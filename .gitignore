@@ -1,1 +1,3 @@
 *.root
+Project/cmt
+!Project/cmt/requirements
