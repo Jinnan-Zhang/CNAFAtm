@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "read_detsim.C": "cpp"
+        "read_detsim.C": "cpp",
+        "alias.C": "cpp"
     }
 }
