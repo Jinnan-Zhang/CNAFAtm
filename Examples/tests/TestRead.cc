@@ -18,5 +18,11 @@ int TestRead()
     tree_evt->SetBranchAddress("SimEvent", &se7);
     tree_hdr->GetBranch("SimHeader")->SetAutoDelete(true);
     tree_evt->GetBranch("SimEvent")->SetAutoDelete(true);
+    tree_hdr->Print();
+    tree_evt->Print();
+
+    return 0;
+    // tree_evt->GetEntry(1);
+
 
 }
