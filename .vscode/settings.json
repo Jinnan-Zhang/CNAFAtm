@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "read_detsim.C": "cpp",
-        "alias.C": "cpp"
+        "alias.C": "cpp",
+        "read.C": "cpp",
+        "iostream": "cpp"
     }
 }
