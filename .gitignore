@@ -1,5 +1,12 @@
 *.root
 cleanup*sh
 setup*sh
-
+install.history
+*~
+*.swp
+*.pyc
+*.log
+InstallArea
 amd64_linux26
+Linux-i686
+Linux-x86_64
