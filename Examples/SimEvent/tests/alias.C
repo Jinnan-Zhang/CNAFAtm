@@ -1,5 +1,6 @@
-
-void SimEventAlias(TTree* SimEvent) {
+#include <TTree.h>
+void SimEventAlias(TTree *SimEvent)
+{
 
     // create alias to simplify analysis
     // = Track =
@@ -34,14 +35,14 @@ void SimEventAlias(TTree* SimEvent) {
 
     SimEvent->SetAlias("track_length", "m_tracks.track_length");
     // == Deposit and Quenched Energy ==
-    SimEvent->SetAlias("edep",   "m_tracks.edep");
+    SimEvent->SetAlias("edep", "m_tracks.edep");
     SimEvent->SetAlias("edep_x", "m_tracks.edep_x");
     SimEvent->SetAlias("edep_y", "m_tracks.edep_y");
     SimEvent->SetAlias("edep_z", "m_tracks.edep_z");
     SimEvent->SetAlias("edep_r", "(edep_x**2+edep_y**2+edep_z**2)**0.5");
     SimEvent->SetAlias("edep_r3", "(edep_r)**3");
 
-    SimEvent->SetAlias("Qedep",   "m_tracks.Qedep");
+    SimEvent->SetAlias("Qedep", "m_tracks.Qedep");
     SimEvent->SetAlias("Qedep_x", "m_tracks.Qedep_x");
     SimEvent->SetAlias("Qedep_y", "m_tracks.Qedep_y");
     SimEvent->SetAlias("Qedep_z", "m_tracks.Qedep_z");
