@@ -1,3 +1,5 @@
 *.root
-Project/cmt
-!Project/cmt/requirements.txt
+cleanup*sh
+setup*sh
+
+amd64_linux26
