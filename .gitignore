@@ -1,4 +1,5 @@
 *.root
+Makefile
 cleanup*sh
 setup*sh
 install.history
