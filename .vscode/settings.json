@@ -3,6 +3,7 @@
         "read_detsim.C": "cpp",
         "alias.C": "cpp",
         "read.C": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "write.C": "cpp"
     }
 }
