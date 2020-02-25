@@ -5,5 +5,7 @@
         "read.C": "cpp",
         "iostream": "cpp",
         "write.C": "cpp"
-    }
+    },
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
 }
