@@ -9,7 +9,7 @@
 
 int TestRead()
 {
-    TFile *f=TFile::Open("$SGD/user-detsim-1000.root","READ");
+    TFile *f=TFile::Open("/storage/gpfs_data/juno/junofs/production/public/users/sgiulio/J18v1r1-Pre1/Atmospheric/0-20GeV/detsim/user-detsim-1000.root","READ");
     TTree* tree_hdr = (TTree*)f->Get("Event/Sim/SimHeader");
     TTree* tree_evt = (TTree*)f->Get("Event/Sim/SimEvent");
     JM::SimHeader* sh7 = 0;
