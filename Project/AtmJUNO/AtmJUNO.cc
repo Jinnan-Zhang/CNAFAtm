@@ -1,6 +1,7 @@
 #include <TFile.h>
 #include <TTree.h>
 #include <TF1.h>
+#include "AtmJUNO.h"
 #include <iostream>
 
 using std::cout;
