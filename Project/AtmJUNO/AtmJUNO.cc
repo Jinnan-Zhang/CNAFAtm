@@ -1,6 +1,17 @@
-#include <TFile.h>
+#include <TChain.h>
+#include <TROOT.h>
 #include <TTree.h>
+#include <TFile.h>
+#include <TSelector.h>
+#include <TH1.h>
+#include <TH2.h>
+#include <TEntryList.h>
 #include <TF1.h>
+#include "TStyle.h"
+#include "TCanvas.h"
+#include "TPaveStats.h"
+#include "TLine.h"
+#include "TMath.h"
 #include "AtmJUNO.h"
 #include <iostream>
 
@@ -9,13 +20,10 @@ using std::endl;
 
 int main()
 {
-    TFile *ff0 = TFile::Open("../data/tme.root", "RECREATE");
-    TF1 *f1 = new TF1("f1", "sin(x)", -10, 10);
-    f1->Write();
-    ff0->Close();
-    for (int i = 0; i < 100; i++)
-    {
-        printf("?\n");
-    }
+    Double_t add=10;
+    TChain chh("h42");
+    chh.Add("../data/dstar*.root");
+    // chh.MakeSelector("AtmSlector");
+    chh.Process("../src/h1analysis.C");
     return 0;
 }

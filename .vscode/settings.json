@@ -4,7 +4,9 @@
         "alias.C": "cpp",
         "read.C": "cpp",
         "iostream": "cpp",
-        "write.C": "cpp"
+        "write.C": "cpp",
+        "AtmSlector.C": "cpp",
+        "h1analysis.C": "cpp"
     },
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true
