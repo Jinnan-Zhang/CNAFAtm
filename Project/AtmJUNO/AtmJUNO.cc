@@ -23,7 +23,7 @@ int main()
     Double_t add=10;
     TChain chh("h42");
     chh.Add("$SGD/user-detsim-1000.root");
-    // chh.MakeSelector("AtmSlector");
+    chh.MakeSelector("AtmSlector");
     // chh.Process("../src/h1analysis.C");
     return 0;
 }
