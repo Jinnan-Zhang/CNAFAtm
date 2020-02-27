@@ -66,7 +66,7 @@ Bool_t AtmSlector::Process(Long64_t entry)
    //
    // The return value is currently not used.
 
-   fReader.SetLocalEntry(entry);
+   fReader.SetEntry(entry);
 
    return kTRUE;
 }
