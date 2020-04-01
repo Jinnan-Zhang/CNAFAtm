@@ -6,7 +6,8 @@
         "iostream": "cpp",
         "write.C": "cpp",
         "AtmSlector.C": "cpp",
-        "h1analysis.C": "cpp"
+        "h1analysis.C": "cpp",
+        "h1analysisTreeReader.C": "cpp"
     },
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true
