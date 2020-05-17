@@ -9,4 +9,5 @@ sys.path.append(o_path)
 
 if __name__ == "__main__":
     # print(SGD)
-    ViewGlobalPos(NFiles=int(sys.argv[1]),WhichEntry=int(sys.argv[2]))
+    # ViewGlobalPos(NFiles=int(sys.argv[1]),WhichEntry=int(sys.argv[2]))
+    ViewPDGID(NFiles=int(sys.argv[1]))
