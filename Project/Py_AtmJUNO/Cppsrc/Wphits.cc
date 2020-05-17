@@ -43,14 +43,14 @@ ClassImp(SimPMTHit);
 #include <TFile.h>
 #include <TChain.h>
 
-void AddDetsimFile2TChain(TChain &tree, int NFiles = 1, int startFile = 0)
+void AddDetsimFile2TChain(TChain &tree, int NFiles = 1, int startFile = 1)
 {
     for (int i = startFile; i < startFile + NFiles; i++)
     {
         tree.Add(Form("%s%d.root", SGD1, i));
     }
 }
-int Wphit()
+int Wphits()
 {
     TChain SimEvent("Event/Sim");
     AddDetsimFile2TChain(SimEvent);
