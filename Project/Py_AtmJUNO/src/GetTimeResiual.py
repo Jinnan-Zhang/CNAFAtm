@@ -47,13 +47,13 @@ def ViewPDGID(NFiles, WhichEntry=0, SaveFileName="PDGID"):
 def ViewWaterPoolPEs(NFiles, WhichEntry=0, SaveFileName="WPnpe"):
     SimEvent = ROOT.TChain("/Event/Sim/SimEvent")
     AddDetsimFile2TChain(SimEvent, NFiles=NFiles)
-    # c = ROOT.TCanvas("myCanvasName", "The Canvas Title", 800, 600)
-    # SimEvent.Draw("SimEvent.m_wp_hits.npe>>+h_wp_npe")
-    # ROOT.gStyle.SetOptStat("ne")
-    # c.SaveAs("./pics/"+SaveFileName + ".png")
-    SimEvent.GetEntry(WhichEntry)
-    npe=np.asarray(SimEvent.SimEvent.m_wp_hits.npe)
-    print(npe)
+    c = ROOT.TCanvas("myCanvasName", "The Canvas Title", 800, 600)
+    SimEvent.Draw("SimEvent.m_wp_hits.npe>>+h_wp_npe")
+    ROOT.gStyle.SetOptStat("ne")
+    c.SaveAs("./pics/"+SaveFileName + ".png")
+    # SimEvent.GetEntry(WhichEntry)
+    # npe=np.asarray(SimEvent.SimEvent.m_wp_hits.npe)
+    # print(npe)
 
 if __name__ == "__main__":
     pass
