@@ -20,13 +20,13 @@ def ViewGlobalPos(NFiles, WhichEntry=0, SaveFileName="GlobalPos"):
     ROOT.gStyle.SetOptStat("ne")
     c.SaveAs("./pics/"+SaveFileName + ".png")
     evt.ls()
-def ViewPDGID(NFiles):
+def ViewPDGID(NFiles,WhichEntry=0):
     ROOT.ROOT.EnableImplicitMT()
     geninfo=ROOT.TChain("geninfo")
     AddUserFile2TChain(geninfo, NFiles)
     geninfo.SetBranchStatus("*", 0)
     geninfo.SetBranchStatus("InitPDGID",1)
-    geninfo.GetEntry(0)
+    geninfo.GetEntry(WhichEntry)
     InitPDGID=np.asarray(geninfo.InitPDGID)
     print(InitPDGID)
 
