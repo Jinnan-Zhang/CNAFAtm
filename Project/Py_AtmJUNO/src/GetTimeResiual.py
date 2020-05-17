@@ -39,7 +39,7 @@ def ViewPDGID(NFiles, WhichEntry=0, SaveFileName="PDGID"):
     # print("prmtrkdep:\t",PDGID)
     c = ROOT.TCanvas("myCanvasName", "The Canvas Title", 800, 600)
     prmtrkdep.Draw("PDGID>>+h_PDGID")
-    h_PDGID=(ROOT.TH1F)ROOT.gDirectory.Get("h_PDGID")
+    #h_PDGID=(ROOT.TH1F)ROOT.gDirectory.Get("h_PDGID")
     ROOT.gStyle.SetOptStat("ne")
     c.SaveAs("./pics/"+SaveFileName + ".png")
 
