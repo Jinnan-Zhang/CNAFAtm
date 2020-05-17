@@ -22,6 +22,11 @@ def ViewGlobalPos(NFiles, WhichEntry=0, SaveFileName="GlobalPos"):
     evt.ls()
 def ViewPDGID(NFiles):
     ROOT.ROOT.EnableImplicitMT()
+    geninfo=ROOT.TChain("geninfo")
+    AddFile2TChain(prmtrkdep, NFiles)
+    geninfo.SetBranchStatus("*", 0)
+    InitPDGID=np.asarray(geninfo.InitPDGID)
+    print(InitPDGID)
 
 
 if __name__ == "__main__":

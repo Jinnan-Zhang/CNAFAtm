@@ -16,3 +16,32 @@ def AddUserFile2TChain(tree, NFiles=1):
 def AddDetsimFile2TChain(tree,NFiles=1):
     for nn in range(1,1+NFiles):
         tree.Add(SGD1+str(nn)+".root")
+
+class SimPMTHit(ROOT.TObject):
+    def __init__(self):
+        self.pmtid = -1
+        self.npe = -1
+        self.hittime = -1.
+        self.timewindow = 0.
+        self.trackid = -1
+    def getPMTID(self):
+        return self.pmtid
+    def getNPE(self):
+        return self.npe
+    def getHitTime(self):
+        return self.hittime
+    def getTimeWindow(self):
+        return self.timewindow
+    def getTrackID(self):
+        return self.trackid
+    def setPMTID(self,val):
+        self.pmtid=val
+    def setNPE(self,val):
+        self.npe=val
+    def setHitTime(self,val):
+        self.hittime = val
+    def setTimeWindow(self,val):
+        self.timewindow=val
+    def setTrackID(self,val):
+        self.trackid=val
+
