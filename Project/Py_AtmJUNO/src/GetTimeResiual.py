@@ -15,8 +15,8 @@ def ViewGlobalPos(NFiles, WhichEntry=0, SaveFileName="GlobalPos"):
         "sqrt(GlobalPosX*GlobalPosX+GlobalPosY*GlobalPosY+GlobalPosZ*GlobalPosZ)/1000>>+h_GPos",
         "pmtID>150e3",
         "", 1, WhichEntry)
-    h_GPos = ROOT.gDirectory.Get("h_GPos")
-    h_GPos.SetXTitle("m")
+   # h_GPos = ROOT.gDirectory.Get("h_GPos")
+   # h_GPos.SetXTitle("m")
     ROOT.gStyle.SetOptStat("ne")
     c.SaveAs(SaveFileName + ".png")
 
