@@ -25,6 +25,8 @@ def ViewPDGID(NFiles):
     geninfo=ROOT.TChain("geninfo")
     AddUserFile2TChain(geninfo, NFiles)
     geninfo.SetBranchStatus("*", 0)
+    geninfo.SetBranchStatus("InitPDGID",1)
+    geninfo.GetEntry(0)
     InitPDGID=np.asarray(geninfo.InitPDGID)
     print(InitPDGID)
 
