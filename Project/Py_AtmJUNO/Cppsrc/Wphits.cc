@@ -6,6 +6,8 @@
 #include <TChain.h>
 #define SGD1 "/storage/gpfs_data/juno/junofs/production/public/users/sgiulio/J18v1r1-Pre1/Atmospheric/0-20GeV/detsim/detsim-"
 #include "Event/SimPMTHit.h"
+#include "Event/SimEvent.h"
+#include "Event/SimHeader.h"
 
 
 void AddDetsimFile2TChain(TChain &tree, int NFiles = 1, int startFile = 1)
@@ -17,16 +19,22 @@ void AddDetsimFile2TChain(TChain &tree, int NFiles = 1, int startFile = 1)
 }
 int Wphits()
 {
-    TChain SimEvent("Event/Sim/SimEvent");
-    AddDetsimFile2TChain(SimEvent);
+    TChain SimEvent1("Event/Sim/SimEvent");
+    AddDetsimFile2TChain(SimEvent1);
+    JM::SimHeader* sh7 = 0;
+    JM::SimEvent* se7 = 0;
+    SimEvent1.SetBranchAddress("SimEvent",&se7);
+    SimEvent1.GetBranch("SimEvent")->SetAutoDelete(true);
+    
+    SimEvent1.GetEntry(0);
+    int totalpe=0;
+    const std::vector<JM::SimPMTHit*> hits = se7->getWPHitsVec();
+    for (std::vector<JM::SimPMTHit*>::const_iterator it = hits.begin();
+                it != hits.end(); ++it) {
 
-    std::vector<SimPMTHit *> m_wp_hits = {0};
-    TBranch *brWp = 0;
-    SimEvent.SetBranchAddress("SimEvent.m_wp_hits", &m_wp_hits, &brWp);
-    SimEvent.SetCacheSize(10000000);
-    SimEvent.AddBranchToCache("SimEvent.m_wp_hits");
-    brWp->GetEntry(1);
-    printf("wpPe:%d\n", m_wp_hits[0]->getNPE());
+            JM::SimPMTHit* hit = *it;
+            totalpe += hit->getNPE();
+        }
 
     return 0;
 }
