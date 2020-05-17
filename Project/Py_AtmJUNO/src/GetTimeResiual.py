@@ -18,7 +18,7 @@ def ViewGlobalPos(NFiles, WhichEntry=0, SaveFileName="GlobalPos"):
    # h_GPos = ROOT.gDirectory.Get("h_GPos")
    # h_GPos.SetXTitle("m")
     ROOT.gStyle.SetOptStat("ne")
-    c.SaveAs(SaveFileName + ".png")
+    c.SaveAs("../pics/"+SaveFileName + ".png")
     evt.ls()
 
 
