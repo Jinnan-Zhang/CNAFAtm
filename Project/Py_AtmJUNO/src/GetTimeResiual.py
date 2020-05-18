@@ -61,7 +61,7 @@ def ViewPMTID(NFiles, WhichEntry=0, SaveFileName="PMTid"):
     evt.SetBranchStatus("*",0)
     evt.SetBranchStatus("pmtID",1)
     c = ROOT.TCanvas("myCanvasName", "The Canvas Title", 800, 600)
-    evt.Draw("pmtID>>+h_pmtID")
+    evt.Draw("pmtID>>+h_pmtID","pmtID>30000 && pmtID<50000")
     ROOT.gStyle.SetOptStat("ne")
     c.SaveAs("./pics/"+SaveFileName + ".png")
     
