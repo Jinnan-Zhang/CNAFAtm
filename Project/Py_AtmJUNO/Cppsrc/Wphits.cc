@@ -1,5 +1,5 @@
 
-#include "TObject.h"
+#include <TObject.h>
 #include <vector>
 #include <iostream>
 #include <TFile.h>
@@ -31,7 +31,7 @@ int Wphits()
     
     SimEvent1.GetEntry(0);
     int totalpe=0;
-    const std::vector<JM::SimPMTHit*> hits = se7->getWPHitsVec();
+    const std::vector<JM::SimPMTHit*> hits = se7->getCDHitsVec();
     for (std::vector<JM::SimPMTHit*>::const_iterator it = hits.begin();
                 it != hits.end(); ++it) {
 
