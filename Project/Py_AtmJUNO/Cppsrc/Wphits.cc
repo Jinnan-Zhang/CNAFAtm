@@ -29,7 +29,7 @@ int Wphits()
     SimEvent1.SetBranchAddress("SimEvent", &se7);
     SimEvent1.GetBranch("SimEvent")->SetAutoDelete(true);
     int totalpe = 0;
-    for (int entry = 0; entry < SimEvent1.GetEntries(); i++)
+    for (int entry = 0; entry < SimEvent1.GetEntries(); entry++)
     {
         SimEvent1.GetEntry(entry);
         const std::vector<JM::SimPMTHit *> hits = se7->getWPHitsVec();
