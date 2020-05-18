@@ -54,6 +54,17 @@ def ViewWaterPoolPEs(NFiles, WhichEntry=0, SaveFileName="WPnpe"):
     # SimEvent.GetEntry(WhichEntry)
     # npe=np.asarray(SimEvent.SimEvent.m_wp_hits.npe)
     # print(npe)
+def ViewPMTID(NFiles, WhichEntry=0, SaveFileName="PMTid"):
+    ROOT.ROOT.EnableImplicitMT()
+    evt = ROOT.TChain("evt")
+    AddUserFile2TChain(evt, NFiles=NFiles)
+    evt.SetBranchStatus("*",0)
+    evt.SetBranchStatus("pmtID",1)
+    c = ROOT.TCanvas("myCanvasName", "The Canvas Title", 800, 600)
+    evt.Draw("pmtID>>+h_pmtID")
+    ROOT.gStyle.SetOptStat("ne")
+    c.SaveAs("./pics/"+SaveFileName + ".png")
+    
 
 if __name__ == "__main__":
     pass
