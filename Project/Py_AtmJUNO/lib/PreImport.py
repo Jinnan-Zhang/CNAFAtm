@@ -24,6 +24,14 @@ sPMTID_low=300000
 sPMTID_up=500000
 WPPMTID_low=30000
 WPPMTID_up=50000
+#merters per nano-sec
+LightSpeed_c=0.299792458
+
+PDG_ID={11:'electron',
+    12:'nu_e',
+    -11:'positron',
+    -12:'nu_e_bar',
+    13:'muon'}
 
 class SimPMTHit(ROOT.TObject):
     def __init__(self):
