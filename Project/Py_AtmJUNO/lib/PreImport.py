@@ -18,6 +18,13 @@ def AddDetsimFile2TChain(tree,NFiles=1):
     for nn in range(StartFile,StartFile+NFiles):
         tree.Add(SGD1+str(nn)+".root")
 
+LPMTID_low=0
+LPMTID_up=20000
+sPMTID_low=300000
+sPMTID_up=500000
+WPPMTID_low=30000
+WPPMTID_up=50000
+
 class SimPMTHit(ROOT.TObject):
     def __init__(self):
         self.pmtid = -1
