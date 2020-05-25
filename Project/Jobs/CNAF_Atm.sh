@@ -1,6 +1,3 @@
-source /home/JUNO/zhangjinnan/.bashrc
-# ss71824
-ssmroot620
-# cd /home/JUNO/zhangjinnan/Atm/CNAF_Atm/Project/Py_AtmJUNO/Cppsrc
-cd /home/JUNO/zhangjinnan/Atm/CNAF_Atm/Project/Py_AtmJUNO
+source /storage/gpfs_data/juno/junofs/users/zhangjinnan/Tools/ROOT/6.20.04/bin/thisroot.sh
+cd /storage/gpfs_data/juno/junofs/users/zhangjinnan/Atm/CNAF_Atm/Project/Py_AtmJUNO
 python AtmJUNO.py 1 1
