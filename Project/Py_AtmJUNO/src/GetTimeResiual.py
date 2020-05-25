@@ -143,12 +143,12 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
     evt.SetBranchStatus("GlobalPosX",1)
     evt.SetBranchStatus("GlobalPosY",1)
     evt.SetBranchStatus("GlobalPosZ",1)
-    for entry in range(1):#evt.GetEntries()):
+    for entry in range(evt.GetEntries()):
         geninfo.GetEntry(entry)
         #one vertex, use first one
         InitX,InitY,InitZ=np.asarray(geninfo.InitX)[0]/1e3,np.asarray(geninfo.InitY)[0]/1e3,np.asarray(geninfo.InitZ)[0]/1e3
         Smear_X,Smear_Y,Smear_Z=GetSmearedVertex(InitX,InitY,InitZ,sigma_vertex)
-        print(np.sqrt(Smear_Z**2+Smear_Y**2+Smear_X**2))
+        # print(np.sqrt(Smear_Z**2+Smear_Y**2+Smear_X**2))
         if (np.sqrt(Smear_X**2+Smear_Y**2+Smear_Z**2)<R_vertex_cut):
             evt.GetEntry(entry)
             pmtID=np.asarray(evt.pmtID)
