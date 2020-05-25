@@ -147,9 +147,9 @@ def ViewTimeProfile(NFiles,SaveFileName="TimeProfile"):
             evt.GetEntry(entry)
             pmtID=np.asarray(evt.pmtID)
             #index for different kind of pmts
-            SPMTs=np.where((pmtID>=sPMTID_low)&(pmtID<=sPMTID_up))
-            WPPMTs=np.where((pmtID>=WPPMTID_low)&(pmtID<=WPPMTID_up))
-            LPMTs=np.where((pmtID>=LPMTID_low)&(pmtID<=LPMTID_up))
+            SPMTs=np.where((pmtID>=sPMTID_low)&(pmtID<=sPMTID_up))[0]
+            WPPMTs=np.where((pmtID>=WPPMTID_low)&(pmtID<=WPPMTID_up))[0]
+            LPMTs=np.where((pmtID>=LPMTID_low)&(pmtID<=LPMTID_up))[0]
             if (WPPMTs.shape[0]<WP_NPE_cut) & (LPMTs.shape[0]>LPMT_NPE_cut) :
                 hitTime=np.asarray(evt.hitTime)[SPMTs]
                 #one vertex, use first one
