@@ -13,3 +13,7 @@ Linux-i686
 Linux-x86_64
 build
 !/Project/Py_AtmJUNO/results/*.root
+Project/Jobs/*.sh
+!Project/Jobs/Ge_CNAF_jobs.sh
+!Project/Jobs/CNAF_Atm.sh
+!Project/Jobs/IHEP.sh
