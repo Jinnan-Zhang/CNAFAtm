@@ -38,6 +38,9 @@ LPMT_NPE_cut=1e5
 #Large PMT slection steps
 LPMT_NPE_steps=[1e5,4.73e5,1.01e6,2.32e6]
 
+sigma_vertex=1. #1m
+sigma_hitTime=4 #4ns
+
 # 1 ns binwidth
 BinWidth=1
 TimeP_low=40

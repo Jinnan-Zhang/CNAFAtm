@@ -96,7 +96,7 @@ def GetSmearedVertex(InitialX,InitialY,InitialZ,SmearSigma=1):
     return X_new,Y_new,Z_new
 
 #get smeared value both hitTime,default: sigma_hittime=4ns
-def GetSmearedHittime(InitialhitTime,SmearSigma):
+def GetSmearedHittime(InitialhitTime,SmearSigma=4):
     hitTime_new=np.random.normal(InitialhitTime,SmearSigma)
     return hitTime_new
 
@@ -151,13 +151,16 @@ def ViewTimeProfile(NFiles,SaveFileName="TimeProfile"):
             WPPMTs=np.where((pmtID>=WPPMTID_low)&(pmtID<=WPPMTID_up))[0]
             LPMTs=np.where((pmtID>=LPMTID_low)&(pmtID<=LPMTID_up))[0]
             if (WPPMTs.shape[0]<WP_NPE_cut) & (LPMTs.shape[0]>LPMT_NPE_cut) :
-                hitTime=np.asarray(evt.hitTime)[SPMTs]
                 #one vertex, use first one
                 InitX,InitY,InitZ=np.asarray(geninfo.InitX)[0]/1e3,np.asarray(geninfo.InitY)[0]/1e3,np.asarray(geninfo.InitZ)[0]/1e3
                 #hit position only for sPMT
                 Hit_x,Hit_y,Hit_z=np.asarray(evt.GlobalPosX)[SPMTs]/1e3,np.asarray(evt.GlobalPosY)[SPMTs]/1e3,np.asarray(evt.GlobalPosZ)[SPMTs]/1e3
-                R_Vi=SmearVertexAndGetDistance(InitX,InitY,InitZ,Hit_x,Hit_y,Hit_z,1.)
-                t_res_i=hitTime-(R_Vi*LS_RI_idx/LightSpeed_c)
+                R_Vi=SmearVertexAndGetDistance(InitX,InitY,InitZ,Hit_x,Hit_y,Hit_z,sigma_vertex)
+                
+                hitTime=np.asarray(evt.hitTime)[SPMTs]
+                #smear hitTime 
+                t_hit_i=np.random.normal(hitTime,sigma_hitTime)
+                t_res_i=t_hit_i-(R_Vi*LS_RI_idx/LightSpeed_c)
                 
                 #lepton at first place
                 InitPDGID=np.asarray(geninfo.InitPDGID)[0]

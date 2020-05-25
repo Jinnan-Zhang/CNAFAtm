@@ -12,3 +12,4 @@ amd64_linux26
 Linux-i686
 Linux-x86_64
 build
+!/Project/Py_AtmJUNO/results/*.root
