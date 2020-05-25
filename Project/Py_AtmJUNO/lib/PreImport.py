@@ -18,6 +18,7 @@ def AddDetsimFile2TChain(tree,NFiles=1):
     for nn in range(StartFile,StartFile+NFiles):
         tree.Add(SGD1+str(nn)+".root")
 
+#pmt id range for different pmts
 LPMTID_low=0
 LPMTID_up=20000
 sPMTID_low=300000
@@ -28,6 +29,21 @@ WPPMTID_up=50000
 LightSpeed_c=0.299792458
 #liquid reflexive index, use average
 LS_RI_idx=1.55
+#16 m vertex position cut 
+R_vertex_cut=16
+#water pool NPE cut
+WP_NPE_cut=60
+#Large PMT NPE cut
+LPMT_NPE_cut=1e5
+#Large PMT slection steps
+LPMT_NPE_steps=[1e5,4.73e5,1.01e6,2.32e6]
+
+# 1 ns binwidth
+BinWidth=1
+TimeP_low=40
+TimeP_up=170
+#number of bins
+NumofBins=(TimeP_up-TimeP_low)/BinWidth
 
 PDG_ID={11:'electron',
     12:'nu_e',

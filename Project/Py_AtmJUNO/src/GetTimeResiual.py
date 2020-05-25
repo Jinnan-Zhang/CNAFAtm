@@ -28,7 +28,7 @@ def ViewGlobalPos(NFiles, WhichEntry=0, SaveFileName="GlobalPos"):
     ROOT.gStyle.SetOptStat("ne")
     c.SaveAs("./pics/"+SaveFileName + ".png")
 
-
+#Same particles for geninfo and prmtrkdep
 def ViewPDGID(NFiles, WhichEntry=0, SaveFileName="PDGID"):
     ROOT.ROOT.EnableImplicitMT()
     geninfo=ROOT.TChain("geninfo")
@@ -78,8 +78,10 @@ def ViewPMTID(NFiles, WhichEntry=0, SaveFileName="PMTid"):
     ROOT.gStyle.SetOptStat("ne")
     c.SaveAs("./pics/"+SaveFileName + ".png")
     
+#basicly relective index
 def ViewOptPar(NFiles):
     opticalparam=ROOT.TChain("opticalparam")
+    print(opticalparam.AsMatirx(columns=["LS_RI_idx"]))
 
 #get smeared value for vertex position, default: sima_v=1m
 def GetSmearedVertex(InitialX,InitialY,InitialZ,SmearSigma=1):
@@ -99,14 +101,55 @@ def GetSmearedHittime(InitialhitTime,SmearSigma):
     return hitTime_new
 
 #Get Distance from vertex to pmt
-def GetDistanceR_Vi(V_x,V_y,V_z,Hit_x,HIt_y,Hit_z):
-    R_Vi=np.sqrt((V_x-Hit_x)**2+(V_y-HIt_y)**2+(V_z-Hit_z)**2)
+def GetDistanceR_Vi(V_x,V_y,V_z,Hit_x,Hit_y,Hit_z):
+    R_Vi=np.sqrt((V_x-Hit_x)**2+(V_y-Hit_y)**2+(V_z-Hit_z)**2)
+    return R_Vi
+
+def SmearVertexAndGetDistance(InitialX,InitialY,InitialZ,Hit_x,Hit_y,Hit_z,SmearSigma=1):
+    V_x,V_y,V_z=GetSmearedVertex(InitialX,InitialY,InitialZ,SmearSigma)
+    R_Vi=np.sqrt((V_x-Hit_x)**2+(V_y-Hit_y)**2+(V_z-Hit_z)**2)
     return R_Vi
 
 def ViewTimeProfile(NFiles,SaveFileName="TimeProfile"):
     ROOT.ROOT.EnableImplicitMT()
+    h_muCC=ROOT.TH1D("muCC","muon Charge Current",NumofBins,TimeP_low,TimeP_up)
+    h_eCC=ROOT.TH1D("eCC","electron Charge Current",NumofBins,TimeP_low,TimeP_up)
+    h_NC=ROOT.TH1D("NC","Neutral Current",NumofBins,TimeP_low,TimeP_up)
+    h_muCC_list=[h_muCC]
+    h_eCC_list=[h_eCC]
+    h_NC_list=[h_NC]
+    for i in range(len(LPMT_NPE_steps)):
+        h_muCC.append()
     evt = ROOT.TChain("evt")
     geninfo = ROOT.TChain("geninfo")
+    AddUserFile2TChain(evt,NFiles=NFiles)
+    AddUserFile2TChain(geninfo,NFiles=NFiles)
+    evt.SetBranchStatus("*", 0)
+    geninfo.SetBranchStatus("*", 0)
+    geninfo.SetBranchStatus("InitX", 1)
+    geninfo.SetBranchStatus("InitY", 1)
+    geninfo.SetBranchStatus("InitZ", 1)
+    geninfo.SetBranchStatus("InitPDGID",1)
+    evt.SetBranchStatus("hitTime", 1)
+    evt.SetBranchStatus("pmtID", 1)
+    for entry in range(evt.GetEntries()):
+        geninfo.GetEntry(entry)
+        InitX,InitY,InitZ=np.asarray(geninfo.InitX)/1e3,np.asarray(geninfo.InitY)/1e3,np.asarray(geninfo.InitZ)/1e3
+        if (np.sqrt(InitZ[0]**2+InitY[0]**2+InitZ[0]**2)<R_vertex_cut):
+            evt.GetEntry(entry)
+            pmtID=np.asarray(evt.pmtID)
+            SPMTs=np.where((pmtID>=sPMTID_low)&(pmtID<=sPMTID_up))
+            WPPMTs=np.where((pmtID>=WPPMTID_low)&(pmtID<=WPPMTID_up))
+            LPMTs=np.where((pmtID>=LPMTID_low)&(pmtID<=LPMTID_up))
+            if WPPMTs.shape[0]<WP_NPE_cut :
+                hitTime=np.asarray(evt.hitTime)
+                
+
+                InitX,InitY,InitZ=np.asarray(geninfo.InitX)/1e3,np.asarray(geninfo.InitY)/1e3,np.asarray(geninfo.InitZ)/1e3
+                Hit_x,Hit_y,Hit_z=np.asarray(evt.GlobalPosX)/1e3,np.asarray(evt.GlobalPosY)/1e3,np.asarray(evt.GlobalPosZ)/1e3
+                R_Vi=SmearVertexAndGetDistance(InitX[0],InitY[0],InitZ[0],Hit_x[SPMTs],Hit_y[SPMTs],Hit_z[SPMTs],1.)
+                InitPDGID=geninfo.InitPDGID
+    
 
 
 if __name__ == "__main__":
