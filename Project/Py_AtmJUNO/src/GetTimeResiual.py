@@ -178,7 +178,7 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
                     h_muCC_list[At_Which_NPE_LPMT].Fill(t_res_i.std(ddof=1))
                 else:
                     h_NC_list[At_Which_NPE_LPMT].Fill(t_res_i.std(ddof=1))
-    ff_TimeP=ROOT.TFile("./results/"+SaveFileName+".root","RECREATE")
+    ff_TimeP=ROOT.TFile("./results/"+SaveFileName+str(StartFile)+".root","RECREATE")
     ff_TimeP.cd()
     for i in range(len(LPMT_NPE_steps)):
         h_muCC_list[i].Write()
