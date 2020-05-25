@@ -172,6 +172,9 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
                 # print(t_res_i)
                 # print(R_Vi)
 
+                #takes RMS not standar devation?
+                RMS_t_res=np.sqrt(np.mean(t_res_i**2))
+
                 #lepton at first place
                 InitPDGID=np.asarray(geninfo.InitPDGID)[0]
                 
@@ -181,12 +184,12 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
                 At_Which_NPE_LPMT=np.searchsorted(LPMT_NPE_steps,LPMTs.shape[0])-1
                 # e-CC
                 if (InitPDGID==11) | (InitPDGID==-11):
-                    h_eCC_list[At_Which_NPE_LPMT].Fill(t_res_i.std(ddof=1))
+                    h_eCC_list[At_Which_NPE_LPMT].Fill(RMS_t_res)
                 #mu-CC
                 elif (InitPDGID==13) | (InitPDGID==-13):
-                    h_muCC_list[At_Which_NPE_LPMT].Fill(t_res_i.std(ddof=1))
+                    h_muCC_list[At_Which_NPE_LPMT].Fill(RMS_t_res)
                 else:
-                    h_NC_list[At_Which_NPE_LPMT].Fill(t_res_i.std(ddof=1))
+                    h_NC_list[At_Which_NPE_LPMT].Fill(RMS_t_res)
     ff_TimeP=ROOT.TFile("./results/"+SaveFileName+str(StartFile)+".root","RECREATE")
     ff_TimeP.cd()
     for i in range(len(LPMT_NPE_steps)):
