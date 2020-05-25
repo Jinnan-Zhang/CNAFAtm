@@ -43,8 +43,8 @@ sigma_hitTime=4 #4ns
 
 # 1 ns binwidth
 BinWidth=1
-TimeP_low=40
-TimeP_up=170
+TimeP_low=20
+TimeP_up=520
 #number of bins
 NumofBins=(TimeP_up-TimeP_low)/BinWidth
 
