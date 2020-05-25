@@ -156,7 +156,7 @@ def ViewTimeProfile(NFiles,SaveFileName="TimeProfile"):
                 InitX,InitY,InitZ=np.asarray(geninfo.InitX)[0]/1e3,np.asarray(geninfo.InitY)[0]/1e3,np.asarray(geninfo.InitZ)[0]/1e3
                 #hit position only for sPMT
                 Hit_x,Hit_y,Hit_z=np.asarray(evt.GlobalPosX)[SPMTs]/1e3,np.asarray(evt.GlobalPosY)[SPMTs]/1e3,np.asarray(evt.GlobalPosZ)[SPMTs]/1e3
-                R_Vi=SmearVertexAndGetDistance(InitX,InitY,InitZ,Hit_x[SPMTs],Hit_y[SPMTs],Hit_z[SPMTs],1.)
+                R_Vi=SmearVertexAndGetDistance(InitX,InitY,InitZ,Hit_x,Hit_y,Hit_z,1.)
                 t_res_i=hitTime-(R_Vi*LS_RI_idx/LightSpeed_c)
                 
                 #lepton at first place
