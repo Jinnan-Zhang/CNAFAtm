@@ -42,14 +42,17 @@ def ViewPDGID(NFiles, WhichEntry=0, SaveFileName="PDGID"):
     AddUserFile2TChain(prmtrkdep, NFiles=NFiles)
     prmtrkdep.SetBranchStatus("*", 0)
     prmtrkdep.SetBranchStatus("PDGID", 1)
+    for entry in range(prmtrkdep.GetEntries()):
+        prmtrkdep.GetEntry(entry)
+        print(np.asarray(prmtrkdep.PDGID))
     # prmtrkdep.GetEntry(WhichEntry)
     # PDGID=np.asarray(prmtrkdep.PDGID)
     # print("prmtrkdep:\t",PDGID)
-    c = ROOT.TCanvas("myCanvasName", "The Canvas Title", 800, 600)
-    prmtrkdep.Draw("PDGID>>+h_PDGID")
-    # h_PDGID=(ROOT.TH1F)ROOT.gDirectory.Get("h_PDGID")
-    ROOT.gStyle.SetOptStat("ne")
-    c.SaveAs("./pics/"+SaveFileName + ".png")
+    # c = ROOT.TCanvas("myCanvasName", "The Canvas Title", 800, 600)
+    # prmtrkdep.Draw("PDGID>>+h_PDGID")
+    # # h_PDGID=(ROOT.TH1F)ROOT.gDirectory.Get("h_PDGID")
+    # ROOT.gStyle.SetOptStat("ne")
+    # c.SaveAs("./pics/"+SaveFileName + ".png")
 
 
 def ViewWaterPoolPEs(NFiles, WhichEntry=0, SaveFileName="WPnpe"):

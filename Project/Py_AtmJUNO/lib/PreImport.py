@@ -26,12 +26,15 @@ WPPMTID_low=30000
 WPPMTID_up=50000
 #merters per nano-sec
 LightSpeed_c=0.299792458
+#liquid reflexive index, use average
+LS_RI_idx=1.55
 
 PDG_ID={11:'electron',
     12:'nu_e',
     -11:'positron',
     -12:'nu_e_bar',
-    13:'muon'}
+    13:'muon',
+    -13:'anti_muon'}
 
 class SimPMTHit(ROOT.TObject):
     def __init__(self):
