@@ -140,9 +140,13 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
     geninfo.SetBranchStatus("InitPDGID",1)
     evt.SetBranchStatus("hitTime", 1)
     evt.SetBranchStatus("pmtID", 1)
+    evt.SetBranchStatus("GlobalPosX",1)
+    evt.SetBranchStatus("GlobalPosY",1)
+    evt.SetBranchStatus("GlobalPosZ",1)
     for entry in range(1):#evt.GetEntries()):
         geninfo.GetEntry(entry)
-        InitX,InitY,InitZ=np.asarray(geninfo.InitX)/1e3,np.asarray(geninfo.InitY)/1e3,np.asarray(geninfo.InitZ)/1e3
+        #one vertex, use first one
+        InitX,InitY,InitZ=np.asarray(geninfo.InitX)[0]/1e3,np.asarray(geninfo.InitY)[0]/1e3,np.asarray(geninfo.InitZ)[0]/1e3
         if (np.sqrt(InitZ[0]**2+InitY[0]**2+InitZ[0]**2)<R_vertex_cut):
             evt.GetEntry(entry)
             pmtID=np.asarray(evt.pmtID)
@@ -151,8 +155,7 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
             WPPMTs=np.where((pmtID>=WPPMTID_low)&(pmtID<=WPPMTID_up))[0]
             LPMTs=np.where((pmtID>=LPMTID_low)&(pmtID<=LPMTID_up))[0]
             if (WPPMTs.shape[0]<WP_NPE_cut) & (LPMTs.shape[0]>LPMT_NPE_cut) :
-                #one vertex, use first one
-                InitX,InitY,InitZ=np.asarray(geninfo.InitX)[0]/1e3,np.asarray(geninfo.InitY)[0]/1e3,np.asarray(geninfo.InitZ)[0]/1e3
+                # InitX,InitY,InitZ=np.asarray(geninfo.InitX)[0]/1e3,np.asarray(geninfo.InitY)[0]/1e3,np.asarray(geninfo.InitZ)[0]/1e3
                 #hit position only for sPMT
                 Hit_x,Hit_y,Hit_z=np.asarray(evt.GlobalPosX)[SPMTs]/1e3,np.asarray(evt.GlobalPosY)[SPMTs]/1e3,np.asarray(evt.GlobalPosZ)[SPMTs]/1e3
                 R_Vi=SmearVertexAndGetDistance(InitX,InitY,InitZ,Hit_x,Hit_y,Hit_z,sigma_vertex)
