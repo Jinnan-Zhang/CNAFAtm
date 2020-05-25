@@ -148,6 +148,7 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
         #one vertex, use first one
         InitX,InitY,InitZ=np.asarray(geninfo.InitX)[0]/1e3,np.asarray(geninfo.InitY)[0]/1e3,np.asarray(geninfo.InitZ)[0]/1e3
         Smear_X,Smear_Y,Smear_Z=GetSmearedVertex(InitX,InitY,InitZ,sigma_vertex)
+        print(np.sqrt(Smear_Z**2+Smear_Y**2+Smear_X**2))
         if (np.sqrt(Smear_X**2+Smear_Y**2+Smear_Z**2)<R_vertex_cut):
             evt.GetEntry(entry)
             pmtID=np.asarray(evt.pmtID)
@@ -159,9 +160,6 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
                 #hit position only for sPMT
                 Hit_x,Hit_y,Hit_z=np.asarray(evt.GlobalPosX)[SPMTs]/1e3,np.asarray(evt.GlobalPosY)[SPMTs]/1e3,np.asarray(evt.GlobalPosZ)[SPMTs]/1e3
                 R_Vi=np.sqrt((Smear_X-Hit_x)**2+(Smear_Y-Hit_y)**2+(Smear_Z-Hit_z)**2)
-                print(Hit_x)
-                print(InitX)
-                print(R_Vi)
 
                 hitTime=np.asarray(evt.hitTime)[SPMTs]
                 #smear hitTime 
