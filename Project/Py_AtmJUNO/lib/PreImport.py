@@ -30,7 +30,7 @@ LightSpeed_c=0.299792458
 #liquid reflexive index, use average
 LS_RI_idx=1.55
 #16 m vertex position cut 
-R_vertex_cut=16
+R_vertex_cut=16.
 #water pool NPE cut
 WP_NPE_cut=60
 #Large PMT NPE cut

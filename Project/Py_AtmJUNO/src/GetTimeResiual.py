@@ -147,7 +147,8 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
         geninfo.GetEntry(entry)
         #one vertex, use first one
         InitX,InitY,InitZ=np.asarray(geninfo.InitX)[0]/1e3,np.asarray(geninfo.InitY)[0]/1e3,np.asarray(geninfo.InitZ)[0]/1e3
-        if (np.sqrt(InitZ**2+InitY**2+InitZ**2)<R_vertex_cut):
+        Smear_X,Smear_Y,Smear_Z=GetSmearedVertex(InitX,InitY,InitZ,sigma_vertex)
+        if (np.sqrt(Smear_X**2+Smear_Y**2+Smear_Z**2)<R_vertex_cut):
             evt.GetEntry(entry)
             pmtID=np.asarray(evt.pmtID)
             #index for different kind of pmts
@@ -155,10 +156,9 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
             WPPMTs=np.where((pmtID>=WPPMTID_low)&(pmtID<=WPPMTID_up))[0]
             LPMTs=np.where((pmtID>=LPMTID_low)&(pmtID<=LPMTID_up))[0]
             if (WPPMTs.shape[0]<WP_NPE_cut) & (LPMTs.shape[0]>LPMT_NPE_cut) :
-                # InitX,InitY,InitZ=np.asarray(geninfo.InitX)[0]/1e3,np.asarray(geninfo.InitY)[0]/1e3,np.asarray(geninfo.InitZ)[0]/1e3
                 #hit position only for sPMT
                 Hit_x,Hit_y,Hit_z=np.asarray(evt.GlobalPosX)[SPMTs]/1e3,np.asarray(evt.GlobalPosY)[SPMTs]/1e3,np.asarray(evt.GlobalPosZ)[SPMTs]/1e3
-                R_Vi=SmearVertexAndGetDistance(InitX,InitY,InitZ,Hit_x,Hit_y,Hit_z,sigma_vertex)
+                R_Vi=np.sqrt((Smear_X-Hit_x)**2+(Smear_Y-Hit_y)**2+(Smear_Z-Hit_z)**2)
                 print(Hit_x)
                 print(InitX)
                 print(R_Vi)
@@ -175,7 +175,6 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
                 #which will not happen, find 1 means first stage, thus need -1
                 #to the histgram list
                 At_Which_NPE_LPMT=np.searchsorted(LPMT_NPE_steps,LPMTs.shape[0])-1
-                print(t_res_i.std(ddof=1))
                 # e-CC
                 if (InitPDGID==11) | (InitPDGID==-11):
                     h_eCC_list[At_Which_NPE_LPMT].Fill(t_res_i.std(ddof=1))
