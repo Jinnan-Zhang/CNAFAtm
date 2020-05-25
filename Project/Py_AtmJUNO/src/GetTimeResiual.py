@@ -163,9 +163,12 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
 
                 hitTime=np.asarray(evt.hitTime)[SPMTs]
                 #smear hitTime 
-                t_hit_i=np.random.normal(hitTime,sigma_hitTime)
-                t_res_i=t_hit_i-(R_Vi*LS_RI_idx/LightSpeed_c)
-                print(t_hit_i)
+                Smear_t=np.random.normal(hitTime,sigma_hitTime)
+                #prompt time cut less than 3 times of meadian value
+                hit_pr_idx=np.where(Smear_t<np.median(hitTime)*3)[0]
+                
+                t_res_i=Smear_t[hit_pr_idx]-(R_Vi[hit_pr_idx]*LS_RI_idx/LightSpeed_c)
+                print(t_res_i)
                 print(R_Vi)
 
                 #lepton at first place
