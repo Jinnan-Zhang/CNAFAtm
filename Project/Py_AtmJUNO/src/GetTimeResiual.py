@@ -85,10 +85,10 @@ def ViewOptPar(NFiles):
 
 #get smeared value for vertex position, default: sima_v=1m
 def GetSmearedVertex(InitialX,InitialY,InitialZ,SmearSigma=1):
-    SmearR = np.random.normal(np.zeros(InitialX.shape[0]),SmearSigma)
-    SmearCosTheta = np.random.rand(InitialX.shape[0]) * 2. - 1
+    SmearR = np.random.normal(0,SmearSigma)
+    SmearCosTheta = np.random.rand(1) * 2. - 1
     SmearSinTheta = np.sqrt(1. - SmearCosTheta**2)
-    SmearPhi = np.random.rand(InitialX.shape[0]) * np.pi * 2.
+    SmearPhi = np.random.rand(1) * np.pi * 2.
     dx, dy, dz = SmearR * SmearSinTheta * np.cos(
         SmearPhi), SmearR * SmearSinTheta * np.sin(
             SmearPhi), SmearR * SmearCosTheta
@@ -110,16 +110,24 @@ def SmearVertexAndGetDistance(InitialX,InitialY,InitialZ,Hit_x,Hit_y,Hit_z,Smear
     R_Vi=np.sqrt((V_x-Hit_x)**2+(V_y-Hit_y)**2+(V_z-Hit_z)**2)
     return R_Vi
 
+
 def ViewTimeProfile(NFiles,SaveFileName="TimeProfile"):
     ROOT.ROOT.EnableImplicitMT()
-    h_muCC=ROOT.TH1D("muCC","muon Charge Current",NumofBins,TimeP_low,TimeP_up)
-    h_eCC=ROOT.TH1D("eCC","electron Charge Current",NumofBins,TimeP_low,TimeP_up)
-    h_NC=ROOT.TH1D("NC","Neutral Current",NumofBins,TimeP_low,TimeP_up)
+    h_muCC=ROOT.TH1D("muCC0","muon Charge Current",NumofBins,TimeP_low,TimeP_up)
+    h_eCC=ROOT.TH1D("eCC0","electron Charge Current",NumofBins,TimeP_low,TimeP_up)
+    h_NC=ROOT.TH1D("NC0","Neutral Current",NumofBins,TimeP_low,TimeP_up)
     h_muCC_list=[h_muCC]
     h_eCC_list=[h_eCC]
     h_NC_list=[h_NC]
-    for i in range(len(LPMT_NPE_steps)):
-        h_muCC.append()
+    for i in range(len(LPMT_NPE_steps)-1):
+        h_muCC_t=h_muCC.Clone("muCC"+str(i+1))
+        h_muCC_list.append(h_muCC_t)
+        h_eCC_t=h_eCC.Clone("eCC"+str(i+1))
+        h_eCC_list.append(h_eCC_t)
+        h_NC_t=h_NC.Clone("NC"+str(i+1))
+        h_NC_list.append(h_NC_t)
+
+
     evt = ROOT.TChain("evt")
     geninfo = ROOT.TChain("geninfo")
     AddUserFile2TChain(evt,NFiles=NFiles)
@@ -138,17 +146,46 @@ def ViewTimeProfile(NFiles,SaveFileName="TimeProfile"):
         if (np.sqrt(InitZ[0]**2+InitY[0]**2+InitZ[0]**2)<R_vertex_cut):
             evt.GetEntry(entry)
             pmtID=np.asarray(evt.pmtID)
+            #index for different kind of pmts
             SPMTs=np.where((pmtID>=sPMTID_low)&(pmtID<=sPMTID_up))
             WPPMTs=np.where((pmtID>=WPPMTID_low)&(pmtID<=WPPMTID_up))
             LPMTs=np.where((pmtID>=LPMTID_low)&(pmtID<=LPMTID_up))
-            if WPPMTs.shape[0]<WP_NPE_cut :
-                hitTime=np.asarray(evt.hitTime)
+            if (WPPMTs.shape[0]<WP_NPE_cut) & (LPMTs.shape[0]>LPMT_NPE_cut) :
+                hitTime=np.asarray(evt.hitTime)[SPMTs]
+                #one vertex, use first one
+                InitX,InitY,InitZ=np.asarray(geninfo.InitX)[0]/1e3,np.asarray(geninfo.InitY)[0]/1e3,np.asarray(geninfo.InitZ)[0]/1e3
+                #hit position only for sPMT
+                Hit_x,Hit_y,Hit_z=np.asarray(evt.GlobalPosX)[SPMTs]/1e3,np.asarray(evt.GlobalPosY)[SPMTs]/1e3,np.asarray(evt.GlobalPosZ)[SPMTs]/1e3
+                R_Vi=SmearVertexAndGetDistance(InitX,InitY,InitZ,Hit_x[SPMTs],Hit_y[SPMTs],Hit_z[SPMTs],1.)
+                t_res_i=hitTime-(R_Vi*LS_RI_idx/LightSpeed_c)
                 
+                #lepton at first place
+                InitPDGID=np.asarray(geninfo.InitPDGID)[0]
+                
+                #for value, find 0 means under the LPMT cut,
+                #which will not happen, find 1 means first stage, thus need -1
+                #to the histgram list
+                At_Which_NPE_LPMT=np.searchsorted(LPMT_NPE_steps,LPMTs.shape[0])-1
+                
+                # e-CC
+                if (InitPDGID==11) | (InitPDGID==-11):
+                    h_eCC_list[At_Which_NPE_LPMT].Fill(t_res_i.std(ddof=1))
+                #mu-CC
+                elif (InitPDGID==13) | (InitPDGID==-13):
+                    h_muCC_list[At_Which_NPE_LPMT].Fill(t_res_i.std(ddof=1))
+                else:
+                    h_NC_list[At_Which_NPE_LPMT].Fill(t_res_i.std(ddof=1))
+    ff_TimeP=ROOT.TFile(SaveFileName+".root","RECREATE")
+    ff_TimeP.cd()
+    for i in range(len(LPMT_NPE_steps)):
+        h_muCC_list[i].Write()
+        h_eCC_list[i].Write()
+        h_NC_list[i].Write()
+    ff_TimeP.Close()
 
-                InitX,InitY,InitZ=np.asarray(geninfo.InitX)/1e3,np.asarray(geninfo.InitY)/1e3,np.asarray(geninfo.InitZ)/1e3
-                Hit_x,Hit_y,Hit_z=np.asarray(evt.GlobalPosX)/1e3,np.asarray(evt.GlobalPosY)/1e3,np.asarray(evt.GlobalPosZ)/1e3
-                R_Vi=SmearVertexAndGetDistance(InitX[0],InitY[0],InitZ[0],Hit_x[SPMTs],Hit_y[SPMTs],Hit_z[SPMTs],1.)
-                InitPDGID=geninfo.InitPDGID
+
+
+
     
 
 

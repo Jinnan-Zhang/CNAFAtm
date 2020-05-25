@@ -11,6 +11,7 @@ if __name__ == "__main__":
     # print(SGD)
     # ViewGlobalPos(NFiles=int(sys.argv[1]),WhichEntry=int(sys.argv[2]))
     # ViewHitTime(NFiles=int(sys.argv[1]),WhichEntry=int(sys.argv[2]))
-    ViewPDGID(NFiles=int(sys.argv[1]),WhichEntry=int(sys.argv[2]))
+    # ViewPDGID(NFiles=int(sys.argv[1]),WhichEntry=int(sys.argv[2]))
     # ViewWaterPoolPEs(NFiles=int(sys.argv[1]), WhichEntry=int(sys.argv[2]))
     # ViewPMTID(NFiles=int(sys.argv[1]), WhichEntry=int(sys.argv[2]))
+    ViewTimeProfile(NFiles=int(sys.argv[1]))
