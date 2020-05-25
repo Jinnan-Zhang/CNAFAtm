@@ -147,7 +147,7 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
         geninfo.GetEntry(entry)
         #one vertex, use first one
         InitX,InitY,InitZ=np.asarray(geninfo.InitX)[0]/1e3,np.asarray(geninfo.InitY)[0]/1e3,np.asarray(geninfo.InitZ)[0]/1e3
-        if (np.sqrt(InitZ[0]**2+InitY[0]**2+InitZ[0]**2)<R_vertex_cut):
+        if (np.sqrt(InitZ**2+InitY**2+InitZ**2)<R_vertex_cut):
             evt.GetEntry(entry)
             pmtID=np.asarray(evt.pmtID)
             #index for different kind of pmts
