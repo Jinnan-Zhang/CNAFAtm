@@ -9,7 +9,7 @@ def ViewHitTime(NFiles, WhichEntry=0, SaveFileName="hitTime"):
     evt = ROOT.TChain("evt")
     AddUserFile2TChain(evt,NFiles)
     c = ROOT.TCanvas("myCanvasName", "The Canvas Title", 800, 600)
-    evt.Draw("hitTime>>h_hit","pmtID>300000","",1,WhichEntry)
+    evt.Draw("hitTime>>+h_hit","pmtID>300000","")#,1,WhichEntry)
     ROOT.gStyle.SetOptStat("ne")
     c.SaveAs("./pics/"+SaveFileName + ".png")
 
@@ -140,7 +140,7 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
     geninfo.SetBranchStatus("InitPDGID",1)
     evt.SetBranchStatus("hitTime", 1)
     evt.SetBranchStatus("pmtID", 1)
-    for entry in range(evt.GetEntries()):
+    for entry in range(1):#evt.GetEntries()):
         geninfo.GetEntry(entry)
         InitX,InitY,InitZ=np.asarray(geninfo.InitX)/1e3,np.asarray(geninfo.InitY)/1e3,np.asarray(geninfo.InitZ)/1e3
         if (np.sqrt(InitZ[0]**2+InitY[0]**2+InitZ[0]**2)<R_vertex_cut):
@@ -161,6 +161,7 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
                 #smear hitTime 
                 t_hit_i=np.random.normal(hitTime,sigma_hitTime)
                 t_res_i=t_hit_i-(R_Vi*LS_RI_idx/LightSpeed_c)
+                print(t_hit_i,t_res_i)
                 
                 #lepton at first place
                 InitPDGID=np.asarray(geninfo.InitPDGID)[0]
