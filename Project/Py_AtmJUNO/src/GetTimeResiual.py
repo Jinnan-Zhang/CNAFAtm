@@ -166,7 +166,7 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
                 Smear_t=np.random.normal(hitTime,sigma_hitTime)
                 #prompt time cut less than 3 times of meadian value
                 #this cut is not valid, even though better
-                hit_pr_idx=np.where(Smear_t<np.median(hitTime)*3)[0]
+                hit_pr_idx=np.where(Smear_t<np.median(hitTime)*10)[0]
                 t_res_i=Smear_t[hit_pr_idx]-(R_Vi[hit_pr_idx]*LS_RI_idx/LightSpeed_c)
                 # t_res_i=Smear_t-(R_Vi*LS_RI_idx/LightSpeed_c)
                 # print(t_res_i)
