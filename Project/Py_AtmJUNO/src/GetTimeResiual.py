@@ -169,7 +169,7 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
                 #which will not happen, find 1 means first stage, thus need -1
                 #to the histgram list
                 At_Which_NPE_LPMT=np.searchsorted(LPMT_NPE_steps,LPMTs.shape[0])-1
-                
+                print(t_res_i.std(ddof=1))
                 # e-CC
                 if (InitPDGID==11) | (InitPDGID==-11):
                     h_eCC_list[At_Which_NPE_LPMT].Fill(t_res_i.std(ddof=1))
