@@ -31,10 +31,10 @@ def ViewGlobalPos(NFiles, WhichEntry=0, SaveFileName="GlobalPos"):
 
 def ViewPDGID(NFiles, WhichEntry=0, SaveFileName="PDGID"):
     ROOT.ROOT.EnableImplicitMT()
-    # geninfo=ROOT.TChain("geninfo")
-    # AddUserFile2TChain(geninfo, NFiles)
-    # geninfo.SetBranchStatus("*", 0)
-    # geninfo.SetBranchStatus("InitPDGID",1)
+    geninfo=ROOT.TChain("geninfo")
+    AddUserFile2TChain(geninfo, NFiles)
+    geninfo.SetBranchStatus("*", 0)
+    geninfo.SetBranchStatus("InitPDGID",1)
     # geninfo.GetEntry(WhichEntry)
     # InitPDGID=np.asarray(geninfo.InitPDGID)
     # print("geninfo:\t",InitPDGID)
@@ -43,8 +43,10 @@ def ViewPDGID(NFiles, WhichEntry=0, SaveFileName="PDGID"):
     prmtrkdep.SetBranchStatus("*", 0)
     prmtrkdep.SetBranchStatus("PDGID", 1)
     for entry in range(prmtrkdep.GetEntries()):
+        geninfo.GetEntry(entry)
         prmtrkdep.GetEntry(entry)
-        print(np.asarray(prmtrkdep.PDGID))
+        print("gen:",np.asarray(geninfo.InitPDGID))
+        print("prm:",np.asarray(prmtrkdep.PDGID))
     # prmtrkdep.GetEntry(WhichEntry)
     # PDGID=np.asarray(prmtrkdep.PDGID)
     # print("prmtrkdep:\t",PDGID)
