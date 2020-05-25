@@ -5,6 +5,14 @@ import sys
 import os
 sys.path.append("..")
 
+def ViewHitTime(NFiles, WhichEntry=0, SaveFileName="hitTime"):
+    evt = ROOT.TChain("evt")
+    AddUserFile2TChain(evt,NFiles)
+    c = ROOT.TCanvas("myCanvasName", "The Canvas Title", 800, 600)
+    evt.Draw("hitTime>>h_hit","pmtID>300000","",1,WhichEntry)
+    ROOT.gStyle.SetOptStat("ne")
+    c.SaveAs("./pics/"+SaveFileName + ".png")
+
 
 def ViewGlobalPos(NFiles, WhichEntry=0, SaveFileName="GlobalPos"):
     ROOT.ROOT.EnableImplicitMT()
@@ -65,6 +73,36 @@ def ViewPMTID(NFiles, WhichEntry=0, SaveFileName="PMTid"):
     ROOT.gStyle.SetOptStat("ne")
     c.SaveAs("./pics/"+SaveFileName + ".png")
     
+def ViewOptPar(NFiles):
+    opticalparam=ROOT.TChain("opticalparam")
+
+#get smeared value for vertex position, default: sima_v=1m
+def GetSmearedVertex(InitialX,InitialY,InitialZ,SmearSigma=1):
+    SmearR = np.random.normal(np.zeros(InitialX.shape[0]),SmearSigma)
+    SmearCosTheta = np.random.rand(InitialX.shape[0]) * 2. - 1
+    SmearSinTheta = np.sqrt(1. - SmearCosTheta**2)
+    SmearPhi = np.random.rand(InitialX.shape[0]) * np.pi * 2.
+    dx, dy, dz = SmearR * SmearSinTheta * np.cos(
+        SmearPhi), SmearR * SmearSinTheta * np.sin(
+            SmearPhi), SmearR * SmearCosTheta
+    X_new, Y_new, Z_new = InitialX + dx, InitialY + dy, InitialZ + dz
+    return X_new,Y_new,Z_new
+
+#get smeared value both hitTime,default: sigma_hittime=4ns
+def GetSmearedHittime(InitialhitTime,SmearSigma):
+    hitTime_new=np.random.normal(InitialhitTime,SmearSigma)
+    return hitTime_new
+
+#Get Distance from vertex to pmt
+def GetDistanceR_Vi(V_x,V_y,V_z,Hit_x,HIt_y,Hit_z):
+    R_Vi=np.sqrt((V_x-Hit_x)**2+(V_y-HIt_y)**2+(V_z-Hit_z)**2)
+    return R_Vi
+
+def ViewTimeProfile(NFiles,SaveFileName="TimeProfile"):
+    ROOT.ROOT.EnableImplicitMT()
+    evt = ROOT.TChain("evt")
+    geninfo = ROOT.TChain("geninfo")
+
 
 if __name__ == "__main__":
     pass
