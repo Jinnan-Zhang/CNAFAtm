@@ -161,7 +161,9 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
                 #smear hitTime 
                 t_hit_i=np.random.normal(hitTime,sigma_hitTime)
                 t_res_i=t_hit_i-(R_Vi*LS_RI_idx/LightSpeed_c)
-                print(t_hit_i,t_res_i)
+                print(t_hit_i)
+                print(R_Vi)
+                print(t_res_i)
                 
                 #lepton at first place
                 InitPDGID=np.asarray(geninfo.InitPDGID)[0]
