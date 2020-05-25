@@ -3,4 +3,4 @@ source /home/JUNO/zhangjinnan/.bashrc
 ssmroot620
 # cd /home/JUNO/zhangjinnan/Atm/CNAF_Atm/Project/Py_AtmJUNO/Cppsrc
 cd /home/JUNO/zhangjinnan/Atm/CNAF_Atm/Project/Py_AtmJUNO
-# root -l Wphits.cc
+python AtmJUNO.py 1 1

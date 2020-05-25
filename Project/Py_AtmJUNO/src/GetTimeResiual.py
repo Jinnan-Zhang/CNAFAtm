@@ -111,7 +111,7 @@ def SmearVertexAndGetDistance(InitialX,InitialY,InitialZ,Hit_x,Hit_y,Hit_z,Smear
     return R_Vi
 
 
-def ViewTimeProfile(NFiles,SaveFileName="TimeProfile"):
+def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
     ROOT.ROOT.EnableImplicitMT()
     h_muCC=ROOT.TH1D("muCC0","muon Charge Current",NumofBins,TimeP_low,TimeP_up)
     h_eCC=ROOT.TH1D("eCC0","electron Charge Current",NumofBins,TimeP_low,TimeP_up)
@@ -130,8 +130,8 @@ def ViewTimeProfile(NFiles,SaveFileName="TimeProfile"):
 
     evt = ROOT.TChain("evt")
     geninfo = ROOT.TChain("geninfo")
-    AddUserFile2TChain(evt,NFiles=NFiles)
-    AddUserFile2TChain(geninfo,NFiles=NFiles)
+    AddUserFile2TChain(evt,NFiles=NFiles,StartFile=StartFile)
+    AddUserFile2TChain(geninfo,NFiles=NFiles,StartFile=StartFile)
     evt.SetBranchStatus("*", 0)
     geninfo.SetBranchStatus("*", 0)
     geninfo.SetBranchStatus("InitX", 1)
