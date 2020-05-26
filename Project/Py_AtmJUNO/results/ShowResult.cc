@@ -20,6 +20,7 @@ void ViewEffandCONT();
 int ShowResult()
 {
     // ViewFlavor();
+    ViewEffandCONT();
     return 0;
 }
 
@@ -53,8 +54,58 @@ void ViewEffandCONT()
         "4.73#times10^{5}<NPE_{LPMT}<1.01#times10^{6}",
         "1.01#times10^{6}<NPE_{LPMT}<2.32#times10^{6}",
         "NPE_{LPMT}>2.32#times10^{6}"};
-    
-    
+    TH1 *h_Eff_eCC[4];
+    TH1 *h_CONT_eCC[4];
+    TH1 *h_Eff_muCC[4];
+    TH1 *h_CONT_muCC[4];
+    //all events number for eCC in each LPMT NPE
+    double eCC_all[4];
+    //all events number for muCC in each LPMT NPE
+    double muCC_all[4];
+    for (int i = 0; i < 4; i++)
+    {
+        eCC_all[i] = h_eCC[i]->Integral();
+        muCC_all[i] = h_muCC[i]->Integral();
+        h_CONT_eCC[i] = (TH1 *)h_muCC[0]->Clone("Contamination");
+        h_Eff_eCC[i] = (TH1 *)h_muCC[0]->Clone("Efficiency");
+        h_CONT_muCC[i] = (TH1 *)h_muCC[0]->Clone("Contamination");
+        h_Eff_muCC[i] = (TH1 *)h_muCC[0]->Clone("Efficiency");
+        h_CONT_eCC[i]->SetYTitle("");
+        h_Eff_eCC[i]->SetYTitle("");
+        h_CONT_muCC[i]->SetYTitle("");
+        h_Eff_muCC[i]->SetYTitle("");
+        h_CONT_eCC[i]->SetLineColor(kRed);
+        h_CONT_eCC[i]->SetLineWidth(4);
+        h_Eff_eCC[i]->SetLineColor(kBlue);
+        h_Eff_eCC[i]->SetLineWidth(4);
+        h_CONT_muCC[i]->SetLineColor(kRed);
+        h_CONT_muCC[i]->SetLineWidth(4);
+        h_Eff_muCC[i]->SetLineColor(kBlue);
+        h_Eff_muCC[i]->SetLineWidth(4);
+        
+    }
+    //obseved event number in current cut range
+    double Ob_range[4];
+    double muCC_in[4], eCC_in[4];
+    double Eff_mu = 0, CONT_mu = 0;
+    double Eff_e = 0, CONT_e = 0;
+    for (int i = 0; i < h_Eff_eCC[0]->GetNbinsX(); i++)
+    {
+        Ob_range[i] = 0;
+        eCC_in[i] = h_eCC[i]->Integral(1, i + 1);
+        muCC_in[i] = h_muCC[i]->Integral(1, i + 1);
+        Ob_range[i] += eCC_in[i];
+        Ob_range[i] += muCC_in[i];
+        Ob_range[i] += h_NC[i]->Integral(1, i + 1);
+        Eff_e = eCC_in[i] / eCC_all[i];
+        CONT_e=1-eCC_in[i]/Ob_range[i];
+        Eff_mu=muCC_in[i]/muCC_all[i];
+        CONT_mu=1-muCC_in[i]/Ob_range[i];
+        h_Eff_eCC[i]->SetBinContent(i+1,Eff_e);
+        h_CONT_eCC[i]->SetBinContent(i+1,CONT_e);
+        h_Eff_muCC[i]->SetBinContent(i+1,Eff_mu);
+        h_CONT_muCC[i]->SetBinContent(i+1,CONT_mu);
+    }
 }
 void ViewFlavor()
 {
