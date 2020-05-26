@@ -196,6 +196,12 @@ def ViewTimeProfile(NFiles,StartFile=1,SaveFileName="TimeProfile"):
         h_muCC_list[i].Write()
         h_eCC_list[i].Write()
         h_NC_list[i].Write()
+        h_muCC_list[i].SetXTitle("#sigma(t_{res}) [ns]")
+        h_muCC_list[i].SetYTitle("entries")
+        h_eCC_list[i].SetXTitle("#sigma(t_{res}) [ns]")
+        h_eCC_list[i].SetYTitle("entries")
+        h_NC_list[i].SetXTitle("#sigma(t_{res}) [ns]")
+        h_NC_list[i].SetYTitle("entries")
     ff_TimeP.Close()
 
 
