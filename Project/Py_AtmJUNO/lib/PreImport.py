@@ -28,7 +28,8 @@ WPPMTID_up=50000
 #merters per nano-sec
 LightSpeed_c=0.299792458
 #liquid reflexive index, use average
-LS_RI_idx=1.55
+# LS_RI_idx=1.55
+LS_RI_idx=1.5
 #16 m vertex position cut 
 R_vertex_cut=16.
 #water pool NPE cut
@@ -40,6 +41,7 @@ LPMT_NPE_steps=[1e5,4.73e5,1.01e6,2.32e6]
 
 sigma_vertex=1. #1m
 sigma_hitTime=4 #4ns
+HitTimeCut_up=1500 #ns
 
 # 1 ns binwidth
 BinWidth=1
@@ -55,31 +57,31 @@ PDG_ID={11:'electron',
     13:'muon',
     -13:'anti_muon'}
 
-class SimPMTHit(ROOT.TObject):
-    def __init__(self):
-        self.pmtid = -1
-        self.npe = -1
-        self.hittime = -1.
-        self.timewindow = 0.
-        self.trackid = -1
-    def getPMTID(self):
-        return self.pmtid
-    def getNPE(self):
-        return self.npe
-    def getHitTime(self):
-        return self.hittime
-    def getTimeWindow(self):
-        return self.timewindow
-    def getTrackID(self):
-        return self.trackid
-    def setPMTID(self,val):
-        self.pmtid=val
-    def setNPE(self,val):
-        self.npe=val
-    def setHitTime(self,val):
-        self.hittime = val
-    def setTimeWindow(self,val):
-        self.timewindow=val
-    def setTrackID(self,val):
-        self.trackid=val
+# class SimPMTHit(ROOT.TObject):
+#     def __init__(self):
+#         self.pmtid = -1
+#         self.npe = -1
+#         self.hittime = -1.
+#         self.timewindow = 0.
+#         self.trackid = -1
+#     def getPMTID(self):
+#         return self.pmtid
+#     def getNPE(self):
+#         return self.npe
+#     def getHitTime(self):
+#         return self.hittime
+#     def getTimeWindow(self):
+#         return self.timewindow
+#     def getTrackID(self):
+#         return self.trackid
+#     def setPMTID(self,val):
+#         self.pmtid=val
+#     def setNPE(self,val):
+#         self.npe=val
+#     def setHitTime(self,val):
+#         self.hittime = val
+#     def setTimeWindow(self,val):
+#         self.timewindow=val
+#     def setTrackID(self,val):
+#         self.trackid=val
 
