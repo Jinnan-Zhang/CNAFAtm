@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # reSub=(1 51 101 151 )
-for((Target=1;Target<702;Target+=50))
+for((Target=851;Target<1002;Target+=50))
 do
     echo dealing...Files begin from:$Target 
     sed "s/START/$Target/g"  $1.sh > $1$Target.sh
