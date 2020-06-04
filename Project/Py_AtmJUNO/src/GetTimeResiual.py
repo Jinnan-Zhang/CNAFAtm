@@ -92,7 +92,7 @@ def ViewOptPar(NFiles):
 
 # get smeared value for vertex position, default: sima_v=1m
 
-
+#a single point
 def GetSmearedVertex(InitialX, InitialY, InitialZ, SmearSigma=1):
     SmearR = np.random.normal(0, SmearSigma)
     SmearCosTheta = np.random.rand(1) * 2. - 1
