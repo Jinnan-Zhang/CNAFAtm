@@ -6,56 +6,61 @@ try:
 except:
     print("Failed to import numpy.")
     exit()
-#detector simulation path 
-SGD="/storage/gpfs_data/juno/junofs/production/public/users/sgiulio/J18v1r1-Pre1/Atmospheric/0-20GeV/detsim/user-detsim-"
-SGD1="/storage/gpfs_data/juno/junofs/production/public/users/sgiulio/J18v1r1-Pre1/Atmospheric/0-20GeV/detsim/detsim-"
-StartFile=1
+# detector simulation path
+SGD = "/storage/gpfs_data/juno/junofs/production/public/users/sgiulio/J18v1r1-Pre1/Atmospheric/0-20GeV/detsim/user-detsim-"
+SGD1 = "/storage/gpfs_data/juno/junofs/production/public/users/sgiulio/J18v1r1-Pre1/Atmospheric/0-20GeV/detsim/detsim-"
+StartFile = 1
 
-def AddUserFile2TChain(tree, NFiles=2,StartFile=1):
-    for nn in range(StartFile,StartFile+NFiles):
+
+def AddUserFile2TChain(tree, NFiles=2, StartFile=1):
+    for nn in range(StartFile, StartFile+NFiles):
         tree.Add(SGD + str(nn) + ".root")
-def AddDetsimFile2TChain(tree,NFiles=1):
-    for nn in range(StartFile,StartFile+NFiles):
+
+
+def AddDetsimFile2TChain(tree, NFiles=1):
+    for nn in range(StartFile, StartFile+NFiles):
         tree.Add(SGD1+str(nn)+".root")
 
-#pmt id range for different pmts
-LPMTID_low=0
-LPMTID_up=20000
-sPMTID_low=300000
-sPMTID_up=500000
-WPPMTID_low=30000
-WPPMTID_up=50000
-#merters per nano-sec
-LightSpeed_c=0.299792458
-#liquid reflexive index, use average
-# LS_RI_idx=1.55
-LS_RI_idx=1.5
-#16 m vertex position cut 
-R_vertex_cut=16.
-#water pool NPE cut
-WP_NPE_cut=60
-#Large PMT NPE cut
-LPMT_NPE_cut=1e5
-#Large PMT slection steps
-LPMT_NPE_steps=[1e5,4.73e5,1.01e6,2.32e6]
 
-sigma_vertex=1. #1m
-sigma_hitTime=4 #4ns
-HitTimeCut_up=1500 #ns
+# pmt id range for different pmts
+LPMTID_low = 0
+LPMTID_up = 20000
+sPMTID_low = 300000
+sPMTID_up = 500000
+WPPMTID_low = 30000
+WPPMTID_up = 50000
+# merters per nano-sec
+LightSpeed_c = 0.299792458
+# liquid reflexive index, use average
+# LS_RI_idx=1.55
+LS_RI_idx = 1.5
+# 16 m vertex position cut
+R_vertex_cut = 16.
+# water pool NPE cut
+WP_NPE_cut = 60
+# Large PMT NPE cut
+LPMT_NPE_cut = 1e5
+LPMT_NPE_cut_up = 10**7.2
+# Large PMT slection steps
+LPMT_NPE_steps = [1e5, 4.73e5, 1.01e6, 2.32e6]
+
+sigma_vertex = 1.  # 1m
+sigma_hitTime = 4  # 4ns
+HitTimeCut_up = 1500  # ns
 
 # 1 ns binwidth
-BinWidth=1
-TimeP_low=20
-TimeP_up=520
-#number of bins
-NumofBins=(TimeP_up-TimeP_low)/BinWidth
+BinWidth = 1
+TimeP_low = 20
+TimeP_up = 520
+# number of bins
+NumofBins = (TimeP_up-TimeP_low)/BinWidth
 
-PDG_ID={11:'electron',
-    12:'nu_e',
-    -11:'positron',
-    -12:'nu_e_bar',
-    13:'muon',
-    -13:'anti_muon'}
+PDG_ID = {11: 'electron',
+          12: 'nu_e',
+          -11: 'positron',
+          -12: 'nu_e_bar',
+          13: 'muon',
+          -13: 'anti_muon'}
 
 # class SimPMTHit(ROOT.TObject):
 #     def __init__(self):
@@ -84,4 +89,3 @@ PDG_ID={11:'electron',
 #         self.timewindow=val
 #     def setTrackID(self,val):
 #         self.trackid=val
-
