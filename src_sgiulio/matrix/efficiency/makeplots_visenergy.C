@@ -1,0 +1,225 @@
+void makeplots_visenergy() {
+  gStyle->SetOptStat(0);
+  gStyle->SetPadBottomMargin(0.12);
+  gStyle->SetTitleH(0.1);
+  gStyle->SetTitleW(1.05);
+  //gStyle->SetOptTitle(0);
+
+  TTree *mytree;
+  //TFile *_file1 = TFile::Open("/home/sgiulio/Giulio/University/JUNO/Work/Atmo/atmo_nuall_LS_0-20GeV_1M.1.gst.root");
+  TFile *_file1 = TFile::Open("/storage/DATA-02/juno/Prod/GENIE-2_12_10/atmo_nuall_LS_0-20GeV_1M.1.gst.root");
+  _file1->GetObject("gst",mytree);
+
+  ///////////////////////////////////////////////////////////////////
+
+  TCanvas *c80 = new TCanvas("c80","",1000,600);
+  TLegend * leg80 = new TLegend(0.65,0.9,0.9,0.6);
+  TH1F *VisE_nuNC = new TH1F("VisE_nuNC","",100,0.,20.1);
+  gPad->SetLogy();
+  VisE_nuNC->SetLineWidth(5);
+  VisE_nuNC->SetLineColor(kSpring-1);
+  VisE_nuNC->SetFillColor(kSpring-1);
+  VisE_nuNC->SetFillStyle(3002);
+  mytree->Project("VisE_nuNC","sumKEf-El","nc==1 && (calresp0)!=0","",500000);
+  c80->cd();
+  TH1F *VisE_nueCC = new TH1F("VisE_nueCC","",100,0.,20.1);
+  gPad->SetLogy();
+  VisE_nueCC->SetLineWidth(5);
+  VisE_nueCC->SetLineColor(kRed);
+  VisE_nueCC->SetFillColor(kRed);
+  VisE_nueCC->SetFillStyle(3002);
+  mytree->Project("VisE_nueCC","sumKEf","cc==1 && abs(fspl)==11","",500000);
+  TH1F *VisE_numuCC = new TH1F("VisE_numuCC","",100,0.,20.1);
+  VisE_numuCC->GetXaxis()->SetTitle("Visible Energy [GeV]");
+  VisE_numuCC->GetYaxis()->SetTitle("entries");
+  VisE_numuCC->GetXaxis()->SetTitleSize(0.05);
+  VisE_numuCC->GetXaxis()->SetLabelSize(0.05);
+  VisE_numuCC->GetYaxis()->SetLabelSize(0.05);
+  VisE_numuCC->GetYaxis()->SetTitleOffset(1.2);
+  VisE_numuCC->GetYaxis()->SetRangeUser(1,3.E5);
+  VisE_numuCC->SetLineWidth(5);
+  VisE_numuCC->SetLineColor(kBlue+2);
+  VisE_numuCC->SetFillColor(kBlue+2);
+  VisE_numuCC->SetFillStyle(3002);
+  mytree->Project("VisE_numuCC","sumKEf","cc==1 && abs(fspl)==13","",500000);
+  VisE_numuCC->Draw();
+  VisE_nueCC->Draw("same");
+  VisE_nuNC->Draw("same");
+  leg80->AddEntry(VisE_numuCC, "#nu_{#mu} CC" ,"l");
+  leg80->AddEntry(VisE_nueCC, "#nu_{e} CC" ,"l");
+  leg80->AddEntry(VisE_nuNC, "#nu_{x} NC" ,"l");
+  leg80->Draw();
+  c80->SaveAs("Plot/GENIE_visEnergy.png");
+  c80->SaveAs("Plot/GENIE_visEnergy.pdf");
+  c80->SaveAs("Plot/GENIE_visEnergy.C");
+
+
+  /////////////////////////LOGPLOTS//////////////////////////////////////////
+
+  TCanvas *c81 = new TCanvas("c81","",1000,600);
+  TLegend * leg81 = new TLegend(0.5,0.45,0.75,0.15);
+  TH1F *LogVisE_nuEL = new TH1F("LogVisE_nuEL","",100,-2.0,1.5);
+  mytree->Project("LogVisE_nuEL","log10(sumKEf)","nc==1 && nuel==1","");
+  TH1F *LogVisE_nuNC = new TH1F("LogVisE_nuNC","",100,-2.0,1.5);
+  gPad->SetLogy();
+  LogVisE_nuNC->GetXaxis()->SetTitle("log_{10} (Visible Energy [GeV])");
+  LogVisE_nuNC->GetYaxis()->SetTitle("entries");
+  LogVisE_nuNC->GetXaxis()->SetTitleSize(0.05);
+  LogVisE_nuNC->GetXaxis()->SetLabelSize(0.05);
+  LogVisE_nuNC->GetYaxis()->SetLabelSize(0.05);
+  LogVisE_nuNC->GetYaxis()->SetTitleOffset(1.2);
+  LogVisE_nuNC->SetLineWidth(5);
+  LogVisE_nuNC->SetLineColor(kSpring-1);
+  LogVisE_nuNC->SetFillColor(kSpring-1);
+  LogVisE_nuNC->SetFillStyle(3002);
+  mytree->Project("LogVisE_nuNC","log10((sumKEf-El))","nc==1 && nuel==0 && (calresp0)!=0","");
+  LogVisE_nuNC->Add(LogVisE_nuEL);
+  c81->cd();
+  TH1F *LogVisE_nueCC = new TH1F("LogVisE_nueCC","",100,-2.0,1.5);
+  gPad->SetLogy();
+  LogVisE_nueCC->GetXaxis()->SetTitle("log_{10} (Visible Energy [GeV])");
+  LogVisE_nueCC->GetYaxis()->SetTitle("entries");
+  LogVisE_nueCC->GetXaxis()->SetTitleSize(0.05);
+  LogVisE_nueCC->GetXaxis()->SetLabelSize(0.05);
+  LogVisE_nueCC->GetYaxis()->SetLabelSize(0.05);
+  LogVisE_nueCC->GetYaxis()->SetTitleOffset(1.2);
+  LogVisE_nueCC->SetLineWidth(5);
+  LogVisE_nueCC->SetLineColor(kRed);
+  LogVisE_nueCC->SetFillColor(kRed);
+  LogVisE_nueCC->SetFillStyle(3002);
+  mytree->Project("LogVisE_nueCC","log10(sumKEf)","cc==1 && abs(fspl)==11","");
+  TH1F *LogVisE_numuCC = new TH1F("LogVisE_numuCC","",100,-2.0,1.5);
+  LogVisE_numuCC->GetXaxis()->SetTitle("log_{10} (Visible Energy [GeV])");
+  LogVisE_numuCC->GetYaxis()->SetTitle("entries");
+  LogVisE_numuCC->GetXaxis()->SetTitleSize(0.05);
+  LogVisE_numuCC->GetXaxis()->SetLabelSize(0.05);
+  LogVisE_numuCC->GetYaxis()->SetLabelSize(0.05);
+  LogVisE_numuCC->GetYaxis()->SetTitleOffset(1.2);
+  LogVisE_numuCC->SetLineWidth(5);
+  LogVisE_numuCC->SetLineColor(kBlue+2);
+  LogVisE_numuCC->SetFillColor(kBlue+2);
+  LogVisE_numuCC->SetFillStyle(3002);
+  mytree->Project("LogVisE_numuCC","log10(sumKEf)","cc==1 && abs(fspl)==13","");
+  LogVisE_numuCC->Draw();
+  LogVisE_nueCC->Draw("same");
+  LogVisE_nuNC->Draw("same");
+  leg81->AddEntry(LogVisE_numuCC, "#nu_{#mu} CC" ,"l");
+  leg81->AddEntry(LogVisE_nueCC, "#nu_{e} CC" ,"l");
+  leg81->AddEntry(LogVisE_nuNC, "#nu_{x} NC" ,"l");
+  leg81->Draw();
+  c81->SaveAs("Plot/GENIE_logvisEnergy.png");
+  c81->SaveAs("Plot/GENIE_logvisEnergy.pdf");
+  c81->SaveAs("Plot/GENIE_logvisEnergy.C");
+
+
+  /////////////////////////LOGPLOTS-CHANNELS//////////////////////////////////////////
+
+  ////////////////////////nuE////////////////////////////////////////////////////////
+  
+  TCanvas *c82 = new TCanvas("c82","",1000,600);
+  TLegend * leg82 = new TLegend(0.7,0.5,0.9,0.9);
+  TCanvas *c82a = new TCanvas("c82a","",1000,600);
+  TLegend * leg82a = new TLegend(0.7,0.5,0.9,0.9);
+  TCanvas *c82b = new TCanvas("c82b","",1000,600);
+  TLegend * leg82b = new TLegend(0.7,0.5,0.9,0.9);
+  TH1F *LogVisE_numuCC_COH = new TH1F("LogVisE_numuCC_COH","",100,-2.0,1.5);
+  LogVisE_numuCC_COH->SetLineWidth(4);
+  LogVisE_numuCC_COH->SetLineColor(kViolet+7);
+  mytree->Project("LogVisE_numuCC_COH","log10(sumKEf)","abs(neu)==14 && cc==1 && coh==1 && calresp0!=0","");
+  TH1F *LogVisE_numuCC_QEL = new TH1F("LogVisE_numuCC_QEL","",100,-2.0,1.5);
+  LogVisE_numuCC_QEL->SetLineWidth(4);
+  LogVisE_numuCC_QEL->SetLineColor(kAzure+3);
+  mytree->Project("LogVisE_numuCC_QEL","log10(sumKEf)","abs(neu)==14 && cc==1 && qel==1 && calresp0!=0","");
+  TH1F *LogVisE_numuCC_RES = new TH1F("LogVisE_numuCC_RES","",100,-2.0,1.5);
+  LogVisE_numuCC_RES->SetLineWidth(4);
+  LogVisE_numuCC_RES->SetLineColor(kAzure-3);
+  mytree->Project("LogVisE_numuCC_RES","log10(sumKEf)","abs(neu)==14 && cc==1 && res==1 && calresp0!=0","");
+  TH1F *LogVisE_numuCC_DIS = new TH1F("LogVisE_numuCC_DIS","",100,-2.0,1.5);
+  LogVisE_numuCC_DIS->SetLineWidth(4);
+  LogVisE_numuCC_DIS->SetLineColor(kBlue-5);
+  mytree->Project("LogVisE_numuCC_DIS","log10(sumKEf)","abs(neu)==14 && cc==1 && dis==1 && calresp0!=0","");
+  TH1F *LogVisE_nueCC_COH = new TH1F("LogVisE_nueCC_COH","",100,-2.0,1.5);
+  LogVisE_nueCC_COH->SetLineWidth(4);
+  LogVisE_nueCC_COH->SetLineColor(kPink-7);
+  mytree->Project("LogVisE_nueCC_COH","log10(sumKEf)","abs(neu)==12 && cc==1 && coh==1 && calresp0!=0","");
+  TH1F *LogVisE_nueCC_QEL = new TH1F("LogVisE_nueCC_QEL","",100,-2.0,1.5);
+  LogVisE_nueCC_QEL->SetLineWidth(4);
+  LogVisE_nueCC_QEL->SetLineColor(kRed+3);
+  mytree->Project("LogVisE_nueCC_QEL","log10(sumKEf)","abs(neu)==12 && cc==1 && qel==1 && calresp0!=0","");
+  TH1F *LogVisE_nueCC_RES = new TH1F("LogVisE_nueCC_RES","",100,-2.0,1.5);
+  LogVisE_nueCC_RES->SetLineWidth(4);
+  LogVisE_nueCC_RES->SetLineColor(kPink-1);
+  mytree->Project("LogVisE_nueCC_RES","log10(sumKEf)","abs(neu)==12 && cc==1 && res==1 && calresp0!=0","");
+  TH1F *LogVisE_nueCC_DIS = new TH1F("LogVisE_nueCC_DIS","",100,-2.0,1.5);
+  LogVisE_nueCC_DIS->SetLineWidth(4);
+  LogVisE_nueCC_DIS->SetLineColor(kOrange+4);
+  mytree->Project("LogVisE_nueCC_DIS","log10(sumKEf)","abs(neu)==12 && cc==1 && dis==1 && calresp0!=0","");
+  TH1F *LogVisE_nueEL = new TH1F("LogVisE_nueEL","",100,-2.0,1.5);
+  mytree->Project("LogVisE_nueEL","log10(sumKEf-El)","nc==1 && nuel==1","");
+  TH1F *LogVisE_nuNC_COH = new TH1F("LogVisE_nuNC_COH","",100,-2.0,1.5);
+  LogVisE_nuNC_COH->SetLineWidth(4);
+  LogVisE_nuNC_COH->SetLineColor(kTeal+7);
+  mytree->Project("LogVisE_nuNC_COH","log10(sumKEf-El)","nc==1 && coh==1 && (calresp0)!=0","");
+  TH1F *LogVisE_nuNC_QEL = new TH1F("LogVisE_nuNC_QEL","",100,-2.0,1.5);
+  LogVisE_nuNC_QEL->SetLineWidth(4);
+  LogVisE_nuNC_QEL->SetLineColor(kSpring-7);
+  mytree->Project("LogVisE_nuNC_QEL","log10(sumKEf-El)","nc==1 && qel==1 && (calresp0)!=0","");
+  TH1F *LogVisE_nuNC_RES = new TH1F("LogVisE_nuNC_RES","",100,-2.0,1.5);
+  LogVisE_nuNC_RES->SetLineWidth(4);
+  LogVisE_nuNC_RES->SetLineColor(kSpring+4);
+  mytree->Project("LogVisE_nuNC_RES","log10(sumKEf-El)","nc==1 && res==1 && (calresp0)!=0","");
+  TH1F *LogVisE_nuNC_DIS = new TH1F("LogVisE_nuNC_DIS","",100,-2.0,1.5);
+  LogVisE_nuNC_DIS->SetLineWidth(4);
+  LogVisE_nuNC_DIS->SetLineColor(kTeal+3);
+  mytree->Project("LogVisE_nuNC_DIS","log10(sumKEf-El)","nc==1 && dis==1 && (calresp0)!=0","");
+  c82a->cd();
+  LogVisE_numuCC->Draw();
+  LogVisE_numuCC_COH->Draw("same");
+  LogVisE_numuCC_QEL->Draw("same");
+  LogVisE_numuCC_RES->Draw("same");
+  LogVisE_numuCC_DIS->Draw("same");
+  leg82a->AddEntry(LogVisE_numuCC, "#nu_{#mu} CC - all" ,"l");
+  leg82a->AddEntry(LogVisE_numuCC_COH, "#nu_{#mu} CC - coh" ,"l");
+  leg82a->AddEntry(LogVisE_numuCC_QEL, "#nu_{#mu} CC - qel" ,"l");
+  leg82a->AddEntry(LogVisE_numuCC_RES, "#nu_{#mu} CC - res" ,"l");
+  leg82a->AddEntry(LogVisE_numuCC_DIS, "#nu_{#mu} CC - dis" ,"l");
+  leg82a->Draw();
+  c82->cd();
+  LogVisE_nueCC->Draw(); 
+  LogVisE_nueCC_COH->Draw("same");
+  LogVisE_nueCC_QEL->Draw("same");
+  LogVisE_nueCC_RES->Draw("same");
+  LogVisE_nueCC_DIS->Draw("same");
+  leg82->AddEntry(LogVisE_nueCC, "#nu_{e} CC - all" ,"l");
+  leg82->AddEntry(LogVisE_nueCC_COH, "#nu_{e} CC - coh" ,"l");
+  leg82->AddEntry(LogVisE_nueCC_QEL, "#nu_{e} CC - qel" ,"l");
+  leg82->AddEntry(LogVisE_nueCC_RES, "#nu_{e} CC - res" ,"l");
+  leg82->AddEntry(LogVisE_nueCC_DIS, "#nu_{e} CC - dis" ,"l");
+  leg82->Draw();
+  c82b->cd();
+  LogVisE_nuNC->Draw();
+  LogVisE_nuNC_COH->Draw("same");
+  LogVisE_nuNC_QEL->Draw("same");
+  LogVisE_nuNC_RES->Draw("same");
+  LogVisE_nuNC_DIS->Draw("same");
+  leg82b->AddEntry(LogVisE_nuNC, "#nu NC - all" ,"l");
+  leg82b->AddEntry(LogVisE_nuNC_COH, "#nu NC - coh" ,"l");
+  leg82b->AddEntry(LogVisE_nuNC_QEL, "#nu NC - qel" ,"l");
+  leg82b->AddEntry(LogVisE_nuNC_RES, "#nu NC - res" ,"l");
+  leg82b->AddEntry(LogVisE_nuNC_DIS, "#nu NC - dis" ,"l");
+  leg82b->Draw();
+
+  c82->SaveAs("Plot/GENIE_logvisEnergy_channels_nueCC.png");
+  c82->SaveAs("Plot/GENIE_logvisEnergy_channels_nueCC.pdf");
+  c82->SaveAs("Plot/GENIE_logvisEnergy_channels_nueCC.C");
+
+  c82a->SaveAs("Plot/GENIE_logvisEnergy_channels_numuCC.png");
+  c82a->SaveAs("Plot/GENIE_logvisEnergy_channels_numuCC.pdf");
+  c82a->SaveAs("Plot/GENIE_logvisEnergy_channels_numuCC.C");
+  
+  c82b->SaveAs("Plot/GENIE_logvisEnergy_channels_nuNC.png");
+  c82b->SaveAs("Plot/GENIE_logvisEnergy_channels_nuNC.pdf");
+  c82b->SaveAs("Plot/GENIE_logvisEnergy_channels_nuNC.C");
+  
+}
+

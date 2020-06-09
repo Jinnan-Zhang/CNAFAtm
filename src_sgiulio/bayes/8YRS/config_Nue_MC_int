@@ -1,0 +1,16 @@
+E_BINS_FILE energybins_Nue_10.txt
+E_NORM_FILE trueenergy_Nue_10.txt
+MAT_FILE_SGN sgnmatrix_Nue_10_8.txt
+MAT_FILE_BKG bkgmatrix_Nue_10_8.txt
+NPE_BINS_FILE NPEbins_Nue_8.txt
+NPE_FILE NPEarray_allcuts_8.txt
+TRUE_E_FILE trueenergy_fromDATA_Nue_10.txt
+PRIOR_FILE trueenergy_Nue_10.txt
+N_ITER 3
+INPUT_FOLDER /storage/DATA-02/juno/Users/sgiulio/Atmo/analysis/unfolding/matrix/likelihood/output_Nue_MC
+OUTPUT_FOLDER output_Nue_int
+//ENERGY-NPE RANGE --> must be the same as the makematrix
+LOWTHR_E 2.0
+LOWTHR_NPE 5.0
+UPTHR_E 4.2
+UPTHR_NPE 7.2

@@ -1,0 +1,210 @@
+void LOGNPE_LPMT_eff_0-20GeV_16volcut_1m_over95nscut()
+{
+//=========Macro generated from canvas: c17/
+//=========  (Sat Jan 12 09:17:43 2019) by ROOT version 6.13/08
+   TCanvas *c17 = new TCanvas("c17", "",231,221,800,600);
+   gStyle->SetOptStat(0);
+   c17->Range(0.7187499,-0.9535579,8.53125,4.484174);
+   c17->SetFillColor(0);
+   c17->SetBorderMode(0);
+   c17->SetBorderSize(2);
+   c17->SetLogy();
+   c17->SetBottomMargin(0.12);
+   c17->SetFrameBorderMode(0);
+   c17->SetFrameBorderMode(0);
+   
+   TH1F *Lognpe_LPMT_numuCC__10 = new TH1F("Lognpe_LPMT_numuCC__10","",35,1.5,7.75);
+   Lognpe_LPMT_numuCC__10->SetBinContent(16,1);
+   Lognpe_LPMT_numuCC__10->SetBinContent(17,6);
+   Lognpe_LPMT_numuCC__10->SetBinContent(18,27);
+   Lognpe_LPMT_numuCC__10->SetBinContent(19,96);
+   Lognpe_LPMT_numuCC__10->SetBinContent(20,420);
+   Lognpe_LPMT_numuCC__10->SetBinContent(21,924);
+   Lognpe_LPMT_numuCC__10->SetBinContent(22,1590);
+   Lognpe_LPMT_numuCC__10->SetBinContent(23,2423);
+   Lognpe_LPMT_numuCC__10->SetBinContent(24,3400);
+   Lognpe_LPMT_numuCC__10->SetBinContent(25,4301);
+   Lognpe_LPMT_numuCC__10->SetBinContent(26,4576);
+   Lognpe_LPMT_numuCC__10->SetBinContent(27,4601);
+   Lognpe_LPMT_numuCC__10->SetBinContent(28,3874);
+   Lognpe_LPMT_numuCC__10->SetBinContent(29,3147);
+   Lognpe_LPMT_numuCC__10->SetBinContent(30,2153);
+   Lognpe_LPMT_numuCC__10->SetBinContent(31,1220);
+   Lognpe_LPMT_numuCC__10->SetBinContent(32,583);
+   Lognpe_LPMT_numuCC__10->SetBinContent(33,158);
+   Lognpe_LPMT_numuCC__10->SetBinContent(34,6);
+   Lognpe_LPMT_numuCC__10->SetEntries(33506);
+   Lognpe_LPMT_numuCC__10->SetStats(0);
+
+   Int_t ci;      // for color index setting
+   TColor *color; // for color definition with alpha
+   ci = TColor::GetColor("#3399ff");
+   Lognpe_LPMT_numuCC__10->SetFillColor(ci);
+   Lognpe_LPMT_numuCC__10->SetFillStyle(3002);
+
+   ci = TColor::GetColor("#3399ff");
+   Lognpe_LPMT_numuCC__10->SetLineColor(ci);
+   Lognpe_LPMT_numuCC__10->SetLineWidth(5);
+   Lognpe_LPMT_numuCC__10->GetXaxis()->SetTitle("log_{10} (NPE_{LPMT} [MeV])");
+   Lognpe_LPMT_numuCC__10->GetXaxis()->SetLabelFont(42);
+   Lognpe_LPMT_numuCC__10->GetXaxis()->SetLabelSize(0.05);
+   Lognpe_LPMT_numuCC__10->GetXaxis()->SetTitleSize(0.05);
+   Lognpe_LPMT_numuCC__10->GetXaxis()->SetTitleFont(42);
+   Lognpe_LPMT_numuCC__10->GetYaxis()->SetTitle("entries");
+   Lognpe_LPMT_numuCC__10->GetYaxis()->SetLabelFont(42);
+   Lognpe_LPMT_numuCC__10->GetYaxis()->SetLabelSize(0.05);
+   Lognpe_LPMT_numuCC__10->GetYaxis()->SetTitleSize(0.035);
+   Lognpe_LPMT_numuCC__10->GetYaxis()->SetTitleOffset(1.2);
+   Lognpe_LPMT_numuCC__10->GetYaxis()->SetTitleFont(42);
+   Lognpe_LPMT_numuCC__10->GetZaxis()->SetLabelFont(42);
+   Lognpe_LPMT_numuCC__10->GetZaxis()->SetLabelSize(0.035);
+   Lognpe_LPMT_numuCC__10->GetZaxis()->SetTitleSize(0.035);
+   Lognpe_LPMT_numuCC__10->GetZaxis()->SetTitleFont(42);
+   Lognpe_LPMT_numuCC__10->Draw("");
+   
+   TH1F *Lognpe_LPMT_numuCC_cut__11 = new TH1F("Lognpe_LPMT_numuCC_cut__11","",35,1.5,7.75);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(16,1);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(17,4);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(18,21);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(19,67);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(20,357);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(21,822);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(22,1487);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(23,2265);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(24,3241);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(25,4063);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(26,4234);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(27,4070);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(28,3228);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(29,2479);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(30,1601);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(31,825);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(32,326);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(33,68);
+   Lognpe_LPMT_numuCC_cut__11->SetBinContent(34,1);
+   Lognpe_LPMT_numuCC_cut__11->SetEntries(29160);
+   Lognpe_LPMT_numuCC_cut__11->SetStats(0);
+
+   ci = TColor::GetColor("#ff0000");
+   Lognpe_LPMT_numuCC_cut__11->SetFillColor(ci);
+   Lognpe_LPMT_numuCC_cut__11->SetFillStyle(3002);
+
+   ci = TColor::GetColor("#ff0000");
+   Lognpe_LPMT_numuCC_cut__11->SetLineColor(ci);
+   Lognpe_LPMT_numuCC_cut__11->SetLineWidth(5);
+   Lognpe_LPMT_numuCC_cut__11->GetXaxis()->SetTitle("log_{10} (NPE_{LPMT} [MeV])");
+   Lognpe_LPMT_numuCC_cut__11->GetXaxis()->SetLabelFont(42);
+   Lognpe_LPMT_numuCC_cut__11->GetXaxis()->SetLabelSize(0.035);
+   Lognpe_LPMT_numuCC_cut__11->GetXaxis()->SetTitleSize(0.035);
+   Lognpe_LPMT_numuCC_cut__11->GetXaxis()->SetTitleFont(42);
+   Lognpe_LPMT_numuCC_cut__11->GetYaxis()->SetLabelFont(42);
+   Lognpe_LPMT_numuCC_cut__11->GetYaxis()->SetLabelSize(0.035);
+   Lognpe_LPMT_numuCC_cut__11->GetYaxis()->SetTitleSize(0.035);
+   Lognpe_LPMT_numuCC_cut__11->GetYaxis()->SetTitleOffset(0);
+   Lognpe_LPMT_numuCC_cut__11->GetYaxis()->SetTitleFont(42);
+   Lognpe_LPMT_numuCC_cut__11->GetZaxis()->SetLabelFont(42);
+   Lognpe_LPMT_numuCC_cut__11->GetZaxis()->SetLabelSize(0.035);
+   Lognpe_LPMT_numuCC_cut__11->GetZaxis()->SetTitleSize(0.035);
+   Lognpe_LPMT_numuCC_cut__11->GetZaxis()->SetTitleFont(42);
+   Lognpe_LPMT_numuCC_cut__11->Draw("same");
+   
+   TH1F *Lognpe_LPMT_bkg2__12 = new TH1F("Lognpe_LPMT_bkg2__12","",35,1.5,7.75);
+   Lognpe_LPMT_bkg2__12->SetBinContent(2,1);
+   Lognpe_LPMT_bkg2__12->SetBinContent(5,2);
+   Lognpe_LPMT_bkg2__12->SetBinContent(6,4);
+   Lognpe_LPMT_bkg2__12->SetBinContent(7,9);
+   Lognpe_LPMT_bkg2__12->SetBinContent(8,16);
+   Lognpe_LPMT_bkg2__12->SetBinContent(9,25);
+   Lognpe_LPMT_bkg2__12->SetBinContent(10,50);
+   Lognpe_LPMT_bkg2__12->SetBinContent(11,73);
+   Lognpe_LPMT_bkg2__12->SetBinContent(12,138);
+   Lognpe_LPMT_bkg2__12->SetBinContent(13,224);
+   Lognpe_LPMT_bkg2__12->SetBinContent(14,303);
+   Lognpe_LPMT_bkg2__12->SetBinContent(15,443);
+   Lognpe_LPMT_bkg2__12->SetBinContent(16,603);
+   Lognpe_LPMT_bkg2__12->SetBinContent(17,918);
+   Lognpe_LPMT_bkg2__12->SetBinContent(18,1069);
+   Lognpe_LPMT_bkg2__12->SetBinContent(19,1178);
+   Lognpe_LPMT_bkg2__12->SetBinContent(20,1345);
+   Lognpe_LPMT_bkg2__12->SetBinContent(21,1307);
+   Lognpe_LPMT_bkg2__12->SetBinContent(22,1239);
+   Lognpe_LPMT_bkg2__12->SetBinContent(23,1281);
+   Lognpe_LPMT_bkg2__12->SetBinContent(24,1254);
+   Lognpe_LPMT_bkg2__12->SetBinContent(25,1073);
+   Lognpe_LPMT_bkg2__12->SetBinContent(26,925);
+   Lognpe_LPMT_bkg2__12->SetBinContent(27,699);
+   Lognpe_LPMT_bkg2__12->SetBinContent(28,515);
+   Lognpe_LPMT_bkg2__12->SetBinContent(29,303);
+   Lognpe_LPMT_bkg2__12->SetBinContent(30,262);
+   Lognpe_LPMT_bkg2__12->SetBinContent(31,141);
+   Lognpe_LPMT_bkg2__12->SetBinContent(32,73);
+   Lognpe_LPMT_bkg2__12->SetBinContent(33,33);
+   Lognpe_LPMT_bkg2__12->SetBinContent(34,2);
+   Lognpe_LPMT_bkg2__12->SetEntries(15508);
+   Lognpe_LPMT_bkg2__12->SetStats(0);
+
+   ci = TColor::GetColor("#006600");
+   Lognpe_LPMT_bkg2__12->SetFillColor(ci);
+   Lognpe_LPMT_bkg2__12->SetFillStyle(3002);
+
+   ci = TColor::GetColor("#006600");
+   Lognpe_LPMT_bkg2__12->SetLineColor(ci);
+   Lognpe_LPMT_bkg2__12->SetLineWidth(5);
+   Lognpe_LPMT_bkg2__12->GetXaxis()->SetTitle("log_{10} (NPE_{LPMT} [MeV])");
+   Lognpe_LPMT_bkg2__12->GetXaxis()->SetLabelFont(42);
+   Lognpe_LPMT_bkg2__12->GetXaxis()->SetLabelSize(0.035);
+   Lognpe_LPMT_bkg2__12->GetXaxis()->SetTitleSize(0.035);
+   Lognpe_LPMT_bkg2__12->GetXaxis()->SetTitleFont(42);
+   Lognpe_LPMT_bkg2__12->GetYaxis()->SetLabelFont(42);
+   Lognpe_LPMT_bkg2__12->GetYaxis()->SetLabelSize(0.035);
+   Lognpe_LPMT_bkg2__12->GetYaxis()->SetTitleSize(0.035);
+   Lognpe_LPMT_bkg2__12->GetYaxis()->SetTitleOffset(0);
+   Lognpe_LPMT_bkg2__12->GetYaxis()->SetTitleFont(42);
+   Lognpe_LPMT_bkg2__12->GetZaxis()->SetLabelFont(42);
+   Lognpe_LPMT_bkg2__12->GetZaxis()->SetLabelSize(0.035);
+   Lognpe_LPMT_bkg2__12->GetZaxis()->SetTitleSize(0.035);
+   Lognpe_LPMT_bkg2__12->GetZaxis()->SetTitleFont(42);
+   Lognpe_LPMT_bkg2__12->Draw("same");
+   
+   TLegend *leg = new TLegend(0.1,0.65,0.35,0.9,NULL,"brNDC");
+   leg->SetBorderSize(1);
+   leg->SetLineColor(1);
+   leg->SetLineStyle(1);
+   leg->SetLineWidth(1);
+   leg->SetFillColor(0);
+   leg->SetFillStyle(1001);
+   TLegendEntry *entry=leg->AddEntry("Lognpe_LPMT_numuCC","#nu_{#mu} CC","l");
+
+   ci = TColor::GetColor("#3399ff");
+   entry->SetLineColor(ci);
+   entry->SetLineStyle(1);
+   entry->SetLineWidth(5);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(21);
+   entry->SetMarkerSize(1);
+   entry->SetTextFont(42);
+   entry=leg->AddEntry("Lognpe_LPMT_numuCC_cut","#nu_{#mu} CC sel.","l");
+
+   ci = TColor::GetColor("#ff0000");
+   entry->SetLineColor(ci);
+   entry->SetLineStyle(1);
+   entry->SetLineWidth(5);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(21);
+   entry->SetMarkerSize(1);
+   entry->SetTextFont(42);
+   entry=leg->AddEntry("Lognpe_LPMT_bkg2","res. bkg","l");
+
+   ci = TColor::GetColor("#006600");
+   entry->SetLineColor(ci);
+   entry->SetLineStyle(1);
+   entry->SetLineWidth(5);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(21);
+   entry->SetMarkerSize(1);
+   entry->SetTextFont(42);
+   leg->Draw();
+   c17->Modified();
+   c17->cd();
+   c17->SetSelected(c17);
+}

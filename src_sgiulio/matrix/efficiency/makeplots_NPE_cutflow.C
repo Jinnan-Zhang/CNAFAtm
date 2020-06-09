@@ -1,0 +1,110 @@
+void makeplots_NPE_cutflow() {
+  gStyle->SetOptStat(0);
+  gStyle->SetPadBottomMargin(0.15);
+  gStyle->SetPadLeftMargin(0.1);
+  gStyle->SetPadRightMargin(0.05);
+  gStyle->SetPadTopMargin(0.05);
+  gStyle->SetOptTitle(0);
+
+  TTree *mytree;
+  TFile *_file1 = TFile::Open("/storage/DATA-02/juno/Users/sgiulio/Atmo/analysis/unfolding/treemaker/trees/MC_500K_1m_TOT_NEW.root");
+  //TFile *_file1 = TFile::Open("/home/sgiulio/Giulio/University/JUNO/juno-unfolding/treemaker/trees/MC_100K_1m_SHORT.root");
+  _file1->GetObject("Data",mytree);
+
+  /////////////////////////LOGPLOTS//////////////////////////////////////////
+  TCanvas *c9a = new TCanvas("c9a","",750,800);
+  TLegend *leg9a = new TLegend(0.735,0.735,0.945,0.945);
+  leg9a->SetBorderSize(0);
+  TH1F *LogNpe_Nue = new TH1F("LogNpe_Nue","",50,4.7,7.5);
+  LogNpe_Nue->GetXaxis()->SetTitle("log_{10} (NPE)");
+  LogNpe_Nue->GetXaxis()->SetTitleSize(0.06);
+  LogNpe_Nue->GetXaxis()->SetLabelSize(0.045);
+  LogNpe_Nue->GetYaxis()->SetTitle("entries");
+  LogNpe_Nue->GetYaxis()->SetTitleSize(0.04);
+  LogNpe_Nue->GetYaxis()->SetLabelSize(0.045);
+  LogNpe_Nue->GetYaxis()->SetTitleOffset(1.3);
+  LogNpe_Nue->SetLineWidth(3);
+  LogNpe_Nue->SetLineColor(1);
+  //LogNpe_Nue->SetFillColor(kGreen-3);
+  //LogNpe_Nue->SetFillStyle(3000);
+  mytree->Project("LogNpe_Nue","log10(trueNPE_LPMT_CD)","abs(init_nuID)==12","");
+  leg9a->AddEntry(LogNpe_Nue,"#nu_{e} sim.","l");
+  LogNpe_Nue->Draw();
+  TH1F *LogNpe_Nue_fidcut = new TH1F("LogNpe_Nue_fidcut","",50,4.7,7.5);
+  LogNpe_Nue_fidcut->SetLineWidth(3);
+  LogNpe_Nue_fidcut->SetLineColor(4);
+  //LogNpe_Nue_fidcut->SetFillColor(kRed-3);
+  //LogNpe_Nue_fidcut->SetFillStyle(3000);
+  mytree->Project("LogNpe_Nue_fidcut","log10(trueNPE_LPMT_CD)","abs(init_nuID)==12 && newVradius<16000. && trueNPE_LPMT_WP < 60.","");
+  leg9a->AddEntry(LogNpe_Nue_fidcut,"#nu_{e} fid. cuts","l");
+  LogNpe_Nue_fidcut->Draw("same");
+  TH1F *LogNpe_Nue_Nuecut = new TH1F("LogNpe_Nue_Nuecut","",50,4.7,7.5);
+  LogNpe_Nue_Nuecut->SetLineWidth(3);
+  LogNpe_Nue_Nuecut->SetLineColor(2);
+  //LogNpe_Nue_Nuecut->SetFillColor(kBlue-10);
+  //LogNpe_Nue_Nuecut->SetFillStyle(3000);
+  mytree->Project("LogNpe_Nue_Nuecut","log10(trueNPE_LPMT_CD)","abs(init_nuID)==12 && newVradius<16000. && trueNPE_LPMT_WP < 60. && log10(trueNPE_LPMT_CD) > 5.0 && log10(trueNPE_LPMT_CD) < 7.2 && Tres_RMS < 75","");
+  gPad->SetLogy();
+  leg9a->AddEntry(LogNpe_Nue_Nuecut,"#nu_{e} all cuts","l");
+  LogNpe_Nue_Nuecut->Draw("same");
+  TH1F *LogNpe_Numu_Nuecut = new TH1F("LogNpe_Numu_Nuecut","",50,4.7,7.5);
+  LogNpe_Numu_Nuecut->SetLineWidth(3);
+  LogNpe_Numu_Nuecut->SetLineColor(kGreen+3);
+  //LogNpe_Numu_Nuecut->SetFillColor(kGreen+3);
+  //LogNpe_Numu_Nuecut->SetFillStyle(3000);
+  mytree->Project("LogNpe_Numu_Nuecut","log10(trueNPE_LPMT_CD)","abs(init_nuID)==14 && newVradius<16000. && trueNPE_LPMT_WP < 60. && log10(trueNPE_LPMT_CD) > 5.0 && log10(trueNPE_LPMT_CD) < 7.2 && Tres_RMS < 75","");
+  LogNpe_Numu_Nuecut->Draw("same");
+  leg9a->AddEntry(LogNpe_Numu_Nuecut,"#nu_{#mu} res.","l");
+  leg9a->Draw();
+  gPad->RedrawAxis();
+
+  //////////////////////////////////////////////////////////////////////////////
+
+  TCanvas *c9b = new TCanvas("c9b","",750,800);
+  TLegend *leg9b = new TLegend(0.735,0.735,0.945,0.945);
+  leg9b->SetBorderSize(0);
+  TH1F *LogNpe_Numu = new TH1F("LogNpe_Numu","",50,5.5,7.5);
+  LogNpe_Numu->GetXaxis()->SetTitle("log_{10} (NPE)");
+  LogNpe_Numu->GetXaxis()->SetTitleSize(0.06);
+  LogNpe_Numu->GetXaxis()->SetLabelSize(0.045);
+  LogNpe_Numu->GetYaxis()->SetTitle("entries");
+  LogNpe_Numu->GetYaxis()->SetTitleSize(0.04);
+  LogNpe_Numu->GetYaxis()->SetLabelSize(0.045);
+  LogNpe_Numu->GetYaxis()->SetTitleOffset(1.3);
+  LogNpe_Numu->SetLineWidth(3);
+  LogNpe_Numu->SetLineColor(1);
+  //LogNpe_Numu->SetFillColor(kGreen-3);
+  //LogNpe_Numu->SetFillStyle(3000);
+  mytree->Project("LogNpe_Numu","log10(trueNPE_LPMT_CD)","abs(init_nuID)==14","");
+  leg9b->AddEntry(LogNpe_Numu,"#nu_{#mu} sim.","l");
+  LogNpe_Numu->Draw();
+  TH1F *LogNpe_Numu_fidcut = new TH1F("LogNpe_Numu_fidcut","",50,5.5,7.5);
+  LogNpe_Numu_fidcut->SetLineWidth(3);
+  LogNpe_Numu_fidcut->SetLineColor(4);
+  //LogNpe_Numu_fidcut->SetFillColor(kRed-3);
+  //LogNpe_Numu_fidcut->SetFillStyle(3000);
+  mytree->Project("LogNpe_Numu_fidcut","log10(trueNPE_LPMT_CD)","abs(init_nuID)==14 && newVradius<16000. && trueNPE_LPMT_WP < 60.","");
+  leg9b->AddEntry(LogNpe_Numu_fidcut,"#nu_{#mu} fid. cuts","l");
+  LogNpe_Numu_fidcut->Draw("same");
+  TH1F *LogNpe_Numu_Numucut = new TH1F("LogNpe_Numu_Numucut","",50,5.5,7.5);
+  LogNpe_Numu_Numucut->SetLineWidth(3);
+  LogNpe_Numu_Numucut->SetLineColor(2);
+  //LogNpe_Numu_Numucut->SetFillColor(kBlue-10);
+  //LogNpe_Numu_Numucut->SetFillStyle(3000);
+  mytree->Project("LogNpe_Numu_Numucut","log10(trueNPE_LPMT_CD)","abs(init_nuID)==14 && newVradius<16000. && trueNPE_LPMT_WP < 60. && log10(trueNPE_LPMT_CD) > 5.7 && log10(trueNPE_LPMT_CD) < 7.2 && Tres_RMS > 95","");
+  gPad->SetLogy();
+  leg9b->AddEntry(LogNpe_Numu_Numucut,"#nu_{#mu} all cuts","l");
+  LogNpe_Numu_Numucut->Draw("same");
+  TH1F *LogNpe_Nue_Numucut = new TH1F("LogNpe_Nue_Numucut","",50,5.5,7.5);
+  LogNpe_Nue_Numucut->SetLineWidth(3);
+  LogNpe_Nue_Numucut->SetLineColor(kGreen+3);
+  //LogNpe_Nue_Numucut->SetFillColor(kGreen+3);
+  //LogNpe_Nue_Numucut->SetFillStyle(3000);
+  mytree->Project("LogNpe_Nue_Numucut","log10(trueNPE_LPMT_CD)","abs(init_nuID)==12 && newVradius<16000. && trueNPE_LPMT_WP < 60. && log10(trueNPE_LPMT_CD) > 5.7 && log10(trueNPE_LPMT_CD) < 7.2 && Tres_RMS > 95","");
+  LogNpe_Nue_Numucut->Draw("same");
+  leg9b->AddEntry(LogNpe_Nue_Numucut,"#nu_{e} res.","l");
+  gPad->RedrawAxis();
+  leg9b->Draw();
+
+}
+

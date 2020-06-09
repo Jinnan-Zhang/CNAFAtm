@@ -1,0 +1,13 @@
+N_CAUSES 1
+N_EFFECTS 1
+MAX_ITER 1
+TEST_FLAG 0
+YEAR 0
+CORR_2012 ../analog/output/corr_mult_2012.dat
+CAUSE_FILE ./obsolete.dat
+EFFECT_FILE ./obsolete.dat
+MAT_FILE ../analog/output/MC_mat_12X14_Light_p-He-CNO-Fe_Hor.dat
+DAT_FILE ../analog/output/DataAllyears_CORR.dat
+TRU_FILE ../analog/output/mat2Vmcg-p1.5i1.8-14x25.dat
+PRO_FLUX ./ArgoLightGiulio.txt
+IRO_FLUX ./flux/ArgoIron.txt

@@ -1,0 +1,17 @@
+FAMILY e
+E_BINS_FILE energybins_Nue_7.txt
+E_NORM_FILE TRUEHondaFlux_7_7.txt
+MAT_FILE_SGN allmatrix_Nue_7_7.txt
+MAT_FILE_BKG bkgmatrix_Nue_7_7.txt
+NPE_BINS_FILE NPEbins_Nue_7.txt
+NPE_FILE NPEarray_allcuts_7.txt
+TRUE_E_FILE trueenergy_allcuts_7.txt
+TRUE_E_FLUX HondaFlux_7_7.txt
+PRIOR_FILE TRUEHondaFlux_7_7.txt
+UNFOLDED_SPECTRUM Unf_spectrum
+MC-DATA-RATIO 50.
+N_ITER 1
+INPUT_FOLDER /storage/DATA-02/juno/Users/sgiulio/Atmo/analysis/unfolding/matrix/mod_likelihood/output_Nue_-0.2_+0.05
+OUTPUT_FOLDER outputs_systspec_Nue/output_Nue_-0.2_+0.05
+HONDA_FLUX_FILE /storage/DATA-02/juno/Users/sgiulio/Atmo/HondaFlux/mod_flux/juno-ally-20-12-solmin_A-0.2_G0.050.d
+SK_FLUX_FILE /storage/DATA-02/juno/Users/sgiulio/Atmo/analysis/unfolding/bayes/ext_fluxes/SK_flux_Nue.txt

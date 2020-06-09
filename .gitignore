@@ -7,6 +7,8 @@ install.history
 *.swp
 *.pyc
 *.log
+*.exe
+*.pdf
 InstallArea
 amd64_linux26
 Linux-i686
@@ -17,3 +19,12 @@ Project/Jobs/*.sh
 !Project/Jobs/Ge_CNAF_jobs.sh
 !Project/Jobs/CNAF_Atm.sh
 !Project/Jobs/IHEP.sh
+src_sgiulio/bayes/8YRS/output*
+src_sgiulio/bayes/8YRS/*/*.txt
+src_sgiulio/bayes/8YRS/**/*.txt
+src_sgiulio/bayes/5YRS/output*
+src_sgiulio/bayes/5YRS/**/*.txt
+src_sgiulio/matrix/**/*.txt
+src_sgiulio/matrix/efficiency/Plot/*.png
+src_sgiulio/matrix/likelihood/**/*.txt
+src_sgiulio/matrix/**/output*

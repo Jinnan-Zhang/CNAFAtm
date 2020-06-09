@@ -1,0 +1,225 @@
+void makeplots_NPE() {
+  gStyle->SetOptStat(0);
+  gStyle->SetPadBottomMargin(0.12);
+  gStyle->SetTitleH(0.1);
+  gStyle->SetTitleW(1.05);
+  //gStyle->SetOptTitle(0);
+
+  TTree *mytree;
+  //TFile *_file1 = TFile::Open("/home/sgiulio/Giulio/University/JUNO/Work/Atmo/atmo_nuall_LS_0-20GeV_1M.1.gst.root");
+  TFile *_file1 = TFile::Open("/storage/DATA-02/juno/Users/sgiulio/Atmo/analysis/unfolding/treemaker/trees/MC_100K_1m_SHORT.root");
+  _file1->GetObject("pgst",mytree);
+
+  ///////////////////////////////////////////////////////////////////
+
+  TCanvas *c80 = new TCanvas("c80","",1000,600);
+  TLegend * leg80 = new TLegend(0.65,0.9,0.9,0.6);
+  TH1F *NPE_nuNC = new TH1F("NPE_nuNC","",100,0.,3.0E7);
+  gPad->SetLogy();
+  NPE_nuNC->SetLineWidth(5);
+  NPE_nuNC->SetLineColor(kSpring-1);
+  NPE_nuNC->SetFillColor(kSpring-1);
+  NPE_nuNC->SetFillStyle(3002);
+  mytree->Project("NPE_nuNC","calresp0","nc==1 && (calresp0)!=0","");
+  c80->cd();
+  TH1F *NPE_nueCC = new TH1F("NPE_nueCC","",100,0.,3.0E7);
+  gPad->SetLogy();
+  NPE_nueCC->SetLineWidth(5);
+  NPE_nueCC->SetLineColor(kRed);
+  NPE_nueCC->SetFillColor(kRed);
+  NPE_nueCC->SetFillStyle(3002);
+  mytree->Project("NPE_nueCC","calresp0","cc==1 && abs(fspl)==11","");
+  TH1F *NPE_numuCC = new TH1F("NPE_numuCC","",100,0.,3.0E7);
+  NPE_numuCC->GetXaxis()->SetTitle("Visible Energy [GeV]");
+  NPE_numuCC->GetYaxis()->SetTitle("entries");
+  NPE_numuCC->GetXaxis()->SetTitleSize(0.05);
+  NPE_numuCC->GetXaxis()->SetLabelSize(0.05);
+  NPE_numuCC->GetYaxis()->SetLabelSize(0.05);
+  NPE_numuCC->GetYaxis()->SetTitleOffset(1.2);
+  NPE_numuCC->GetYaxis()->SetRangeUser(1,3.E5);
+  NPE_numuCC->SetLineWidth(5);
+  NPE_numuCC->SetLineColor(kBlue+2);
+  NPE_numuCC->SetFillColor(kBlue+2);
+  NPE_numuCC->SetFillStyle(3002);
+  mytree->Project("NPE_numuCC","calresp0","cc==1 && abs(fspl)==13","");
+  NPE_numuCC->Draw();
+  NPE_nueCC->Draw("same");
+  NPE_nuNC->Draw("same");
+  leg80->AddEntry(NPE_numuCC, "#nu_{#mu} CC" ,"l");
+  leg80->AddEntry(NPE_nueCC, "#nu_{e} CC" ,"l");
+  leg80->AddEntry(NPE_nuNC, "#nu_{e}+#nu_{#mu} NC" ,"l");
+  leg80->Draw();
+  c80->SaveAs("Plot/NPE_channels.png");
+  c80->SaveAs("Plot/NPE_channels.pdf");
+  c80->SaveAs("Plot/NPE_channels.C");
+
+
+  /////////////////////////LOGPLOTS//////////////////////////////////////////
+
+  TCanvas *c81 = new TCanvas("c81","",1000,600);
+  TLegend * leg81 = new TLegend(0.5,0.45,0.75,0.15);
+  TH1F *LogNPE_nuEL = new TH1F("LogNPE_nuEL","",100,1.0,4.5);
+  mytree->Project("LogNPE_nuEL","log10(calresp0*1000.)","nc==1 && nuel==1","");
+  TH1F *LogNPE_nuNC = new TH1F("LogNPE_nuNC","",100,1.0,4.5);
+  gPad->SetLogy();
+  LogNPE_nuNC->GetXaxis()->SetTitle("log_{10} (Visible Energy [MeV])");
+  LogNPE_nuNC->GetYaxis()->SetTitle("entries");
+  LogNPE_nuNC->GetXaxis()->SetTitleSize(0.05);
+  LogNPE_nuNC->GetXaxis()->SetLabelSize(0.05);
+  LogNPE_nuNC->GetYaxis()->SetLabelSize(0.05);
+  LogNPE_nuNC->GetYaxis()->SetTitleOffset(1.2);
+  LogNPE_nuNC->SetLineWidth(5);
+  LogNPE_nuNC->SetLineColor(kSpring-1);
+  LogNPE_nuNC->SetFillColor(kSpring-1);
+  LogNPE_nuNC->SetFillStyle(3002);
+  mytree->Project("LogNPE_nuNC","log10((calresp0)*1000.)","nc==1 && nuel==0 && (calresp0)!=0","");
+  LogNPE_nuNC->Add(LogNPE_nuEL);
+  c81->cd();
+  TH1F *LogNPE_nueCC = new TH1F("LogNPE_nueCC","",100,1.0,4.5);
+  gPad->SetLogy();
+  LogNPE_nueCC->GetXaxis()->SetTitle("log_{10} (Visible Energy [MeV])");
+  LogNPE_nueCC->GetYaxis()->SetTitle("entries");
+  LogNPE_nueCC->GetXaxis()->SetTitleSize(0.05);
+  LogNPE_nueCC->GetXaxis()->SetLabelSize(0.05);
+  LogNPE_nueCC->GetYaxis()->SetLabelSize(0.05);
+  LogNPE_nueCC->GetYaxis()->SetTitleOffset(1.2);
+  LogNPE_nueCC->SetLineWidth(5);
+  LogNPE_nueCC->SetLineColor(kRed);
+  LogNPE_nueCC->SetFillColor(kRed);
+  LogNPE_nueCC->SetFillStyle(3002);
+  mytree->Project("LogNPE_nueCC","log10(calresp0*1000.)","cc==1 && abs(fspl)==11","");
+  TH1F *LogNPE_numuCC = new TH1F("LogNPE_numuCC","",100,1.0,4.5);
+  LogNPE_numuCC->GetXaxis()->SetTitle("log_{10} (Visible Energy [MeV])");
+  LogNPE_numuCC->GetYaxis()->SetTitle("entries");
+  LogNPE_numuCC->GetXaxis()->SetTitleSize(0.05);
+  LogNPE_numuCC->GetXaxis()->SetLabelSize(0.05);
+  LogNPE_numuCC->GetYaxis()->SetLabelSize(0.05);
+  LogNPE_numuCC->GetYaxis()->SetTitleOffset(1.2);
+  LogNPE_numuCC->SetLineWidth(5);
+  LogNPE_numuCC->SetLineColor(kBlue+2);
+  LogNPE_numuCC->SetFillColor(kBlue+2);
+  LogNPE_numuCC->SetFillStyle(3002);
+  mytree->Project("LogNPE_numuCC","log10(calresp0*1000.)","cc==1 && abs(fspl)==13","");
+  LogNPE_numuCC->Draw();
+  LogNPE_nueCC->Draw("same");
+  LogNPE_nuNC->Draw("same");
+  leg81->AddEntry(LogNPE_numuCC, "#nu_{#mu} CC" ,"l");
+  leg81->AddEntry(LogNPE_nueCC, "#nu_{e} CC" ,"l");
+  leg81->AddEntry(LogNPE_nuNC, "#nu_{e}+#nu_{#mu} NC" ,"l");
+  leg81->Draw();
+  c81->SaveAs("Plot/logNPE_channels.png");
+  c81->SaveAs("Plot/logNPE_channels.pdf");
+  c81->SaveAs("Plot/logNPE_channels.C");
+
+
+  /////////////////////////LOGPLOTS-CHANNELS//////////////////////////////////////////
+
+  ////////////////////////nuE////////////////////////////////////////////////////////
+  
+  TCanvas *c82 = new TCanvas("c82","",1000,600);
+  TLegend * leg82 = new TLegend(0.7,0.5,0.9,0.9);
+  TCanvas *c82a = new TCanvas("c82a","",1000,600);
+  TLegend * leg82a = new TLegend(0.7,0.5,0.9,0.9);
+  TCanvas *c82b = new TCanvas("c82b","",1000,600);
+  TLegend * leg82b = new TLegend(0.7,0.5,0.9,0.9);
+  TH1F *LogNPE_numuCC_COH = new TH1F("LogNPE_numuCC_COH","",100,1.0,4.5);
+  LogNPE_numuCC_COH->SetLineWidth(4);
+  LogNPE_numuCC_COH->SetLineColor(kViolet+7);
+  mytree->Project("LogNPE_numuCC_COH","log10(calresp0*1000.)","abs(neu)==14 && cc==1 && coh==1 && calresp0!=0","");
+  TH1F *LogNPE_numuCC_QEL = new TH1F("LogNPE_numuCC_QEL","",100,1.0,4.5);
+  LogNPE_numuCC_QEL->SetLineWidth(4);
+  LogNPE_numuCC_QEL->SetLineColor(kAzure+3);
+  mytree->Project("LogNPE_numuCC_QEL","log10(calresp0*1000.)","abs(neu)==14 && cc==1 && qel==1 && calresp0!=0","");
+  TH1F *LogNPE_numuCC_RES = new TH1F("LogNPE_numuCC_RES","",100,1.0,4.5);
+  LogNPE_numuCC_RES->SetLineWidth(4);
+  LogNPE_numuCC_RES->SetLineColor(kAzure-3);
+  mytree->Project("LogNPE_numuCC_RES","log10(calresp0*1000.)","abs(neu)==14 && cc==1 && res==1 && calresp0!=0","");
+  TH1F *LogNPE_numuCC_DIS = new TH1F("LogNPE_numuCC_DIS","",100,1.0,4.5);
+  LogNPE_numuCC_DIS->SetLineWidth(4);
+  LogNPE_numuCC_DIS->SetLineColor(kBlue-5);
+  mytree->Project("LogNPE_numuCC_DIS","log10(calresp0*1000.)","abs(neu)==14 && cc==1 && dis==1 && calresp0!=0","");
+  TH1F *LogNPE_nueCC_COH = new TH1F("LogNPE_nueCC_COH","",100,1.0,4.5);
+  LogNPE_nueCC_COH->SetLineWidth(4);
+  LogNPE_nueCC_COH->SetLineColor(kPink-7);
+  mytree->Project("LogNPE_nueCC_COH","log10(calresp0*1000.)","abs(neu)==12 && cc==1 && coh==1 && calresp0!=0","");
+  TH1F *LogNPE_nueCC_QEL = new TH1F("LogNPE_nueCC_QEL","",100,1.0,4.5);
+  LogNPE_nueCC_QEL->SetLineWidth(4);
+  LogNPE_nueCC_QEL->SetLineColor(kRed+3);
+  mytree->Project("LogNPE_nueCC_QEL","log10(calresp0*1000.)","abs(neu)==12 && cc==1 && qel==1 && calresp0!=0","");
+  TH1F *LogNPE_nueCC_RES = new TH1F("LogNPE_nueCC_RES","",100,1.0,4.5);
+  LogNPE_nueCC_RES->SetLineWidth(4);
+  LogNPE_nueCC_RES->SetLineColor(kPink-1);
+  mytree->Project("LogNPE_nueCC_RES","log10(calresp0*1000.)","abs(neu)==12 && cc==1 && res==1 && calresp0!=0","");
+  TH1F *LogNPE_nueCC_DIS = new TH1F("LogNPE_nueCC_DIS","",100,1.0,4.5);
+  LogNPE_nueCC_DIS->SetLineWidth(4);
+  LogNPE_nueCC_DIS->SetLineColor(kOrange+4);
+  mytree->Project("LogNPE_nueCC_DIS","log10(calresp0*1000.)","abs(neu)==12 && cc==1 && dis==1 && calresp0!=0","");
+  TH1F *LogNPE_nueEL = new TH1F("LogNPE_nueEL","",100,1.0,4.5);
+  mytree->Project("LogNPE_nueEL","log10(calresp0*1000.)","nc==1 && nuel==1","");
+  TH1F *LogNPE_nuNC_COH = new TH1F("LogNPE_nuNC_COH","",100,1.0,4.5);
+  LogNPE_nuNC_COH->SetLineWidth(4);
+  LogNPE_nuNC_COH->SetLineColor(kTeal+7);
+  mytree->Project("LogNPE_nuNC_COH","log10((calresp0)*1000.)","nc==1 && coh==1 && (calresp0)!=0","");
+  TH1F *LogNPE_nuNC_QEL = new TH1F("LogNPE_nuNC_QEL","",100,1.0,4.5);
+  LogNPE_nuNC_QEL->SetLineWidth(4);
+  LogNPE_nuNC_QEL->SetLineColor(kSpring-7);
+  mytree->Project("LogNPE_nuNC_QEL","log10((calresp0)*1000.)","nc==1 && qel==1 && (calresp0)!=0","");
+  TH1F *LogNPE_nuNC_RES = new TH1F("LogNPE_nuNC_RES","",100,1.0,4.5);
+  LogNPE_nuNC_RES->SetLineWidth(4);
+  LogNPE_nuNC_RES->SetLineColor(kSpring+4);
+  mytree->Project("LogNPE_nuNC_RES","log10((calresp0)*1000.)","nc==1 && res==1 && (calresp0)!=0","");
+  TH1F *LogNPE_nuNC_DIS = new TH1F("LogNPE_nuNC_DIS","",100,1.0,4.5);
+  LogNPE_nuNC_DIS->SetLineWidth(4);
+  LogNPE_nuNC_DIS->SetLineColor(kTeal+3);
+  mytree->Project("LogNPE_nuNC_DIS","log10((calresp0)*1000.)","nc==1 && dis==1 && (calresp0)!=0","");
+  c82a->cd();
+  LogNPE_numuCC->Draw();
+  LogNPE_numuCC_COH->Draw("same");
+  LogNPE_numuCC_QEL->Draw("same");
+  LogNPE_numuCC_RES->Draw("same");
+  LogNPE_numuCC_DIS->Draw("same");
+  leg82a->AddEntry(LogNPE_numuCC, "#nu_{#mu} CC - all" ,"l");
+  leg82a->AddEntry(LogNPE_numuCC_COH, "#nu_{#mu} CC - coh" ,"l");
+  leg82a->AddEntry(LogNPE_numuCC_QEL, "#nu_{#mu} CC - qel" ,"l");
+  leg82a->AddEntry(LogNPE_numuCC_RES, "#nu_{#mu} CC - res" ,"l");
+  leg82a->AddEntry(LogNPE_numuCC_DIS, "#nu_{#mu} CC - dis" ,"l");
+  leg82a->Draw();
+  c82->cd();
+  LogNPE_nueCC->Draw(); 
+  LogNPE_nueCC_COH->Draw("same");
+  LogNPE_nueCC_QEL->Draw("same");
+  LogNPE_nueCC_RES->Draw("same");
+  LogNPE_nueCC_DIS->Draw("same");
+  leg82->AddEntry(LogNPE_nueCC, "#nu_{e} CC - all" ,"l");
+  leg82->AddEntry(LogNPE_nueCC_COH, "#nu_{e} CC - coh" ,"l");
+  leg82->AddEntry(LogNPE_nueCC_QEL, "#nu_{e} CC - qel" ,"l");
+  leg82->AddEntry(LogNPE_nueCC_RES, "#nu_{e} CC - res" ,"l");
+  leg82->AddEntry(LogNPE_nueCC_DIS, "#nu_{e} CC - dis" ,"l");
+  leg82->Draw();
+  c82b->cd();
+  LogNPE_nuNC->Draw();
+  LogNPE_nuNC_COH->Draw("same");
+  LogNPE_nuNC_QEL->Draw("same");
+  LogNPE_nuNC_RES->Draw("same");
+  LogNPE_nuNC_DIS->Draw("same");
+  leg82b->AddEntry(LogNPE_nuNC, "#nu NC - all" ,"l");
+  leg82b->AddEntry(LogNPE_nuNC_COH, "#nu NC - coh" ,"l");
+  leg82b->AddEntry(LogNPE_nuNC_QEL, "#nu NC - qel" ,"l");
+  leg82b->AddEntry(LogNPE_nuNC_RES, "#nu NC - res" ,"l");
+  leg82b->AddEntry(LogNPE_nuNC_DIS, "#nu NC - dis" ,"l");
+  leg82b->Draw();
+
+  c82->SaveAs("Plot/logNPE_channels_nueCC.png");
+  c82->SaveAs("Plot/logNPE_channels_nueCC.pdf");
+  c82->SaveAs("Plot/logNPE_channels_nueCC.C");
+
+  c82a->SaveAs("Plot/logNPE_channels_numuCC.png");
+  c82a->SaveAs("Plot/logNPE_channels_numuCC.pdf");
+  c82a->SaveAs("Plot/logNPE_channels_numuCC.C");
+  
+  c82b->SaveAs("Plot/logNPE_channels_nuNC.png");
+  c82b->SaveAs("Plot/logNPE_channels_nuNC.pdf");
+  c82b->SaveAs("Plot/logNPE_channels_nuNC.C");
+  
+}
+
