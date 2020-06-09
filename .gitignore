@@ -9,6 +9,9 @@ install.history
 *.log
 *.exe
 *.pdf
+*.d
+*.o
+*.so
 InstallArea
 amd64_linux26
 Linux-i686
