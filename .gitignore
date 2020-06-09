@@ -12,6 +12,7 @@ install.history
 *.d
 *.o
 *.so
+*.pcm
 InstallArea
 amd64_linux26
 Linux-i686
