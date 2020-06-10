@@ -62,7 +62,11 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "typeinfo": "cpp",
-        "NuSpectrumALL.C": "cpp"
+        "NuSpectrumALL.C": "cpp",
+        "makedataplots.C": "cpp",
+        "NuSpectrumJ.C": "cpp",
+        "NuSpectrum3.C": "cpp",
+        "NuSpectrum2.C": "cpp"
     },
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true
