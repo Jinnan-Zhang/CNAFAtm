@@ -32,3 +32,5 @@ src_sgiulio/matrix/**/*.txt
 src_sgiulio/matrix/efficiency/Plot/*.png
 src_sgiulio/matrix/likelihood/**/*.txt
 src_sgiulio/matrix/**/output*
+!src_sgiulio/bayes/5YRS/output_Nue_osc/*.root
+!src_sgiulio/bayes/5YRS/output_Numu_osc/*.root
