@@ -1,3 +1,6 @@
+#include <fstream>
+#include <TGraph.h>
+
 void NuSpectrumALL() {
 
   gStyle->SetOptStat(0);

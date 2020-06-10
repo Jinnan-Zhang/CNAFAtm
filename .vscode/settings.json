@@ -61,7 +61,8 @@
         "sstream": "cpp",
         "stdexcept": "cpp",
         "streambuf": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "NuSpectrumALL.C": "cpp"
     },
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true
