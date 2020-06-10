@@ -37,7 +37,8 @@ LS_RI_idx = 1.5
 # 16 m vertex position cut
 R_vertex_cut = 16.
 # water pool NPE cut
-WP_NPE_cut = 60
+# WP_NPE_cut = 60
+WP_NPE_cut = 50
 # Large PMT NPE cut
 LPMT_NPE_cut = 1e5
 LPMT_NPE_cut_up = 10**7.2
