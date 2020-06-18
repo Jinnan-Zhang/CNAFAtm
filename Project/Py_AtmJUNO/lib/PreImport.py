@@ -42,7 +42,7 @@ WP_NPE_cut = 50 # Giulio newest cuts
 # Large PMT NPE cut
 LPMT_NPE_cut = 1e5
 LPMT_NPE_cut_up = 10**7.2
-# Large PMT slection steps
+# Large PMT slection steps, Get all in one try
 LPMT_NPE_steps = [1e5, 4.73e5, 1.01e6, 2.32e6,10**7.2]
 
 sigma_vertex = 1.  # 1m
