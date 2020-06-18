@@ -153,15 +153,15 @@ def ViewTimeProfile(NFiles, StartFile=1, SaveFileName="TimeProfile"):
     for i in range(len(LPMT_NPE_steps) - 1):
         h_muCC_t = h_muCC.Clone("muCC" + str(i + 1))
         h_muCC_t.SetTitle("muon Charge Current: %.2e<NPE<%.2e" %
-                          (LPMT_NPE_steps[i + 1], LPMT_NPE_steps[i + 2]))
+                          (LPMT_NPE_steps[i], LPMT_NPE_steps[i + 1]))
         h_muCC_list.append(h_muCC_t)
         h_eCC_t = h_eCC.Clone("eCC" + str(i + 1))
         h_eCC_t.SetTitle("electron Charge Current: %.2e<NPE<%.2e" %
-                         (LPMT_NPE_steps[i + 1], LPMT_NPE_steps[i + 2]))
+                         (LPMT_NPE_steps[i], LPMT_NPE_steps[i + 1]))
         h_eCC_list.append(h_eCC_t)
         h_NC_t = h_NC.Clone("NC" + str(i + 1))
         h_NC_t.SetTitle("Neutral Current: %.2e<NPE<%.2e" %
-                        (LPMT_NPE_steps[i + 1], LPMT_NPE_steps[i + 2]))
+                        (LPMT_NPE_steps[i], LPMT_NPE_steps[i + 1]))
         h_NC_list.append(h_NC_t)
 
     evt = ROOT.TChain("evt")
