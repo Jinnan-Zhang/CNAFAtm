@@ -38,16 +38,17 @@ LS_RI_idx = 1.5
 R_vertex_cut = 16.
 # water pool NPE cut
 # WP_NPE_cut = 60
-WP_NPE_cut = 50
+WP_NPE_cut = 50 # Giulio newest cuts
 # Large PMT NPE cut
 LPMT_NPE_cut = 1e5
 LPMT_NPE_cut_up = 10**7.2
 # Large PMT slection steps
-LPMT_NPE_steps = [1e5, 4.73e5, 1.01e6, 2.32e6]
+LPMT_NPE_steps = [1e5, 4.73e5, 1.01e6, 2.32e6,10**7.2]
 
 sigma_vertex = 1.  # 1m
 sigma_hitTime = 4  # 4ns
-HitTimeCut_up = 1500  # ns
+# HitTimeCut_up = 1500  # ns
+HitTimeCut_up = 1200  # ns according to Giulio
 
 # 1 ns binwidth
 BinWidth = 1

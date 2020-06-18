@@ -69,5 +69,7 @@
         "NuSpectrum2.C": "cpp"
     },
     "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "python.pythonPath": "/usr/bin/python",
+    "python.formatting.provider": "yapf"
 }

@@ -12,7 +12,7 @@ def ViewHitTime(NFiles, WhichEntry=0, SaveFileName="hitTime"):
     c = ROOT.TCanvas("myCanvasName", "The Canvas Title", 800, 600)
     evt.Draw("hitTime>>+h_hit", "pmtID>300000", "")  # ,1,WhichEntry)
     ROOT.gStyle.SetOptStat("ne")
-    c.SaveAs("./pics/"+SaveFileName + ".png")
+    c.SaveAs("./pics/" + SaveFileName + ".png")
 
 
 def ViewGlobalPos(NFiles, WhichEntry=0, SaveFileName="GlobalPos"):
@@ -22,12 +22,12 @@ def ViewGlobalPos(NFiles, WhichEntry=0, SaveFileName="GlobalPos"):
     c = ROOT.TCanvas("myCanvasName", "The Canvas Title", 800, 600)
     evt.Draw(
         "sqrt(GlobalPosX*GlobalPosX+GlobalPosY*GlobalPosY+GlobalPosZ*GlobalPosZ)/1000>>+h_GPos",
-        "pmtID>300000",
-        "", 1, WhichEntry)
+        "pmtID>300000", "", 1, WhichEntry)
     h_GPos = ROOT.gDirectory.Get("h_GPos")
     h_GPos.SetXTitle("m")
     ROOT.gStyle.SetOptStat("ne")
-    c.SaveAs("./pics/"+SaveFileName + ".png")
+    c.SaveAs("./pics/" + SaveFileName + ".png")
+
 
 # Same particles for geninfo and prmtrkdep
 
@@ -66,7 +66,7 @@ def ViewWaterPoolPEs(NFiles, WhichEntry=0, SaveFileName="WPnpe"):
     c = ROOT.TCanvas("myCanvasName", "The Canvas Title", 800, 600)
     SimEvent.Draw("SimEvent.m_wp_hits>>+h_wp_npe")
     ROOT.gStyle.SetOptStat("ne")
-    c.SaveAs("./pics/"+SaveFileName + ".png")
+    c.SaveAs("./pics/" + SaveFileName + ".png")
     # SimEvent.GetEntry(WhichEntry)
     # npe=np.asarray(SimEvent.SimEvent.m_wp_hits.npe)
     # print(npe)
@@ -81,7 +81,8 @@ def ViewPMTID(NFiles, WhichEntry=0, SaveFileName="PMTid"):
     c = ROOT.TCanvas("myCanvasName", "The Canvas Title", 800, 600)
     evt.Draw("pmtID>>+h_pmtID", "pmtID>30000 && pmtID<50000")
     ROOT.gStyle.SetOptStat("ne")
-    c.SaveAs("./pics/"+SaveFileName + ".png")
+    c.SaveAs("./pics/" + SaveFileName + ".png")
+
 
 # basicly relective index
 
@@ -90,7 +91,9 @@ def ViewOptPar(NFiles):
     opticalparam = ROOT.TChain("opticalparam")
     print(opticalparam.AsMatirx(columns=["LS_RI_idx"]))
 
+
 # get smeared value for vertex position, default: sima_v=1m
+
 
 #a single point
 def GetSmearedVertex(InitialX, InitialY, InitialZ, SmearSigma=1):
@@ -104,6 +107,7 @@ def GetSmearedVertex(InitialX, InitialY, InitialZ, SmearSigma=1):
     X_new, Y_new, Z_new = InitialX + dx, InitialY + dy, InitialZ + dz
     return X_new, Y_new, Z_new
 
+
 # get smeared value both hitTime,default: sigma_hittime=4ns
 
 
@@ -111,36 +115,53 @@ def GetSmearedHittime(InitialhitTime, SmearSigma=4):
     hitTime_new = np.random.normal(InitialhitTime, SmearSigma)
     return hitTime_new
 
+
 # Get Distance from vertex to pmt
 
 
 def GetDistanceR_Vi(V_x, V_y, V_z, Hit_x, Hit_y, Hit_z):
-    R_Vi = np.sqrt((V_x-Hit_x)**2+(V_y-Hit_y)**2+(V_z-Hit_z)**2)
+    R_Vi = np.sqrt((V_x - Hit_x)**2 + (V_y - Hit_y)**2 + (V_z - Hit_z)**2)
     return R_Vi
 
 
-def SmearVertexAndGetDistance(InitialX, InitialY, InitialZ, Hit_x, Hit_y, Hit_z, SmearSigma=1):
+def SmearVertexAndGetDistance(InitialX,
+                              InitialY,
+                              InitialZ,
+                              Hit_x,
+                              Hit_y,
+                              Hit_z,
+                              SmearSigma=1):
     V_x, V_y, V_z = GetSmearedVertex(InitialX, InitialY, InitialZ, SmearSigma)
-    R_Vi = np.sqrt((V_x-Hit_x)**2+(V_y-Hit_y)**2+(V_z-Hit_z)**2)
+    R_Vi = np.sqrt((V_x - Hit_x)**2 + (V_y - Hit_y)**2 + (V_z - Hit_z)**2)
     return R_Vi
 
 
 def ViewTimeProfile(NFiles, StartFile=1, SaveFileName="TimeProfile"):
     ROOT.ROOT.EnableImplicitMT()
-    h_muCC = ROOT.TH1D("muCC0", "muon Charge Current",
-                       NumofBins, TimeP_low, TimeP_up)
-    h_eCC = ROOT.TH1D("eCC0", "electron Charge Current",
-                      NumofBins, TimeP_low, TimeP_up)
-    h_NC = ROOT.TH1D("NC0", "Neutral Current", NumofBins, TimeP_low, TimeP_up)
+    h_muCC = ROOT.TH1D(
+        "muCC0", "muon Charge Current: %.2e<NPE<%.2e" %
+        (LPMT_NPE_steps[0], LPMT_NPE_steps[1]), NumofBins, TimeP_low, TimeP_up)
+    h_eCC = ROOT.TH1D(
+        "eCC0", "electron Charge Current: %.2e<NPE<%.2e" %
+        (LPMT_NPE_steps[0], LPMT_NPE_steps[1]), NumofBins, TimeP_low, TimeP_up)
+    h_NC = ROOT.TH1D(
+        "NC0", "Neutral Current: %.2e<NPE<%.2e" %
+        (LPMT_NPE_steps[0], LPMT_NPE_steps[1]), NumofBins, TimeP_low, TimeP_up)
     h_muCC_list = [h_muCC]
     h_eCC_list = [h_eCC]
     h_NC_list = [h_NC]
-    for i in range(len(LPMT_NPE_steps)-1):
-        h_muCC_t = h_muCC.Clone("muCC"+str(i+1))
+    for i in range(len(LPMT_NPE_steps) - 1):
+        h_muCC_t = h_muCC.Clone("muCC" + str(i + 1))
+        h_muCC_t.SetTitle("muon Charge Current: %.2e<NPE<%.2e" %
+                          (LPMT_NPE_steps[i + 1], LPMT_NPE_steps[i + 2]))
         h_muCC_list.append(h_muCC_t)
-        h_eCC_t = h_eCC.Clone("eCC"+str(i+1))
+        h_eCC_t = h_eCC.Clone("eCC" + str(i + 1))
+        h_eCC_t.SetTitle("electron Charge Current: %.2e<NPE<%.2e" %
+                         (LPMT_NPE_steps[i + 1], LPMT_NPE_steps[i + 2]))
         h_eCC_list.append(h_eCC_t)
-        h_NC_t = h_NC.Clone("NC"+str(i+1))
+        h_NC_t = h_NC.Clone("NC" + str(i + 1))
+        h_NC_t.SetTitle("Neutral Current: %.2e<NPE<%.2e" %
+                        (LPMT_NPE_steps[i + 1], LPMT_NPE_steps[i + 2]))
         h_NC_list.append(h_NC_t)
 
     evt = ROOT.TChain("evt")
@@ -161,25 +182,29 @@ def ViewTimeProfile(NFiles, StartFile=1, SaveFileName="TimeProfile"):
     for entry in range(evt.GetEntries()):
         geninfo.GetEntry(entry)
         # one vertex, use first one
-        InitX, InitY, InitZ = np.asarray(geninfo.InitX)[
-            0]/1e3, np.asarray(geninfo.InitY)[0]/1e3, np.asarray(geninfo.InitZ)[0]/1e3
-        Smear_X, Smear_Y, Smear_Z = GetSmearedVertex(
-            InitX, InitY, InitZ, sigma_vertex)
+        InitX, InitY, InitZ = np.asarray(geninfo.InitX)[0] / 1e3, np.asarray(
+            geninfo.InitY)[0] / 1e3, np.asarray(geninfo.InitZ)[0] / 1e3
+        Smear_X, Smear_Y, Smear_Z = GetSmearedVertex(InitX, InitY, InitZ,
+                                                     sigma_vertex)
         # print(np.sqrt(Smear_Z**2+Smear_Y**2+Smear_X**2))
-        if (np.sqrt(Smear_X**2+Smear_Y**2+Smear_Z**2) < R_vertex_cut):
+        if (np.sqrt(Smear_X**2 + Smear_Y**2 + Smear_Z**2) < R_vertex_cut):
             evt.GetEntry(entry)
             pmtID = np.asarray(evt.pmtID)
             # index for different kind of pmts
             SPMTs = np.where((pmtID >= sPMTID_low) & (pmtID <= sPMTID_up))[0]
-            WPPMTs = np.where((pmtID >= WPPMTID_low) &
-                              (pmtID <= WPPMTID_up))[0]
+            WPPMTs = np.where((pmtID >= WPPMTID_low)
+                              & (pmtID <= WPPMTID_up))[0]
             LPMTs = np.where((pmtID >= LPMTID_low) & (pmtID <= LPMTID_up))[0]
-            if (WPPMTs.shape[0] < WP_NPE_cut) & (LPMTs.shape[0] > LPMT_NPE_cut) & (LPMTs.shape[0] < LPMT_NPE_cut_up):
+            if (WPPMTs.shape[0] < WP_NPE_cut) & (
+                    LPMTs.shape[0] > LPMT_NPE_cut) & (LPMTs.shape[0] <
+                                                      LPMT_NPE_cut_up):
                 # hit position only for sPMT
-                Hit_x, Hit_y, Hit_z = np.asarray(evt.GlobalPosX)[SPMTs]/1e3, np.asarray(
-                    evt.GlobalPosY)[SPMTs]/1e3, np.asarray(evt.GlobalPosZ)[SPMTs]/1e3
-                R_Vi = np.sqrt((Smear_X-Hit_x)**2+(Smear_Y-Hit_y)
-                               ** 2+(Smear_Z-Hit_z)**2)
+                Hit_x, Hit_y, Hit_z = np.asarray(
+                    evt.GlobalPosX)[SPMTs] / 1e3, np.asarray(
+                        evt.GlobalPosY)[SPMTs] / 1e3, np.asarray(
+                            evt.GlobalPosZ)[SPMTs] / 1e3
+                R_Vi = np.sqrt((Smear_X - Hit_x)**2 + (Smear_Y - Hit_y)**2 +
+                               (Smear_Z - Hit_z)**2)
 
                 hitTime = np.asarray(evt.hitTime)[SPMTs]
                 # smear hitTime
@@ -187,8 +212,8 @@ def ViewTimeProfile(NFiles, StartFile=1, SaveFileName="TimeProfile"):
                 # prompt time cut less than 3 times of meadian value
                 # this cut is not valid, even though better
                 # hit_pr_idx=np.where(Smear_t<np.median(hitTime)*10)[0]
-                hit_pr_idx = np.where(Smear_t < HitTimeCut_up)[
-                    0]  # <np.median(hitTime)*10)[0]
+                hit_pr_idx = np.where(
+                    Smear_t < HitTimeCut_up)[0]  # <np.median(hitTime)*10)[0]
                 t_res_i = Smear_t[hit_pr_idx] - \
                     (R_Vi[hit_pr_idx]*LS_RI_idx/LightSpeed_c)
                 # t_res_i=Smear_t-(R_Vi*LS_RI_idx/LightSpeed_c)
@@ -204,8 +229,8 @@ def ViewTimeProfile(NFiles, StartFile=1, SaveFileName="TimeProfile"):
                 # for value, find 0 means under the LPMT cut,
                 # which will not happen, find 1 means first stage, thus need -1
                 # to the histgram list
-                At_Which_NPE_LPMT = np.searchsorted(
-                    LPMT_NPE_steps, LPMTs.shape[0])-1
+                At_Which_NPE_LPMT = np.searchsorted(LPMT_NPE_steps,
+                                                    LPMTs.shape[0]) - 1
                 # e-CC
                 if (InitPDGID == 11) | (InitPDGID == -11):
                     h_eCC_list[At_Which_NPE_LPMT].Fill(RMS_t_res)
@@ -214,8 +239,8 @@ def ViewTimeProfile(NFiles, StartFile=1, SaveFileName="TimeProfile"):
                     h_muCC_list[At_Which_NPE_LPMT].Fill(RMS_t_res)
                 else:
                     h_NC_list[At_Which_NPE_LPMT].Fill(RMS_t_res)
-    ff_TimeP = ROOT.TFile("./results/"+SaveFileName +
-                          str(StartFile)+".root", "RECREATE")
+    ff_TimeP = ROOT.TFile(
+        "./results/" + SaveFileName + str(StartFile) + ".root", "RECREATE")
     ff_TimeP.cd()
     for i in range(len(LPMT_NPE_steps)):
         h_muCC_list[i].Write()
