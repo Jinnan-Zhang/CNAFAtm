@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from src.GetTimeResiual import *
+
 from lib.PreImport import *
+from src.GetTimeResiual import *
 import sys
 import os
 o_path = os.getcwd()
@@ -14,10 +15,13 @@ if __name__ == "__main__":
     # ViewPDGID(NFiles=int(sys.argv[1]),WhichEntry=int(sys.argv[2]))
     # ViewWaterPoolPEs(NFiles=int(sys.argv[1]), WhichEntry=int(sys.argv[2]))
     # ViewPMTID(NFiles=int(sys.argv[1]), WhichEntry=int(sys.argv[2]))
-
-    if (len(sys.argv) == 4):
-        ViewTimeProfile(NFiles=int(sys.argv[1]),
-                        StartFile=int(sys.argv[2]),
-                        SaveFileName=sys.argv[3])
-    else:
-        ViewTimeProfile(NFiles=int(sys.argv[1]), StartFile=int(sys.argv[2]))
+    if(sys.argv[1] == "TPro"):
+        if (len(sys.argv) == 4):
+            ViewTimeProfile(NFiles=int(sys.argv[1+1]),
+                            StartFile=int(sys.argv[2+1]),
+                            SaveFileName=sys.argv[3+1])
+        else:
+            ViewTimeProfile(NFiles=int(sys.argv[1]),
+                            StartFile=int(sys.argv[2]))
+    elif(sys.argv[1] == "NPETE"):  # all information
+        GetNPE_Tres_Energy_Profile(NFiles=1)

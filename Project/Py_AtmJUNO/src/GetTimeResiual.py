@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from array import array
 from lib.PreImport import *
 import sys
 import os
@@ -95,7 +96,7 @@ def ViewOptPar(NFiles):
 # get smeared value for vertex position, default: sima_v=1m
 
 
-#a single point
+# a single point
 def GetSmearedVertex(InitialX, InitialY, InitialZ, SmearSigma=1):
     SmearR = np.random.normal(0, SmearSigma)
     SmearCosTheta = np.random.rand(1) * 2. - 1
@@ -263,6 +264,24 @@ def ViewTimeProfile(NFiles, StartFile=1, SaveFileName="TimeProfile"):
         h_NC_list[i].SetXTitle("#sigma(t_{res}) [ns]")
         h_NC_list[i].SetYTitle("entries")
     ff_TimeP.Close()
+
+
+def GetNPE_Tres_Energy_Profile(NFiles, StartFile=1, SaveFileName="NPETresEnergyProfile"):
+    ROOT.TH1.AddDirectory(False)
+    ff_in = ROOT.TFile("results/result10.root", "READ")
+    h_before = ff_in.Get("muCC0")
+    ff_out = ROOT.TFile("./results/"+SaveFileName +
+                        str(StartFile)+".root", 'recreate')
+    sigma_tres = array('f', [0])
+    ff_out.cd()
+    TresNPEE3D_tree = ROOT.TTree(
+        "NPETresE", "NPE_LPMT, Time Residual and True Energy")
+    TresNPEE3D_tree.Branch("sigma_tres", sigma_tres, 'sigma_tres/F')
+    for i in range(500):
+        sigma_tres = h_before.GetBinContent(i+1)
+        TresNPEE3D_tree.Fill()
+    ff_out.Write()
+    ff_out.Close()
 
 
 if __name__ == "__main__":
