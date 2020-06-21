@@ -271,16 +271,37 @@ def GetNPE_Tres_Energy_Profile(NFiles, StartFile=1, SaveFileName="NPETresEnergyP
     ff_out = ROOT.TFile("./results/"+SaveFileName +
                         str(StartFile)+".root", 'recreate')
     ff_out.cd()
-    MuCC_TresNPEE3D_tree = ROOT.TTree(
-        "NPETresE", "muon Charge Current: NPE_LPMT, Time Residual and True Energy")
+    muCC_TresNPEE3D_tree = ROOT.TTree(
+        "muCC_NPETresE", "muon Charge Current: NPE_LPMT, Time Residual and True Energy")
+    eCC_TresNPEE3D_tree = ROOT.TTree(
+        "eCC_NPETresE", "e Charge Current: NPE_LPMT, Time Residual and True Energy")
+    NC_TresNPEE3D_tree = ROOT.TTree(
+        "NC_NPETresE", "Neutral Current: NPE_LPMT, Time Residual and True Energy")
+
     sigma_tres = array('f', [0])  # sigma(t_res)
     NPE_LPMT = array('f', [0])  # NPE_LPMT
+    E_nu_true = array('f', [0])  # true neutrin energy
 
+    muCC_TresNPEE3D_tree.Branch("sigma_tres", sigma_tres, 'sigma_tres/F')
+    muCC_TresNPEE3D_tree.Branch("NPE_LPMT", NPE_LPMT, 'NPE_LPMT/F')
+    muCC_TresNPEE3D_tree.Branch("E_nu_true", E_nu_true, 'E_nu_true/F')
+    eCC_TresNPEE3D_tree.Branch("sigma_tres", sigma_tres, 'sigma_tres/F')
+    eCC_TresNPEE3D_tree.Branch("NPE_LPMT", NPE_LPMT, 'NPE_LPMT/F')
+    eCC_TresNPEE3D_tree.Branch("E_nu_true", E_nu_true, 'E_nu_true/F')
+    NC_TresNPEE3D_tree.Branch("sigma_tres", sigma_tres, 'sigma_tres/F')
+    NC_TresNPEE3D_tree.Branch("NPE_LPMT", NPE_LPMT, 'NPE_LPMT/F')
+    NC_TresNPEE3D_tree.Branch("E_nu_true", E_nu_true, 'E_nu_true/F')
 
-    MuCC_TresNPEE3D_tree.Branch("sigma_tres", sigma_tres, 'sigma_tres/F')
     for i in range(500):
         sigma_tres[0] = i
-        MuCC_TresNPEE3D_tree.Fill()
+        NPE_LPMT[0] = i*500
+        E_nu_true[0] = 14
+        if(i < 200):
+            muCC_TresNPEE3D_tree.Fill()
+        elif i >= 200 and i < 350:
+            eCC_TresNPEE3D_tree.Fill()
+        else:
+            NC_TresNPEE3D_tree.Fill()
     ff_out.Write()
     ff_out.Close()
 
