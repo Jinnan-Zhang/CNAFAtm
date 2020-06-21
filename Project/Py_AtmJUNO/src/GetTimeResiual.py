@@ -268,18 +268,19 @@ def ViewTimeProfile(NFiles, StartFile=1, SaveFileName="TimeProfile"):
 
 def GetNPE_Tres_Energy_Profile(NFiles, StartFile=1, SaveFileName="NPETresEnergyProfile"):
     ROOT.TH1.AddDirectory(False)
-    ff_in = ROOT.TFile("results/result10.root", "READ")
-    h_before = ff_in.Get("muCC0")
     ff_out = ROOT.TFile("./results/"+SaveFileName +
                         str(StartFile)+".root", 'recreate')
-    sigma_tres = array('f', [0])
     ff_out.cd()
-    TresNPEE3D_tree = ROOT.TTree(
-        "NPETresE", "NPE_LPMT, Time Residual and True Energy")
-    TresNPEE3D_tree.Branch("sigma_tres", sigma_tres, 'sigma_tres/F')
+    MuCC_TresNPEE3D_tree = ROOT.TTree(
+        "NPETresE", "muon Charge Current: NPE_LPMT, Time Residual and True Energy")
+    sigma_tres = array('f', [0])  # sigma(t_res)
+    NPE_LPMT = array('f', [0])  # NPE_LPMT
+
+
+    MuCC_TresNPEE3D_tree.Branch("sigma_tres", sigma_tres, 'sigma_tres/F')
     for i in range(500):
-        sigma_tres = h_before.GetBinContent(i+1)
-        TresNPEE3D_tree.Fill()
+        sigma_tres[0] = i
+        MuCC_TresNPEE3D_tree.Fill()
     ff_out.Write()
     ff_out.Close()
 
