@@ -20,7 +20,10 @@ def ViewnCaptureT(NFiles, WhichEntry=0, SaveFileName="nCaptureT"):
     nCapture = ROOT.TChain("nCapture")
     AddUserFile2TChain(nCapture, NFiles=NFiles)
     c = ROOT.TCanvas("myCanvasName", "The Canvas Title", 800, 600)
-    nCapture.Draw("")
+    nCapture.Draw("NeutronCaptureT>>h_ncapT")
+    ROOT.gStyle.SetOptStat("ne")
+    c.SaveAs("./pics/" + SaveFileName + ".png")
+
 
 def ViewGlobalPos(NFiles, WhichEntry=0, SaveFileName="GlobalPos"):
     ROOT.ROOT.EnableImplicitMT()
@@ -272,18 +275,23 @@ def ViewTimeProfile(NFiles, StartFile=1, SaveFileName="TimeProfile"):
     ff_TimeP.Close()
 
 
-def GetNPE_Tres_Energy_Profile(NFiles, StartFile=1, SaveFileName="NPETresEnergyProfile"):
+def GetNPE_Tres_Energy_Profile(NFiles,
+                               StartFile=1,
+                               SaveFileName="NPETresEnergyProfile"):
     ROOT.TH1.AddDirectory(False)
     ROOT.ROOT.EnableImplicitMT()
-    ff_out = ROOT.TFile("./results/"+SaveFileName +
-                        str(StartFile)+".root", 'recreate')
+    ff_out = ROOT.TFile("./results/" + SaveFileName + str(StartFile) + ".root",
+                        'recreate')
     ff_out.cd()
     muCC_TresNPEE3D_tree = ROOT.TTree(
-        "muCC_NPETresE", "muon Charge Current: NPE_LPMT, Time Residual and True Energy")
+        "muCC_NPETresE",
+        "muon Charge Current: NPE_LPMT, Time Residual and True Energy")
     eCC_TresNPEE3D_tree = ROOT.TTree(
-        "eCC_NPETresE", "e Charge Current: NPE_LPMT, Time Residual and True Energy")
+        "eCC_NPETresE",
+        "e Charge Current: NPE_LPMT, Time Residual and True Energy")
     NC_TresNPEE3D_tree = ROOT.TTree(
-        "NC_NPETresE", "Neutral Current: NPE_LPMT, Time Residual and True Energy")
+        "NC_NPETresE",
+        "Neutral Current: NPE_LPMT, Time Residual and True Energy")
 
     sigma_tres = array('f', [0])  # sigma(t_res)
     NPE_LPMT = array('f', [0])  # NPE_LPMT
@@ -306,9 +314,9 @@ def GetNPE_Tres_Energy_Profile(NFiles, StartFile=1, SaveFileName="NPETresEnergyP
 
     for i in range(500):
         sigma_tres[0] = i
-        NPE_LPMT[0] = i*500
+        NPE_LPMT[0] = i * 500
         E_nu_true[0] = 14
-        if(i < 200):
+        if (i < 200):
             muCC_TresNPEE3D_tree.Fill()
         elif i >= 200 and i < 350:
             eCC_TresNPEE3D_tree.Fill()
