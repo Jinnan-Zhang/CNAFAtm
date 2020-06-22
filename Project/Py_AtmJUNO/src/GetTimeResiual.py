@@ -16,6 +16,12 @@ def ViewHitTime(NFiles, WhichEntry=0, SaveFileName="hitTime"):
     c.SaveAs("./pics/" + SaveFileName + ".png")
 
 
+def ViewnCaptureT(NFiles, WhichEntry=0, SaveFileName="nCaptureT"):
+    nCapture = ROOT.TChain("nCapture")
+    AddUserFile2TChain(nCapture, NFiles=NFiles)
+    c = ROOT.TCanvas("myCanvasName", "The Canvas Title", 800, 600)
+    nCapture.Draw("")
+
 def ViewGlobalPos(NFiles, WhichEntry=0, SaveFileName="GlobalPos"):
     ROOT.ROOT.EnableImplicitMT()
     evt = ROOT.TChain("evt")
@@ -268,6 +274,7 @@ def ViewTimeProfile(NFiles, StartFile=1, SaveFileName="TimeProfile"):
 
 def GetNPE_Tres_Energy_Profile(NFiles, StartFile=1, SaveFileName="NPETresEnergyProfile"):
     ROOT.TH1.AddDirectory(False)
+    ROOT.ROOT.EnableImplicitMT()
     ff_out = ROOT.TFile("./results/"+SaveFileName +
                         str(StartFile)+".root", 'recreate')
     ff_out.cd()
@@ -291,6 +298,11 @@ def GetNPE_Tres_Energy_Profile(NFiles, StartFile=1, SaveFileName="NPETresEnergyP
     NC_TresNPEE3D_tree.Branch("sigma_tres", sigma_tres, 'sigma_tres/F')
     NC_TresNPEE3D_tree.Branch("NPE_LPMT", NPE_LPMT, 'NPE_LPMT/F')
     NC_TresNPEE3D_tree.Branch("E_nu_true", E_nu_true, 'E_nu_true/F')
+
+    evt = ROOT.TChain("evt")
+    geninfo = ROOT.TChain("geninfo")
+    AddUserFile2TChain(evt, NFiles=NFiles, StartFile=StartFile)
+    AddUserFile2TChain(geninfo, NFiles=NFiles, StartFile=StartFile)
 
     for i in range(500):
         sigma_tres[0] = i

@@ -25,3 +25,5 @@ if __name__ == "__main__":
                             StartFile=int(sys.argv[2]))
     elif(sys.argv[1] == "NPETE"):  # all information
         GetNPE_Tres_Energy_Profile(NFiles=1)
+    elif(sys.argv[1] == "NcapT"):  # view nCatureTime
+        ViewnCaptureT(int(sys.argv[2]))
