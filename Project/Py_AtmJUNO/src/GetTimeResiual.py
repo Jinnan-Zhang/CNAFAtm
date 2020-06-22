@@ -20,7 +20,7 @@ def ViewnCaptureT(NFiles, WhichEntry=0, SaveFileName="nCaptureT"):
     nCapture = ROOT.TChain("nCapture")
     AddUserFile2TChain(nCapture, NFiles=NFiles)
     c = ROOT.TCanvas("myCanvasName", "The Canvas Title", 800, 600)
-    nCapture.Draw("NeutronCaptureT>>h_ncapT")
+    nCapture.Draw("NeutronCaptureT>>h_ncapT","NeutronCaptureT<3000")
     ROOT.gStyle.SetOptStat("ne")
     c.SaveAs("./pics/" + SaveFileName + ".png")
 
