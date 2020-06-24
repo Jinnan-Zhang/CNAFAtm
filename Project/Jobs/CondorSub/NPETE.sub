@@ -1,6 +1,5 @@
 universe = vanilla
-executable = /storage/gpfs_data/juno/junofs/users/zhangjinnan/Atm/CNAF_Atm/Project/Jobs/CNAF_Atm1.sh
-Accounting_Group = juno
+executable = htc_test.sh
 output = /storage/gpfs_data/juno/junofs/users/zhangjinnan/Atm/CNAF_Atm/Project/Jobs/logs/outputFile.out
 error = /storage/gpfs_data/juno/junofs/users/zhangjinnan/Atm/CNAF_Atm/Project/Jobs/logs/errorFile.err
 ShouldTransferFiles = YES
