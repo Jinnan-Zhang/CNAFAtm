@@ -20,7 +20,7 @@ def ViewnCaptureT(NFiles, WhichEntry=0, SaveFileName="nCaptureT"):
     nCapture = ROOT.TChain("nCapture")
     AddUserFile2TChain(nCapture, NFiles=NFiles)
     c = ROOT.TCanvas("myCanvasName", "The Canvas Title", 800, 600)
-    nCapture.Draw("NeutronCaptureT>>h_ncapT","NeutronCaptureT<3000")
+    nCapture.Draw("NeutronCaptureT>>h_ncapT", "NeutronCaptureT<3000")
     ROOT.gStyle.SetOptStat("ne")
     c.SaveAs("./pics/" + SaveFileName + ".png")
 
@@ -263,15 +263,16 @@ def ViewTimeProfile(NFiles, StartFile=1, SaveFileName="TimeProfile"):
         "./results/" + SaveFileName + str(StartFile) + ".root", "RECREATE")
     ff_TimeP.cd()
     for i in range(len(LPMT_NPE_steps)):
-        h_muCC_list[i].Write()
-        h_eCC_list[i].Write()
-        h_NC_list[i].Write()
         h_muCC_list[i].SetXTitle("#sigma(t_{res}) [ns]")
         h_muCC_list[i].SetYTitle("entries")
         h_eCC_list[i].SetXTitle("#sigma(t_{res}) [ns]")
         h_eCC_list[i].SetYTitle("entries")
         h_NC_list[i].SetXTitle("#sigma(t_{res}) [ns]")
         h_NC_list[i].SetYTitle("entries")
+        h_muCC_list[i].Write()
+        h_eCC_list[i].Write()
+        h_NC_list[i].Write()
+
     ff_TimeP.Close()
 
 
@@ -280,8 +281,9 @@ def GetNPE_Tres_Energy_Profile(NFiles,
                                SaveFileName="NPETresEnergyProfile"):
     ROOT.TH1.AddDirectory(False)
     ROOT.ROOT.EnableImplicitMT()
-    ff_out = ROOT.TFile("./results/" + SaveFileName + str(StartFile) + ".root",
-                        'recreate')
+    ff_out = ROOT.TFile(
+        "./results/" + SaveFileName + str(StartFile) + "_" + str(NFiles) +
+        ".root", 'recreate')
     ff_out.cd()
     muCC_TresNPEE3D_tree = ROOT.TTree(
         "muCC_NPETresE",
@@ -309,19 +311,74 @@ def GetNPE_Tres_Energy_Profile(NFiles,
 
     evt = ROOT.TChain("evt")
     geninfo = ROOT.TChain("geninfo")
+    pgst = ROOT.TChain("pgst")
     AddUserFile2TChain(evt, NFiles=NFiles, StartFile=StartFile)
     AddUserFile2TChain(geninfo, NFiles=NFiles, StartFile=StartFile)
+    AddUserFile2TChain(pgst, NFiles=NFiles, StartFile=StartFile)
 
-    for i in range(500):
-        sigma_tres[0] = i
-        NPE_LPMT[0] = i * 500
-        E_nu_true[0] = 14
-        if (i < 200):
-            muCC_TresNPEE3D_tree.Fill()
-        elif i >= 200 and i < 350:
-            eCC_TresNPEE3D_tree.Fill()
-        else:
-            NC_TresNPEE3D_tree.Fill()
+    evt.SetBranchStatus("*", 0)
+    geninfo.SetBranchStatus("*", 0)
+    pgst.SetBranchStatus("*", 0)
+    pgst.SetBranchStatus("Ev", 1)  #initial neutrino energy
+    geninfo.SetBranchStatus("InitX", 1)
+    geninfo.SetBranchStatus("InitY", 1)
+    geninfo.SetBranchStatus("InitZ", 1)
+    geninfo.SetBranchStatus("InitPDGID", 1)
+    evt.SetBranchStatus("hitTime", 1)
+    evt.SetBranchStatus("pmtID", 1)
+    evt.SetBranchStatus("GlobalPosX", 1)
+    evt.SetBranchStatus("GlobalPosY", 1)
+    evt.SetBranchStatus("GlobalPosZ", 1)
+
+    ff_out.cd()
+    for entry in range(evt.GetEntries()):
+        geninfo.GetEntry(entry)
+        # one vertex, use first one, mm to meter
+        InitX, InitY, InitZ = np.asarray(geninfo.InitX)[0] / 1e3, np.asarray(
+            geninfo.InitY)[0] / 1e3, np.asarray(geninfo.InitZ)[0] / 1e3
+        Smear_X, Smear_Y, Smear_Z = GetSmearedVertex(InitX, InitY, InitZ,
+                                                     sigma_vertex)
+        # print(np.sqrt(Smear_Z**2+Smear_Y**2+Smear_X**2))
+        if (np.sqrt(Smear_X**2 + Smear_Y**2 + Smear_Z**2) < R_vertex_cut):
+            evt.GetEntry(entry)
+            pmtID = np.asarray(evt.pmtID)
+            # index for different kind of pmts
+            SPMTs = np.where((pmtID >= sPMTID_low) & (pmtID <= sPMTID_up))[0]
+            WPPMTs = np.where((pmtID >= WPPMTID_low)
+                              & (pmtID <= WPPMTID_up))[0]
+            LPMTs = np.where((pmtID >= LPMTID_low) & (pmtID <= LPMTID_up))[0]
+            NPE_LPMT = LPMTs.shape[0]
+            if (WPPMTs.shape[0] < WP_NPE_cut):  #only WP cut
+                # & (NPE_LPMT > LPMT_NPE_cut) & (NPE_LPMT <LPMT_NPE_cut_up):
+                # hit position only for sPMT
+                Hit_x, Hit_y, Hit_z = np.asarray(
+                    evt.GlobalPosX)[SPMTs] / 1e3, np.asarray(
+                        evt.GlobalPosY)[SPMTs] / 1e3, np.asarray(
+                            evt.GlobalPosZ)[SPMTs] / 1e3
+                R_Vi = np.sqrt((Smear_X - Hit_x)**2 + (Smear_Y - Hit_y)**2 +
+                               (Smear_Z - Hit_z)**2)
+                hitTime = np.asarray(evt.hitTime)[SPMTs]
+                # smear hitTime
+                Smear_t = np.random.normal(hitTime, sigma_hitTime)
+                # prompt time cut given by Giulio: 1.2 mus
+                hit_pr_idx = np.where(Smear_t < HitTimeCut_up)[0]
+                t_res_i = Smear_t[hit_pr_idx] - \
+                    (R_Vi[hit_pr_idx]*LS_RI_idx/LightSpeed_c)
+
+                # takes RMS not standar devation
+                sigma_tres = np.sqrt(np.mean(t_res_i**2))
+                pgst.GetEntry(entry)
+                E_nu_true = np.asarray(pgst.Ev)[0]  #in GeV
+
+                # lepton at first place
+                InitPDGID = np.asarray(geninfo.InitPDGID)[0]
+                if (InitPDGID == 11) | (InitPDGID == -11):
+                    eCC_TresNPEE3D_tree.Fill()
+                elif (InitPDGID == 13) | (InitPDGID == -13):
+                    muCC_TresNPEE3D_tree.Fill()
+                else:
+                    NC_TresNPEE3D_tree.Fill()
+
     ff_out.Write()
     ff_out.Close()
 

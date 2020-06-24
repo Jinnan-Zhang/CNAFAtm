@@ -47,8 +47,8 @@ LPMT_NPE_steps = [1e5, 4.73e5, 1.01e6, 2.32e6,10**7.2]
 
 sigma_vertex = 1.  # 1m
 sigma_hitTime = 4  # 4ns
-# HitTimeCut_up = 1500  # ns
-HitTimeCut_up = 1200  # ns according to Giulio
+# HitTimeCut_up = 1500  # 1500 ns
+HitTimeCut_up = 1200  # 1200 ns (1.2 mus) according to Giulio
 
 # 1 ns binwidth
 BinWidth = 1

@@ -3,6 +3,7 @@
 
 from lib.PreImport import *
 from src.GetTimeResiual import *
+from src.DataDetail import *
 import sys
 import os
 o_path = os.getcwd()
@@ -27,3 +28,5 @@ if __name__ == "__main__":
         ViewnCaptureT(int(sys.argv[2]))
     elif (sys.argv[1] == "NPETE"):  # all information
         GetNPE_Tres_Energy_Profile(NFiles=1)
+    elif(sys.argv[1]=="E_v"):#view if neutrino energy right
+        ViewNetrinoEnergy(int(sys.argv[2]))
