@@ -347,7 +347,7 @@ def GetNPE_Tres_Energy_Profile(NFiles,
             WPPMTs = np.where((pmtID >= WPPMTID_low)
                               & (pmtID <= WPPMTID_up))[0]
             LPMTs = np.where((pmtID >= LPMTID_low) & (pmtID <= LPMTID_up))[0]
-            NPE_LPMT = LPMTs.shape[0]
+            NPE_LPMT[0] = LPMTs.shape[0]
             if (WPPMTs.shape[0] < WP_NPE_cut):  #only WP cut
                 # & (NPE_LPMT > LPMT_NPE_cut) & (NPE_LPMT <LPMT_NPE_cut_up):
                 # hit position only for sPMT
@@ -366,9 +366,9 @@ def GetNPE_Tres_Energy_Profile(NFiles,
                     (R_Vi[hit_pr_idx]*LS_RI_idx/LightSpeed_c)
 
                 # takes RMS not standar devation
-                sigma_tres = np.sqrt(np.mean(t_res_i**2))
+                sigma_tres[0] = np.sqrt(np.mean(t_res_i**2))
                 pgst.GetEntry(entry)
-                E_nu_true = np.asarray(pgst.Ev)[0]  #in GeV
+                E_nu_true[0] = np.asarray(pgst.Ev)  #in GeV
 
                 # lepton at first place
                 InitPDGID = np.asarray(geninfo.InitPDGID)[0]
