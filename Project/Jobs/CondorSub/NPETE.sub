@@ -1,7 +1,5 @@
 universe = vanilla
-executable = htc_test.sh
-output = /storage/gpfs_data/juno/junofs/users/zhangjinnan/Atm/CNAF_Atm/Project/Jobs/logs/outputFile.out
-error = /storage/gpfs_data/juno/junofs/users/zhangjinnan/Atm/CNAF_Atm/Project/Jobs/logs/errorFile.err
+executable = NPETE.sh
 ShouldTransferFiles = YES
 WhenToTransferOutput = ON_EXIT
 queue 1
