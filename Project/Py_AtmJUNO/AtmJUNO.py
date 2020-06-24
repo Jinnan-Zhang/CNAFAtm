@@ -27,7 +27,7 @@ if __name__ == "__main__":
     elif (sys.argv[1] == "NcapT"):  # view nCatureTime
         ViewnCaptureT(int(sys.argv[2]))
     elif (sys.argv[1] == "NPETE"):  # all information
-        GetNPE_Tres_Energy_Profile(NFiles=int(sys.argv[3]),
+        GetNPE_Tres_Energy_Profile(NFiles=int(sys.argv[2]),
                                    StartFile=int(sys.argv[3]),
                                    SaveFileName="result_NPETE")
     elif (sys.argv[1] == "E_v"):  #view if neutrino energy right
