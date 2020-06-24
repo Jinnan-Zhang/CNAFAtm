@@ -1,0 +1,6 @@
+universe = vanilla
+executable = /storage/gpfs_data/juno/junofs/users/zhangjinnan/Atm/CNAF_Atm/Project/Jobs/CNAF_Atm1.sh
+Accounting_Group = juno
+ShouldTransferFiles = YES
+WhenToTransferOutput = ON_EXIT
+queue 1
