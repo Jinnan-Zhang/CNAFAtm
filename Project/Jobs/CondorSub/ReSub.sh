@@ -1,6 +1,6 @@
 #!/bin/bash
 NOreSub=( 2901 3101 4001 1401 3901 4201 4401 1801 301 4101 )
-for((Target=1;Target<510;Target+=100))
+for((Target=1;Target<5101;Target+=100))
 do
     COUNT_re=0
     for re in ${NOreSub[@]}
