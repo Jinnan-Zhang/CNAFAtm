@@ -7,3 +7,4 @@ do
     echo retrieve: job: $Data
     condor_transfer_data -name sn-01.cr.cnaf.infn.it $Data
 done
+#end
