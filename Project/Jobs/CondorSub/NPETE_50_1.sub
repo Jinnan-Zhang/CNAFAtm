@@ -1,0 +1,5 @@
+universe = vanilla
+executable = NPETE_50_1.sh
+ShouldTransferFiles = YES
+WhenToTransferOutput = ON_EXIT
+queue 1
