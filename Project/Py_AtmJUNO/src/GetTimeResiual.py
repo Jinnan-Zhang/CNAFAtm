@@ -361,9 +361,13 @@ def GetNPE_Tres_Energy_Profile(NFiles,
                 # smear hitTime
                 Smear_t = np.random.normal(hitTime, sigma_hitTime)
                 # prompt time cut given by Giulio: 1.2 mus
-                hit_pr_idx = np.where(Smear_t < HitTimeCut_up)[0]
-                t_res_i = Smear_t[hit_pr_idx] - \
-                    (R_Vi[hit_pr_idx]*LS_RI_idx/LightSpeed_c)
+                if np.size(Smear_t)>1:
+                    hit_pr_idx = np.where(Smear_t < HitTimeCut_up)[0]
+                    t_res_i = Smear_t[hit_pr_idx] - \
+                        (R_Vi[hit_pr_idx]*LS_RI_idx/LightSpeed_c)
+                else:
+                    t_res_i = Smear_t - \
+                        (R_Vi*LS_RI_idx/LightSpeed_c)
 
                 # takes RMS not standar devation
                 sigma_tres[0] = np.sqrt(np.mean(t_res_i**2))
