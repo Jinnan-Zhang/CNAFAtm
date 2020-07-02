@@ -1,7 +1,0 @@
-universe = vanilla
-executable = NPETE_50_51.sh
-output = /storage/gpfs_data/juno/junofs/users/zhangjinnan/Atm/CNAF_Atm/Project/Jobs/logs/NPETE_50_51.out
-error = /storage/gpfs_data/juno/junofs/users/zhangjinnan/Atm/CNAF_Atm/Project/Jobs/logs/NPETE_50_51.err
-ShouldTransferFiles = YES
-WhenToTransferOutput = ON_EXIT
-queue 1
