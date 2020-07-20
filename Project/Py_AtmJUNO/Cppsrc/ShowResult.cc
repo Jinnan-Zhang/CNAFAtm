@@ -29,7 +29,7 @@ int ShowResult()
 //get result for all PEs
 void ForAllPEs()
 {
-    TFile *ff_newr = TFile::Open("resultnHitCUT.root", "READ");
+    TFile *ff_newr = TFile::Open("../results/resultnHitCUT.root", "READ");
     TH1 *h_muCC[4], *h_eCC[4], *h_NC[5];
     TString mucc_name[4] = {
         "muCC0",
@@ -156,8 +156,8 @@ void ForAllPEs()
 void ViewEffandCONT()
 {
     TH1::AddDirectory(false);
-    TString PreFileName = "result10.root";
-    // TString PreFileName = "resultnHitCUT.root";
+    TString PreFileName = "../results/result10.root";
+    // TString PreFileName = "../results/resultnHitCUT.root";
     TFile *ff_flavor = TFile::Open(PreFileName, "READ");
     TH1 *h_muCC[4], *h_eCC[4], *h_NC[4];
     Color_t mueN[] = {
@@ -281,8 +281,8 @@ void ViewEffandCONT()
 }
 void ViewFlavor()
 {
-    // TString PreFileName = "result10.root";
-    TString PreFileName = "resultnHitCUT.root";
+    // TString PreFileName = "../results/result10.root";
+    TString PreFileName = "../results/resultnHitCUT.root";
 
     TH1::AddDirectory(false);
     TFile *ff_flavor = TFile::Open(PreFileName, "READ");
