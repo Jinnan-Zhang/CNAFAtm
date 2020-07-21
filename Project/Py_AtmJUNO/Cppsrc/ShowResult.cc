@@ -41,7 +41,25 @@ void ShowNPE_nd_Cuts()
     NC_NPETresE.Add("../results/result_NPETE*.root");
     //mu,e,NC
     float sigma_tres[3] = {0}, NPE_LPMT[3] = {0}, E_nu_true[3] = {0};
-    
+    muCC_NPETresE.SetBranchAddress("sigma_tres", &sigma_tres[0]);
+    muCC_NPETresE.SetBranchAddress("NPE_LPMT", &NPE_LPMT[0]);
+    muCC_NPETresE.SetBranchAddress("E_nu_true", &E_nu_true[0]);
+    eCC_NPETresE.SetBranchAddress("sigma_tres", &sigma_tres[1]);
+    eCC_NPETresE.SetBranchAddress("NPE_LPMT", &NPE_LPMT[1]);
+    eCC_NPETresE.SetBranchAddress("E_nu_true", &E_nu_true[1]);
+    NC_NPETresE.SetBranchAddress("sigma_tres", &sigma_tres[2]);
+    NC_NPETresE.SetBranchAddress("NPE_LPMT", &NPE_LPMT[2]);
+    NC_NPETresE.SetBranchAddress("E_nu_true", &E_nu_true[2]);
+
+    //mu,e,NC
+    TH1 *h_NPE_initial[3];
+    TH1 *h_NPE_FidCut[3];
+    TH1 *h_NPE_allCut[3];
+    muCC_NPETresE.Draw("NPE_LPMT>>+h_NPE_initial(100,50e3,5e6)", "");
+    h_NPE_initial[0] = (TH1 *)gDirectory->Get("h_NPE_initial");
+    h_NPE_initial[0]->Draw("hist");
+    gPad->SetLogx();
+    gPad->SetLogy();
 }
 
 //get result for all PEs
