@@ -39,6 +39,9 @@ void ShowNPE_nd_Cuts()
     muCC_NPETresE.Add("../results/result_NPETE*.root");
     eCC_NPETresE.Add("../results/result_NPETE*.root");
     NC_NPETresE.Add("../results/result_NPETE*.root");
+    //mu,e,NC
+    float sigma_tres[3] = {0}, NPE_LPMT[3] = {0}, E_nu_true[3] = {0};
+    
 }
 
 //get result for all PEs
