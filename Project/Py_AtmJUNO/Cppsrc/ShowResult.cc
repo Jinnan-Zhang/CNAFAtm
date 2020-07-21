@@ -18,14 +18,22 @@ void ViewFlavor();
 void ViewEffandCONT();
 void ForAllPEs();
 void GetObjFromFile(TFile *File, TH1 *h[], TString ObjNames[], int NUMObj);
+void ShowNPE_nd_Cuts();
 
 int ShowResult()
 {
     // ViewFlavor();
     // ViewEffandCONT();
-    ForAllPEs();
+    // ForAllPEs();
+    ShowNPE_nd_Cuts();
     return 0;
 }
+
+//show NPE profile with/without cuts
+void ShowNPE_nd_Cuts()
+{
+}
+
 //get result for all PEs
 void ForAllPEs()
 {
@@ -125,28 +133,28 @@ void ForAllPEs()
     }
     TCanvas *cs[2];
     TLegend leg[2];
-    // for (int i = 0; i < 1; i++)
-    // {
-    //     cs[i] = new TCanvas(Form("c%d", i));
-    //     leg[i].AddEntry(h_Eff_muCC, "Efficiency");
-    //     leg[i].AddEntry(h_CONT_muCC, "Contamination");
-    //     cs[i]->cd();
-    //     h_Eff_muCC->SetTitle("#nu_{#mu}CC: 5.7<log(NPE_{LPMT})<7.2");
-    //     h_Eff_muCC->Draw();
-    //     h_CONT_muCC->Draw("SAME");
-    //     leg[i].DrawClone("SAME");
+    for (int i = 0; i < 1; i++)
+    {
+        cs[i] = new TCanvas(Form("c%d", i));
+        leg[i].AddEntry(h_Eff_muCC, "Efficiency");
+        leg[i].AddEntry(h_CONT_muCC, "Contamination");
+        cs[i]->cd();
+        h_Eff_muCC->SetTitle("#nu_{#mu}CC: 5.7<log(NPE_{LPMT})<7.2");
+        h_Eff_muCC->Draw();
+        h_CONT_muCC->Draw("SAME");
+        leg[i].DrawClone("SAME");
 
-    //     cs[i + 1] = new TCanvas(Form("c%d", i + 4));
-    //     cs[i + 1]->cd();
-    //     leg[i + 1].AddEntry(h_Eff_eCC, "Efficiency");
-    //     leg[i + 1].AddEntry(h_CONT_eCC, "Contamination");
-    //     h_Eff_eCC->SetTitle("#nu_{e}CC: 5<log(NPE_{LPMT})<7.2");
-    //     h_Eff_eCC->Draw();
-    //     // h_CONT_eCC->Draw();
-    //     h_CONT_eCC->Draw("SAME");
-    //     leg[i + 1].DrawClone("SAME");
-    // }
-    double e_CC_cut =90;
+        cs[i + 1] = new TCanvas(Form("c%d", i + 4));
+        cs[i + 1]->cd();
+        leg[i + 1].AddEntry(h_Eff_eCC, "Efficiency");
+        leg[i + 1].AddEntry(h_CONT_eCC, "Contamination");
+        h_Eff_eCC->SetTitle("#nu_{e}CC: 5<log(NPE_{LPMT})<7.2");
+        h_Eff_eCC->Draw();
+        // h_CONT_eCC->Draw();
+        h_CONT_eCC->Draw("SAME");
+        leg[i + 1].DrawClone("SAME");
+    }
+    double e_CC_cut = 90;
     double mu_CC_cut = 117;
     printf("%.1f ns eCC:EFF: %f\tCONT: %f\n", e_CC_cut, h_Eff_eCC->Interpolate(e_CC_cut), h_CONT_eCC->Interpolate(e_CC_cut));
     printf("%.1f ns muCC:EFF: %f\tCONT: %f\n", mu_CC_cut, h_Eff_muCC->Interpolate(mu_CC_cut), h_CONT_muCC->Interpolate(mu_CC_cut));

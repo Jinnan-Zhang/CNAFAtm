@@ -1,3 +1,9 @@
+/*
+Purpose: to inplement the bayes unfolding procedure.
+Author: Jinnan Zhang: jinnan.zhang@ihep.ac.cn
+2020.07.21
+*/
+
 #include <TChain.h>
 #include <TROOT.h>
 #include <TTree.h>
@@ -23,6 +29,7 @@ int Unfold()
     return 0;
 }
 
+//may load data inte vector from txt file
 void LoadFile(std::string filename,
               std::vector<std::vector<double>> &v,
               int Length,

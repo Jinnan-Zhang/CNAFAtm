@@ -68,7 +68,8 @@
         "NuSpectrum3.C": "cpp",
         "NuSpectrum2.C": "cpp",
         "NuSpectrum.C": "cpp",
-        "ALL_systcut_Numu.C": "cpp"
+        "ALL_systcut_Numu.C": "cpp",
+        "Data.C": "cpp"
     },
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
