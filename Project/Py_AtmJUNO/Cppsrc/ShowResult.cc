@@ -7,6 +7,7 @@ author: Jinnan Zhang:Jinnan.Zhang@ihep.ac.cn
 #include <TF1.h>
 #include <TGraph.h>
 #include <TFile.h>
+#include <TChain.h>
 #include <TCanvas.h>
 #include <TLegend.h>
 #include <iostream>
@@ -32,6 +33,12 @@ int ShowResult()
 //show NPE profile with/without cuts
 void ShowNPE_nd_Cuts()
 {
+    TChain muCC_NPETresE("muCC_NPETresE");
+    TChain eCC_NPETresE("eCC_NPETresE");
+    TChain NC_NPETresE("NC_NPETresE");
+    muCC_NPETresE.Add("../results/result_NPETE*.root");
+    eCC_NPETresE.Add("../results/result_NPETE*.root");
+    NC_NPETresE.Add("../results/result_NPETE*.root");
 }
 
 //get result for all PEs
