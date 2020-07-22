@@ -4,6 +4,7 @@ author: Jinnan Zhang:Jinnan.Zhang@ihep.ac.cn
 */
 #include <vector>
 #include <TH1.h>
+#include <TH2.h>
 #include <TF1.h>
 #include <TGraph.h>
 #include <TFile.h>
@@ -244,6 +245,27 @@ void ShowNPE_nd_Cuts()
         // // gPad->SetLogx();
         // gPad->SetLogy();
         // // ff_before_cut->Close();
+    }
+
+    //0:all selected, 1:true needed, 2:wrong
+    TString NPE_Spec_Name[] = {
+        "Sel.",
+        "True",
+        "Wrong"};
+    TH1 *h_eCC_NPE_Spec[3];
+    TH1 *h_muCC_NPE_Spec[3];
+    TH2D *h_eCC_Etrue_NPE = new TH2D("eCC_Likely_hood",
+                                     "#nu_{e} Likelyhood Matrix",
+                                     7, -1, 1.05,
+                                     7, 5, 7.2);
+    TH2D *h_muCC_Etrue_NPE = new TH2D("muCC_Likely_hood",
+                                      "#nu_{#mu} Likelyhood Matrix",
+                                      7, -0.3, 1.05,
+                                      8, 5.7, 7.2);
+    for (int i = 0; i < 3; i++)
+    {
+        h_eCC_NPE_Spec[i]=new TH1D("eCC"+NPE_Spec_Name[i],"#nu_{e} CC Spectra",7,5,7.2);
+        h_muCC_NPE_Spec[i]=new TH1D("muCC"+NPE_Spec_Name[i],"#nu_{#mu} CC Spectra",8,5.7,7.2);
     }
 }
 
