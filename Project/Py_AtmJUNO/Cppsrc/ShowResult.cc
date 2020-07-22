@@ -52,14 +52,94 @@ void ShowNPE_nd_Cuts()
     NC_NPETresE.SetBranchAddress("E_nu_true", &E_nu_true[2]);
 
     //mu,e,NC
-    TH1 *h_NPE_initial[3];
-    TH1 *h_NPE_FidCut[3];
-    TH1 *h_NPE_allCut[3];
-    muCC_NPETresE.Draw("NPE_LPMT>>+h_NPE_initial(100,50e3,5e6)", "");
-    h_NPE_initial[0] = (TH1 *)gDirectory->Get("h_NPE_initial");
-    h_NPE_initial[0]->Draw("hist");
-    gPad->SetLogx();
-    gPad->SetLogy();
+    Color_t hist_cor[3] = {kBlue, kRed, kGreen};
+    TString hist_name[3] = {"#nu_{#mu} CC", "#nu_{e} CC", "#nu_{x} NC"};
+    {
+        TH1 *h_NPE_initial[3];
+        TH1 *h_NPE_FidCut[3];
+        TH1 *h_NPE_allCut[3];
+        muCC_NPETresE.Draw("NPE_LPMT>>+h_NPE_initial_mu(100,1e4,1e7)", "", "goff");
+        eCC_NPETresE.Draw("NPE_LPMT>>+h_NPE_initial_e(100,1e4,1e7)", "", "goff");
+        NC_NPETresE.Draw("NPE_LPMT>>+h_NPE_initial_NC(100,1e4,1e7)", "", "goff");
+        h_NPE_initial[0] = (TH1 *)gDirectory->Get("h_NPE_initial_mu");
+        h_NPE_initial[1] = (TH1 *)gDirectory->Get("h_NPE_initial_e");
+        h_NPE_initial[2] = (TH1 *)gDirectory->Get("h_NPE_initial_NC");
+
+        TLegend leg_NPE;
+        h_NPE_initial[2]->SetXTitle("NPE_{LPMT}");
+        h_NPE_initial[2]->SetYTitle("entries");
+        TCanvas *c_NPE = new TCanvas("NPE");
+        c_NPE->cd();
+        h_NPE_initial[2]->Draw("hist");
+        for (int i = 0; i < 3; i++)
+        {
+            h_NPE_initial[i]->SetLineColor(hist_cor[i]);
+            leg_NPE.AddEntry(h_NPE_initial[i], hist_name[i]);
+            h_NPE_initial[i]->Draw("SAME");
+        }
+        leg_NPE.DrawClone("SAME");
+        // c_NPE->DrawClone();
+        // gPad->SetLogx();
+        gPad->SetLogy();
+
+        TH1 *h_tres_initial[3];
+        TH1 *h_tres_FidCut[3];
+        TH1 *h_tres_allCut[3];
+        muCC_NPETresE.Draw("sigma_tres>>+h_tres_initial_mu(500,0,500)", "", "goff");
+        eCC_NPETresE.Draw("sigma_tres>>+h_tres_initial_e(500,0,500)", "", "goff");
+        NC_NPETresE.Draw("sigma_tres>>+h_tres_initial_NC(500,0,500)", "", "goff");
+        h_tres_initial[0] = (TH1 *)gDirectory->Get("h_tres_initial_mu");
+        h_tres_initial[1] = (TH1 *)gDirectory->Get("h_tres_initial_e");
+        h_tres_initial[2] = (TH1 *)gDirectory->Get("h_tres_initial_NC");
+
+        TLegend leg_tres;
+        h_tres_initial[0]->SetXTitle("#sigma(t_{res})");
+        h_tres_initial[0]->SetYTitle("entries");
+        TCanvas *c_tres = new TCanvas("tres");
+        c_tres->cd();
+        h_tres_initial[0]->Draw("hist");
+        for (int i = 0; i < 3; i++)
+        {
+            h_tres_initial[i]->SetLineColor(hist_cor[i]);
+            leg_tres.AddEntry(h_tres_initial[i], hist_name[i]);
+            c_tres->cd();
+            h_tres_initial[i]->Draw("SAME");
+        }
+        c_tres->cd();
+        leg_tres.DrawClone("SAME");
+        // c_tres->DrawClone();
+        // gPad->SetLogx();
+        // gPad->SetLogy();
+
+        TH1 *h_Etrue_initial[3];
+        TH1 *h_Etrue_FidCut[3];
+        TH1 *h_Etrue_allCut[3];
+        muCC_NPETresE.Draw("E_nu_true>>+h_Etrue_initial_mu(100,0,20)", "", "goff");
+        eCC_NPETresE.Draw("E_nu_true>>+h_Etrue_initial_e(100,0,20)", "", "goff");
+        NC_NPETresE.Draw("E_nu_true>>+h_Etrue_initial_NC(100,0,20)", "", "goff");
+        h_Etrue_initial[0] = (TH1 *)gDirectory->Get("h_Etrue_initial_mu");
+        h_Etrue_initial[1] = (TH1 *)gDirectory->Get("h_Etrue_initial_e");
+        h_Etrue_initial[2] = (TH1 *)gDirectory->Get("h_Etrue_initial_NC");
+
+        TLegend leg_Etrue;
+        h_Etrue_initial[0]->SetXTitle("True Energy [GeV]");
+        h_Etrue_initial[0]->SetYTitle("entries");
+        TCanvas *c_Etrue = new TCanvas("ETrue");
+        c_Etrue->cd();
+        h_Etrue_initial[0]->Draw("hist");
+        for (int i = 0; i < 3; i++)
+        {
+            h_Etrue_initial[i]->SetLineColor(hist_cor[i]);
+            leg_Etrue.AddEntry(h_Etrue_initial[i], hist_name[i]);
+            c_Etrue->cd();
+            h_Etrue_initial[i]->Draw("SAME");
+        }
+        c_Etrue->cd();
+        leg_Etrue.DrawClone("SAME");
+        // gPad->SetLogx();
+        gPad->SetLogy();
+    }
+
 }
 
 //get result for all PEs
