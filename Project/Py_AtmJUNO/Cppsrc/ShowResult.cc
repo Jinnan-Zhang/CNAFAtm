@@ -50,96 +50,201 @@ void ShowNPE_nd_Cuts()
     NC_NPETresE.SetBranchAddress("sigma_tres", &sigma_tres[2]);
     NC_NPETresE.SetBranchAddress("NPE_LPMT", &NPE_LPMT[2]);
     NC_NPETresE.SetBranchAddress("E_nu_true", &E_nu_true[2]);
+    double Total_mu_eventsNUM = 152073.00;
+    double Total_e_eventsNUM = 86731.000;
 
     //mu,e,NC
     Color_t hist_cor[3] = {kBlue, kRed, kGreen};
     TString hist_name[3] = {"#nu_{#mu} CC", "#nu_{e} CC", "#nu_{x} NC"};
     {
-        TH1 *h_NPE_initial[3];
-        TH1 *h_NPE_FidCut[3];
-        TH1 *h_NPE_allCut[3];
-        muCC_NPETresE.Draw("NPE_LPMT>>+h_NPE_initial_mu(100,1e4,1e7)", "", "goff");
-        eCC_NPETresE.Draw("NPE_LPMT>>+h_NPE_initial_e(100,1e4,1e7)", "", "goff");
-        NC_NPETresE.Draw("NPE_LPMT>>+h_NPE_initial_NC(100,1e4,1e7)", "", "goff");
-        h_NPE_initial[0] = (TH1 *)gDirectory->Get("h_NPE_initial_mu");
-        h_NPE_initial[1] = (TH1 *)gDirectory->Get("h_NPE_initial_e");
-        h_NPE_initial[2] = (TH1 *)gDirectory->Get("h_NPE_initial_NC");
+        // TFile *ff_before_cut = TFile::Open("../data/Preliminary/OnlyWPPrompt.root", "RECREATE");
 
-        TLegend leg_NPE;
-        h_NPE_initial[2]->SetXTitle("NPE_{LPMT}");
-        h_NPE_initial[2]->SetYTitle("entries");
-        TCanvas *c_NPE = new TCanvas("NPE");
-        c_NPE->cd();
-        h_NPE_initial[2]->Draw("hist");
-        for (int i = 0; i < 3; i++)
-        {
-            h_NPE_initial[i]->SetLineColor(hist_cor[i]);
-            leg_NPE.AddEntry(h_NPE_initial[i], hist_name[i]);
-            h_NPE_initial[i]->Draw("SAME");
-        }
-        leg_NPE.DrawClone("SAME");
-        // c_NPE->DrawClone();
-        // gPad->SetLogx();
-        gPad->SetLogy();
+        // TH1 *h_NPE_initial[3];
+        // TH1 *h_NPE_FidCut[3];
+        // TH1 *h_NPE_allCut[3];
+        // muCC_NPETresE.Draw("NPE_LPMT>>+h_NPE_initial_mu", "", "goff");
+        // eCC_NPETresE.Draw("NPE_LPMT>>+h_NPE_initial_e", "", "goff");
+        // NC_NPETresE.Draw("NPE_LPMT>>+h_NPE_initial_NC", "", "goff");
+        // h_NPE_initial[0] = (TH1 *)gDirectory->Get("h_NPE_initial_mu");
+        // h_NPE_initial[1] = (TH1 *)gDirectory->Get("h_NPE_initial_e");
+        // h_NPE_initial[2] = (TH1 *)gDirectory->Get("h_NPE_initial_NC");
 
-        TH1 *h_tres_initial[3];
-        TH1 *h_tres_FidCut[3];
-        TH1 *h_tres_allCut[3];
-        muCC_NPETresE.Draw("sigma_tres>>+h_tres_initial_mu(500,0,500)", "", "goff");
-        eCC_NPETresE.Draw("sigma_tres>>+h_tres_initial_e(500,0,500)", "", "goff");
-        NC_NPETresE.Draw("sigma_tres>>+h_tres_initial_NC(500,0,500)", "", "goff");
-        h_tres_initial[0] = (TH1 *)gDirectory->Get("h_tres_initial_mu");
-        h_tres_initial[1] = (TH1 *)gDirectory->Get("h_tres_initial_e");
-        h_tres_initial[2] = (TH1 *)gDirectory->Get("h_tres_initial_NC");
+        // // muCC_NPETresE.Draw("NPE_LPMT>>+h_NPE_allCut_mu", "", "goff");
+        // // eCC_NPETresE.Draw("NPE_LPMT>>+h_NPE_allCut_e", "", "goff");
+        // // NC_NPETresE.Draw("NPE_LPMT>>+h_NPE_allCut_NC", "", "goff");
+        // // h_NPE_allCut[0] = (TH1 *)gDirectory->Get("h_NPE_allCut_mu");
+        // // h_NPE_allCut[1] = (TH1 *)gDirectory->Get("h_NPE_allCut_e");
+        // // h_NPE_allCut[2] = (TH1 *)gDirectory->Get("h_NPE_allCut_NC");
 
-        TLegend leg_tres;
-        h_tres_initial[0]->SetXTitle("#sigma(t_{res})");
-        h_tres_initial[0]->SetYTitle("entries");
-        TCanvas *c_tres = new TCanvas("tres");
-        c_tres->cd();
-        h_tres_initial[0]->Draw("hist");
-        for (int i = 0; i < 3; i++)
-        {
-            h_tres_initial[i]->SetLineColor(hist_cor[i]);
-            leg_tres.AddEntry(h_tres_initial[i], hist_name[i]);
-            c_tres->cd();
-            h_tres_initial[i]->Draw("SAME");
-        }
-        c_tres->cd();
-        leg_tres.DrawClone("SAME");
-        // c_tres->DrawClone();
-        // gPad->SetLogx();
+        // TLegend leg_NPE;
+        // h_NPE_initial[2]->SetXTitle("NPE_{LPMT}");
+        // h_NPE_initial[2]->SetYTitle("entries");
+        // TCanvas *c_NPE = new TCanvas("NPE");
+        // c_NPE->cd();
+        // h_NPE_initial[2]->Draw("hist");
+        // for (int i = 0; i < 3; i++)
+        // {
+        //     h_NPE_initial[i]->SetLineColor(hist_cor[i]);
+        //     leg_NPE.AddEntry(h_NPE_initial[i], hist_name[i]);
+        //     h_NPE_initial[i]->Draw("SAME");
+        //     // h_NPE_initial[i]->Write();
+        // }
+        // leg_NPE.DrawClone("SAME");
+        // // c_NPE->DrawClone();
+        // // gPad->SetLogx();
         // gPad->SetLogy();
 
-        TH1 *h_Etrue_initial[3];
-        TH1 *h_Etrue_FidCut[3];
-        TH1 *h_Etrue_allCut[3];
-        muCC_NPETresE.Draw("E_nu_true>>+h_Etrue_initial_mu(100,0,20)", "", "goff");
-        eCC_NPETresE.Draw("E_nu_true>>+h_Etrue_initial_e(100,0,20)", "", "goff");
-        NC_NPETresE.Draw("E_nu_true>>+h_Etrue_initial_NC(100,0,20)", "", "goff");
-        h_Etrue_initial[0] = (TH1 *)gDirectory->Get("h_Etrue_initial_mu");
-        h_Etrue_initial[1] = (TH1 *)gDirectory->Get("h_Etrue_initial_e");
-        h_Etrue_initial[2] = (TH1 *)gDirectory->Get("h_Etrue_initial_NC");
+        // TH1 *h_tres_initial[3];
+        // TH1 *h_tres_FidCut[3];
+        // TH1 *h_tres_muCut[3];
+        // TH1 *h_tres_eCut[3];
+        // muCC_NPETresE.Draw("sigma_tres>>+h_tres_initial_mu(500,0,500)", "", "goff");
+        // eCC_NPETresE.Draw("sigma_tres>>+h_tres_initial_e(500,0,500)", "", "goff");
+        // NC_NPETresE.Draw("sigma_tres>>+h_tres_initial_NC(500,0,500)", "", "goff");
+        // h_tres_initial[0] = (TH1 *)gDirectory->Get("h_tres_initial_mu");
+        // h_tres_initial[1] = (TH1 *)gDirectory->Get("h_tres_initial_e");
+        // h_tres_initial[2] = (TH1 *)gDirectory->Get("h_tres_initial_NC");
 
-        TLegend leg_Etrue;
-        h_Etrue_initial[0]->SetXTitle("True Energy [GeV]");
-        h_Etrue_initial[0]->SetYTitle("entries");
-        TCanvas *c_Etrue = new TCanvas("ETrue");
-        c_Etrue->cd();
-        h_Etrue_initial[0]->Draw("hist");
-        for (int i = 0; i < 3; i++)
-        {
-            h_Etrue_initial[i]->SetLineColor(hist_cor[i]);
-            leg_Etrue.AddEntry(h_Etrue_initial[i], hist_name[i]);
-            c_Etrue->cd();
-            h_Etrue_initial[i]->Draw("SAME");
-        }
-        c_Etrue->cd();
-        leg_Etrue.DrawClone("SAME");
-        // gPad->SetLogx();
-        gPad->SetLogy();
+        // TLegend leg_tres;
+        // h_tres_initial[0]->SetXTitle("#sigma(t_{res})");
+        // h_tres_initial[0]->SetYTitle("entries");
+        // TCanvas *c_tres = new TCanvas("tres");
+        // c_tres->cd();
+        // h_tres_initial[0]->Draw("hist");
+        // for (int i = 0; i < 3; i++)
+        // {
+        //     h_tres_initial[i]->SetLineColor(hist_cor[i]);
+        //     leg_tres.AddEntry(h_tres_initial[i], hist_name[i]);
+        //     c_tres->cd();
+        //     h_tres_initial[i]->Draw("SAME");
+        //     // h_tres_initial[i]->Write();
+        // }
+        // c_tres->cd();
+        // leg_tres.DrawClone("SAME");
+        // // c_tres->DrawClone();
+        // // gPad->SetLogx();
+        // // gPad->SetLogy();
+
+        // //different spectra under different cuts
+        // muCC_NPETresE.Draw("sigma_tres>>+h_tres_muCut_mu(500,0,500)", "(NPE_LPMT>5e5) && (NPE_LPMT<1.59e7)", "goff");
+        // eCC_NPETresE.Draw("sigma_tres>>+h_tres_muCut_e(500,0,500)", "(NPE_LPMT>5e5) && (NPE_LPMT<1.59e7)", "goff");
+        // NC_NPETresE.Draw("sigma_tres>>+h_tres_muCut_NC(500,0,500)", "(NPE_LPMT>5e5) && (NPE_LPMT<1.59e7)", "goff");
+        // h_tres_muCut[0] = (TH1 *)gDirectory->Get("h_tres_muCut_mu");
+        // h_tres_muCut[1] = (TH1 *)gDirectory->Get("h_tres_muCut_e");
+        // h_tres_muCut[2] = (TH1 *)gDirectory->Get("h_tres_muCut_NC");
+        // muCC_NPETresE.Draw("sigma_tres>>+h_tres_eCut_mu(500,0,500)", "(NPE_LPMT>1e5) && (NPE_LPMT<1.59e7)", "goff");
+        // eCC_NPETresE.Draw("sigma_tres>>+h_tres_eCut_e(500,0,500)", "(NPE_LPMT>1e5) && (NPE_LPMT<1.59e7)", "goff");
+        // NC_NPETresE.Draw("sigma_tres>>+h_tres_eCut_NC(500,0,500)", "(NPE_LPMT>1e5) && (NPE_LPMT<1.59e7)", "goff");
+        // h_tres_eCut[0] = (TH1 *)gDirectory->Get("h_tres_eCut_mu");
+        // h_tres_eCut[1] = (TH1 *)gDirectory->Get("h_tres_eCut_e");
+        // h_tres_eCut[2] = (TH1 *)gDirectory->Get("h_tres_eCut_NC");
+        // TH1 *h_Eff_eCC = (TH1 *)h_tres_initial[0]->Clone("Eff_eCC");
+        // TH1 *h_CONT_eCC = (TH1 *)h_tres_initial[0]->Clone("Cont_eCC");
+        // TH1 *h_Eff_muCC = (TH1 *)h_tres_initial[0]->Clone("Eff_muCC");
+        // TH1 *h_CONT_muCC = (TH1 *)h_tres_initial[0]->Clone("Cont_muCC");
+        // TCanvas *c_EffCONT[2];
+        // TLegend leg_EffCONT[2];
+        // //all events number for eCC in each LPMT NPE with current cut(bin)
+        // double eCC_all = h_NPE_initial[1]->GetEntries();
+        // //all events number for muCC in each LPMT NPE with current cut(bin)
+        // double muCC_all = h_tres_initial[0]->GetEntries();
+        // //obseved event number in current cut range, mu,e case
+        // double Ob_range[2];
+        // double muCC_in[2], eCC_in[2], NC_in[2];
+        // double Eff_mu = 0, CONT_mu = 0;
+        // double Eff_e = 0, CONT_e = 0;
+        // const int BINNUM_tres = h_Eff_eCC->GetNbinsX();
+        // for (int i = 0; i < BINNUM_tres; i++)
+        // {
+        //     muCC_in[0] = h_tres_muCut[0]->Integral(i + 1, BINNUM_tres);
+        //     eCC_in[0] = h_tres_muCut[1]->Integral(i + 1, BINNUM_tres);
+        //     NC_in[0] = h_tres_muCut[2]->Integral(i + 1, BINNUM_tres);
+        //     muCC_in[1] = h_tres_eCut[0]->Integral(1, i + 1);
+        //     eCC_in[1] = h_tres_eCut[1]->Integral(1, i + 1);
+        //     NC_in[1] = h_tres_eCut[2]->Integral(1, i + 1);
+        //     Ob_range[0] = muCC_in[0] + eCC_in[0] + NC_in[0];
+        //     Ob_range[1] = muCC_in[1] + eCC_in[1] + NC_in[1];
+        //     if (Ob_range[0] == 0)
+        //         Ob_range[0] = 1;
+        //     if (Ob_range[1] == 0)
+        //         Ob_range[1] = 1;
+        //     Eff_mu = muCC_in[0] / muCC_all;
+        //     CONT_mu = 1 - muCC_in[0] / Ob_range[0];
+        //     Eff_e = eCC_in[1] / eCC_all;
+        //     CONT_e = 1 - eCC_in[1] / Ob_range[1];
+        //     h_Eff_eCC->SetBinContent(i + 1, Eff_e);
+        //     h_CONT_eCC->SetBinContent(i + 1, CONT_e);
+        //     h_Eff_muCC->SetBinContent(i + 1, Eff_mu);
+        //     h_CONT_muCC->SetBinContent(i + 1, CONT_mu);
+        // }
+        // // TFile *ff_EffCONT = TFile::Open("../data/Preliminary/EffCont.root", "RECREATE");
+        // c_EffCONT[0] = new TCanvas("mu_CC");
+        // h_CONT_muCC->SetLineColor(kRed);
+        // h_Eff_muCC->SetLineColor(kBlue);
+        // leg_EffCONT[0].AddEntry(h_CONT_muCC, "Contamination");
+        // leg_EffCONT[0].AddEntry(h_Eff_muCC, "Efficiency");
+        // h_CONT_muCC->SetXTitle("#sigma(t_{res}) [ns]");
+        // h_CONT_muCC->SetTitle("#nu_{#mu} CC");
+        // c_EffCONT[0]->cd();
+        // h_CONT_muCC->Draw();
+        // h_Eff_muCC->Draw("SAME");
+        // // h_CONT_muCC->Write();
+        // // h_Eff_muCC->Write();
+        // leg_EffCONT[0].DrawClone("SAME");
+
+        // c_EffCONT[1] = new TCanvas("e_CC");
+        // h_CONT_eCC->SetLineColor(kRed);
+        // h_Eff_eCC->SetLineColor(kBlue);
+        // leg_EffCONT[1].AddEntry(h_CONT_eCC, "Contamination");
+        // leg_EffCONT[1].AddEntry(h_Eff_eCC, "Efficiency");
+        // h_CONT_eCC->SetXTitle("#sigma(t_{res}) [ns]");
+        // h_CONT_eCC->SetTitle("#nu_{e} CC");
+        // c_EffCONT[1]->cd();
+        // h_CONT_eCC->Draw();
+        // h_Eff_eCC->Draw("SAME");
+        // // h_CONT_eCC->Write();
+        // // h_Eff_eCC->Write();
+        // leg_EffCONT[1].DrawClone("SAME");
+        // // ff_EffCONT->Close();
+        // double Sigma_cut_muCC = 114;
+        // double Sigma_cut_eCC = 85;
+        // printf("mu CC: Eff:%f\tCONT:%f\n",
+        //        h_Eff_muCC->Interpolate(Sigma_cut_muCC),
+        //        h_CONT_muCC->Interpolate(Sigma_cut_muCC));
+        // printf("e CC: Eff:%f\tCONT:%f\n",
+        //        h_Eff_eCC->Interpolate(Sigma_cut_eCC),
+        //        h_CONT_eCC->Interpolate(Sigma_cut_eCC));
+
+        // TH1 *h_Etrue_initial[3];
+        // TH1 *h_Etrue_FidCut[3];
+        // TH1 *h_Etrue_allCut[3];
+        // muCC_NPETresE.Draw("E_nu_true>>+h_Etrue_initial_mu(100,0,20)", "", "goff");
+        // eCC_NPETresE.Draw("E_nu_true>>+h_Etrue_initial_e(100,0,20)", "", "goff");
+        // NC_NPETresE.Draw("E_nu_true>>+h_Etrue_initial_NC(100,0,20)", "", "goff");
+        // h_Etrue_initial[0] = (TH1 *)gDirectory->Get("h_Etrue_initial_mu");
+        // h_Etrue_initial[1] = (TH1 *)gDirectory->Get("h_Etrue_initial_e");
+        // h_Etrue_initial[2] = (TH1 *)gDirectory->Get("h_Etrue_initial_NC");
+
+        // TLegend leg_Etrue;
+        // h_Etrue_initial[0]->SetXTitle("True Energy [GeV]");
+        // h_Etrue_initial[0]->SetYTitle("entries");
+        // TCanvas *c_Etrue = new TCanvas("ETrue");
+        // c_Etrue->cd();
+        // h_Etrue_initial[0]->Draw("hist");
+        // for (int i = 0; i < 3; i++)
+        // {
+        //     h_Etrue_initial[i]->SetLineColor(hist_cor[i]);
+        //     leg_Etrue.AddEntry(h_Etrue_initial[i], hist_name[i]);
+        //     c_Etrue->cd();
+        //     h_Etrue_initial[i]->Draw("SAME");
+        //     // h_Etrue_initial[i]->Write();
+        // }
+        // c_Etrue->cd();
+        // leg_Etrue.DrawClone("SAME");
+        // // gPad->SetLogx();
+        // gPad->SetLogy();
+        // // ff_before_cut->Close();
     }
-
 }
 
 //get result for all PEs
