@@ -18,6 +18,8 @@ Author: Jinnan Zhang: jinnan.zhang@ihep.ac.cn
 #include "TPaveStats.h"
 #include "TLine.h"
 #include "TMath.h"
+#include <TPad.h>
+#include <TLegend.h>
 #include <vector>
 #include <string>
 #include <fstream>
@@ -26,11 +28,11 @@ void LoadFile(std::string filename, std::vector<std::vector<double>> &v, int Len
 void BayesUnfold(int Iter_NUM = 1);
 void Iter_Bayes_Once(TH1 *h_input, TH1 *h_prior, TH2 *h_Likelihd_M, TH1 *h_output, double *epsilon_i);
 const int Expected_evt_NUM_eCC[] = {40, 100, 125, 135, 80, 45, 20};
-const int Expected_evt_NUM_muCC[] = {55, 237, 231, 171, 100, 48,17};
+const int Expected_evt_NUM_muCC[] = {55, 237, 231, 171, 100, 48, 17};
 
 int Unfold()
 {
-    BayesUnfold(1000);
+    BayesUnfold(1);
     return 0;
 }
 
@@ -46,8 +48,8 @@ void BayesUnfold(int Iter_NUM)
     TH1 *h_Prior_muCC = (TH1 *)ff_unfold_data->Get("Honda_flux_mu");
     TH1 *h_MC_true_eCC = (TH1 *)ff_unfold_data->Get("Enu_eCCTrue");
     TH1 *h_MC_true_muCC = (TH1 *)ff_unfold_data->Get("Enu_muCCTrue");
-    TH1 *h_eCC_result = (TH1 *)h_Prior_eCC->Clone("eCC_result");
-    TH1 *h_muCC_result = (TH1 *)h_Prior_muCC->Clone("muCC_result");
+    TH1 *h_eCC_result = (TH1 *)h_MC_true_eCC->Clone("eCC_result");
+    TH1 *h_muCC_result = (TH1 *)h_MC_true_muCC->Clone("muCC_result");
     const int Enu_BINNUM_eCC = h_Prior_eCC->GetNbinsX();
     const int Enu_BINNUM_muCC = h_Prior_muCC->GetNbinsX();
     double epsilon_i_eCC[Enu_BINNUM_eCC];
@@ -76,12 +78,38 @@ void BayesUnfold(int Iter_NUM)
             Iter_Bayes_Once(h_sel_eCC, h_Prior_eCC, h_likeli_eCC, h_eCC_result, epsilon_i_eCC);
             Iter_Bayes_Once(h_sel_muCC, h_Prior_muCC, h_likeli_muCC, h_muCC_result, epsilon_i_muCC);
         }
+    gStyle->SetOptStat(0);
+    gStyle->SetOptTitle(0);
     TCanvas *c_CC_Spec = new TCanvas("muCC_Spec");
+    TPad *p1 = new TPad("p1", "p1", 0.01, 0.3, 0.95, 0.95, 0, 0, 0);
+    p1->SetTopMargin(0);
+    p1->SetBottomMargin(0);
+    p1->SetRightMargin(0.02);
+    p1->Draw();
+
+    TPad *p2 = new TPad("p2", "p2", 0.01, 0.0, 0.95, 0.3, 0, 0, 0);
+    p2->SetTopMargin(0);
+    //p2->SetLeftMargin(0);
+    p2->SetRightMargin(0.02);
+    p2->SetBottomMargin(0.25);
+    //gPad->SetTickx(2);
+    //gPad->SetTicky(2);
+    p2->Draw();
+
+    p1->cd();
+    TLegend leg_[2];
     h_muCC_result->SetLineColor(kRed);
+    h_muCC_result->SetMarkerColor(kRed);
+    h_muCC_result->SetMarkerSize(1.5);
+
     h_muCC_result->Draw();
     h_MC_true_muCC->Draw("SAME");
+    leg_[0].AddEntry(h_MC_true_muCC, "MC Truth");
+    leg_[0].AddEntry(h_muCC_result, "Unfolded");
+    leg_[0].DrawClone("SAME");
 
-    TCanvas *c_muCC = new TCanvas("muCC_");
+    // TCanvas *c_muCC = new TCanvas("muCC_");
+    p2->cd();
     TH1 *h_ref_muCC = (TH1 *)h_MC_true_muCC->Clone("refLine_muCC");
     TH1 *h_ratio_muCC = (TH1 *)h_MC_true_muCC->Clone("Ratio_muCC");
     h_ref_muCC->Divide(h_MC_true_muCC);
@@ -90,16 +118,41 @@ void BayesUnfold(int Iter_NUM)
     h_ratio_muCC->SetMarkerColor(kRed);
     h_ratio_muCC->SetMarkerSize(1.5);
     h_ratio_muCC->SetMarkerStyle(kFullCircle);
+    h_ratio_muCC->SetYTitle("Reco/MC");
     h_ratio_muCC->Draw("E1");
     h_ref_muCC->Draw("SAME");
 
     TCanvas *c_eCC_Spec = new TCanvas("eCC_Spec");
+    TPad *p3 = new TPad("p3", "p3", 0.01, 0.3, 0.95, 0.95, 0, 0, 0);
+    p3->SetTopMargin(0);
+    p3->SetBottomMargin(0);
+    //p3->SetLeftMargin(0);
+    p3->SetRightMargin(0.02);
+    //gPad->SetTickx(2);
+    //gPad->SetTicky(2);
+    p3->Draw();
+
+    TPad *p4 = new TPad("p4", "p4", 0.01, 0.0, 0.95, 0.3, 0, 0, 0);
+    p4->SetTopMargin(0);
+    //p4->SetLeftMargin(0);
+    p4->SetRightMargin(0.02);
+    p4->SetBottomMargin(0.25);
+    //gPad->SetTickx(2);
+    //gPad->SetTicky(2);
+    p4->Draw();
+    p3->cd();
     h_eCC_result->SetLineColor(kRed);
+    h_eCC_result->SetMarkerColor(kRed);
+    h_eCC_result->SetMarkerSize(1.5);
     h_eCC_result->Draw();
     h_MC_true_eCC->Draw("SAME");
+    leg_[1].AddEntry(h_MC_true_eCC, "MC Truth");
+    leg_[1].AddEntry(h_eCC_result, "Unfolded");
+    leg_[1].DrawClone("SAME");
     // h_MC_true_eCC->Draw();
 
-    TCanvas *c_eCC = new TCanvas("eCC_");
+    // TCanvas *c_eCC = new TCanvas("eCC_");
+    p4->cd();
     TH1 *h_ref_eCC = (TH1 *)h_MC_true_eCC->Clone("refLine_eCC");
     TH1 *h_ratio_eCC = (TH1 *)h_MC_true_eCC->Clone("Ratio_eCC");
     h_ref_eCC->Divide(h_MC_true_eCC);
@@ -108,6 +161,7 @@ void BayesUnfold(int Iter_NUM)
     h_ratio_eCC->SetMarkerColor(kRed);
     h_ratio_eCC->SetMarkerSize(1.5);
     h_ratio_eCC->SetMarkerStyle(kFullCircle);
+    h_ratio_eCC->SetYTitle("Reco/MC");
     h_ratio_eCC->Draw("E1");
     h_ref_eCC->Draw("SAME");
 }

@@ -24,6 +24,8 @@ void ForAllPEs();
 void GetObjFromFile(TFile *File, TH1 *h[], TString ObjNames[], int NUMObj);
 void LoadFile(std::string filename, std::vector<std::vector<double>> &v, int Length = 2, int SkipLines = 0);
 void ShowNPE_nd_Cuts();
+const int Expected_evt_NUM_eCC[] = {40, 100, 125, 135, 80, 45, 20};
+const int Expected_evt_NUM_muCC[] = {165, 170, 155, 145, 100, 60, 35, 20};
 
 using namespace std;
 int ShowResult()
@@ -395,28 +397,53 @@ void ShowNPE_nd_Cuts()
     }
 
     {
-        // TLegend leg_sel[2];
-        // TCanvas *c_Sel_eCC = new TCanvas("Sel_eCC");
-        // c_Sel_eCC->cd();
-        // h_eCC_NPE_Spec[0]->Draw("");
-        // for (int i = 0; i < 3; i++)
-        // {
-        //     h_eCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
-        //     leg_sel[0].AddEntry(h_eCC_NPE_Spec[i], "#nu_{e}: " + NPE_Spec_Name[i]+" part");
-        //     h_eCC_NPE_Spec[i]->Draw("SAME");
-        // }
-        // leg_sel[0].DrawClone("SAME");
+        TLegend leg_sel[2];
+        TCanvas *c_Sel_eCC = new TCanvas("Sel_eCC");
+        c_Sel_eCC->cd();
+        double t_evt[NPE_BINNUM_muCC];
+        double Bin_center;
+        for (int i = 0; i < h_eCC_NPE_Spec[0]->GetNbinsX(); i++)
+            t_evt[i] = h_eCC_NPE_Spec[0]->GetBinContent(i + 1);
+        h_eCC_NPE_Spec[0]->Reset();
+        for (int i = 0; i < NPE_BINNUM_eCC; i++)
+        {
+            Bin_center = h_eCC_NPE_Spec[0]->GetBinCenter(i + 1);
+            for (int j = 0; j < Expected_evt_NUM_eCC[i]; j++)
+                h_eCC_NPE_Spec[0]->Fill(Bin_center, t_evt[i] / Expected_evt_NUM_eCC[i]);
+        }
+        h_eCC_NPE_Spec[0]->SetMarkerColor(kBlack);
+        h_eCC_NPE_Spec[0]->SetMarkerSize(1.5);
+        h_eCC_NPE_Spec[0]->Draw("E1");
+        for (int i = 0; i < 3; i++)
+        {
+            h_eCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
+            leg_sel[0].AddEntry(h_eCC_NPE_Spec[i], "#nu_{e}: " + NPE_Spec_Name[i] + " part");
+            h_eCC_NPE_Spec[i]->Draw("SAME");
+        }
+        leg_sel[0].DrawClone("SAME");
 
-        // TCanvas *c_Sel_mu = new TCanvas("Sel_muCC");
-        // c_Sel_mu->cd();
-        // h_muCC_NPE_Spec[0]->Draw();
-        // for (int i = 0; i < 3; i++)
-        // {
-        //     h_muCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
-        //     leg_sel[1].AddEntry(h_muCC_NPE_Spec[i], "#nu_{#mu}: " + NPE_Spec_Name[i]+" part");
-        //     h_muCC_NPE_Spec[i]->Draw("SAME");
-        // }
-        // leg_sel[1].DrawClone("SAME");
+        TCanvas *c_Sel_mu = new TCanvas("Sel_muCC");
+        c_Sel_mu->cd();
+        for (int i = 0; i < h_muCC_NPE_Spec[0]->GetNbinsX(); i++)
+            t_evt[i] = h_muCC_NPE_Spec[0]->GetBinContent(i + 1);
+        h_muCC_NPE_Spec[0]->Reset();
+        for (int i = 0; i < NPE_BINNUM_muCC; i++)
+        {
+            Bin_center = h_muCC_NPE_Spec[0]->GetBinCenter(i + 1);
+            for (int j = 0; j < Expected_evt_NUM_muCC[i]; j++)
+                h_muCC_NPE_Spec[0]->Fill(Bin_center, t_evt[i] / Expected_evt_NUM_muCC[i]);
+        }
+        h_muCC_NPE_Spec[0]->SetMarkerColor(kBlack);
+        h_muCC_NPE_Spec[0]->SetMarkerSize(1.5);
+        h_muCC_NPE_Spec[0]->Draw("E1");
+        h_muCC_NPE_Spec[0]->Draw("E1");
+        for (int i = 0; i < 3; i++)
+        {
+            h_muCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
+            leg_sel[1].AddEntry(h_muCC_NPE_Spec[i], "#nu_{#mu}: " + NPE_Spec_Name[i] + " part");
+            h_muCC_NPE_Spec[i]->Draw("SAME");
+        }
+        leg_sel[1].DrawClone("SAME");
 
         // h_muCC_NPE_Spec[0]->Draw("E");
         // h_muCC_Etrue_NPE->Draw("colz");
