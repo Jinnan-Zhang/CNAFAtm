@@ -421,8 +421,8 @@ void ShowNPE_nd_Cuts()
         // h_muCC_NPE_Spec[0]->Draw("E");
         // h_muCC_Etrue_NPE->Draw("colz");
         // h_eCC_Etrue_NPE->Draw("colz");
-        // muCC_NPETresE.Draw("NPE_LPMT:E_nu_true>>+h_2DmuCC","","colz");
-        // eCC_NPETresE.Draw("E_nu_true>>+h_2DmuCC","","");
+        // muCC_NPETresE.Draw("NPE_LPMT:E_nu_true>>+h_2DmuCC","E_nu_true<2","colz");
+        // muCC_NPETresE.Draw("E_nu_true>>+h_2DmuCC","","");
         // eCC_NPETresE.Draw("NPE_LPMT:E_nu_true>>+h_2DeCC","","colz");
         // NC_NPETresE.Draw("NPE_LPMT:E_nu_true>>+h_2DNC","","colz");
     }
@@ -447,19 +447,19 @@ void ShowNPE_nd_Cuts()
     h_Honda_flux_mu->SetYTitle("P_{0}(E_{i})");
 
     // h_Honda_flux_mu->Draw("E");
-    // TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "RECREATE");
-    // for (int i = 0; i < 3; i++)
-    // {
-    //     h_eCC_NPE_Spec[i]->Write();
-    //     h_muCC_NPE_Spec[i]->Write();
-    //     h_eCC_Enu_Spec[i]->Write();
-    //     h_muCC_Enu_Spec[i]->Write();
-    // }
-    // h_muCC_Etrue_NPE->Write();
-    // h_eCC_Etrue_NPE->Write();
-    // h_Honda_flux_e->Write();
-    // h_Honda_flux_mu->Write();
-    // ff_unfold->Close();
+    TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "RECREATE");
+    for (int i = 0; i < 3; i++)
+    {
+        h_eCC_NPE_Spec[i]->Write();
+        h_muCC_NPE_Spec[i]->Write();
+        h_eCC_Enu_Spec[i]->Write();
+        h_muCC_Enu_Spec[i]->Write();
+    }
+    h_muCC_Etrue_NPE->Write();
+    h_eCC_Etrue_NPE->Write();
+    h_Honda_flux_e->Write();
+    h_Honda_flux_mu->Write();
+    ff_unfold->Close();
 
     {
         // double A_ji_ecc[NPE_BINNUM_eCC][Etrue_BINNUM_eCC];
