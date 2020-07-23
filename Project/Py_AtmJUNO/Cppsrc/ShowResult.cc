@@ -262,7 +262,7 @@ void ShowNPE_nd_Cuts()
     Color_t NPE_Spec_Color[] = {
         kBlack,
         kViolet,
-        kGreen+3};
+        kGreen + 3};
     const int NPE_BINNUM_eCC = 7;
     const int NPE_BINNUM_muCC = 8;
     const int Etrue_BINNUM_eCC = 7;
@@ -274,6 +274,8 @@ void ShowNPE_nd_Cuts()
 
     TH1 *h_eCC_NPE_Spec[3];
     TH1 *h_muCC_NPE_Spec[3];
+    TH1 *h_eCC_Enu_Spec[3];
+    TH1 *h_muCC_Enu_Spec[3];
     TH2D *h_eCC_Etrue_NPE = new TH2D("eCC_Likely_hood",
                                      "#nu_{e} Likelihood Matrix",
                                      Etrue_BINNUM_eCC, -1, 1.05,
@@ -289,20 +291,35 @@ void ShowNPE_nd_Cuts()
 
     for (int i = 0; i < 3; i++)
     {
-        h_eCC_NPE_Spec[i] = new TH1D("eCC" + NPE_Spec_Name[i],
-                                     "#nu_{e} CC Spectra",
-                                     NPE_BINNUM_eCC, logNPE_range_eCC[0], logNPE_range_eCC[1]);
-        h_muCC_NPE_Spec[i] = new TH1D("muCC" + NPE_Spec_Name[i],
-                                      "#nu_{#mu} CC Spectra",
-                                      NPE_BINNUM_muCC, logNPE_range_muCC[0], logNPE_range_muCC[1]);
+        h_eCC_NPE_Spec[i] = new TH1D("NPEeCC" + NPE_Spec_Name[i],
+                                     "#nu_{e} CC NPE Spectra",
+                                     NPE_BINNUM_eCC,
+                                     logNPE_range_eCC[0], logNPE_range_eCC[1]);
+        h_muCC_NPE_Spec[i] = new TH1D("NPEmuCC" + NPE_Spec_Name[i],
+                                      "#nu_{#mu} CC NPE Spectra",
+                                      NPE_BINNUM_muCC,
+                                      logNPE_range_muCC[0], logNPE_range_muCC[1]);
         h_eCC_NPE_Spec[i]->SetXTitle("log_{10}(NPE_{LPMT})");
         h_muCC_NPE_Spec[i]->SetXTitle("log_{10}(NPE_{LPMT})");
         h_eCC_NPE_Spec[i]->SetYTitle("entries");
         h_muCC_NPE_Spec[i]->SetYTitle("entries");
         h_eCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
         h_muCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
+        h_eCC_Enu_Spec[i] = new TH1D("Enu_eCC" + NPE_Spec_Name[i],
+                                     "#nu_{e} CC Neutrino Enegry Spectra",
+                                     Etrue_BINNUM_eCC,
+                                     logEtrue_range_eCC[0], logEtrue_range_eCC[1]);
+        h_muCC_Enu_Spec[i] = new TH1D("Enu_muCC" + NPE_Spec_Name[i],
+                                      "#nu_{#mu} CC Neutrino Enegry Spectra",
+                                      Etrue_BINNUM_muCC,
+                                      logEtrue_range_muCC[0], logEtrue_range_muCC[1]);
+        h_eCC_Enu_Spec[i]->SetXTitle("log_{10}(E_{#nu}/GeV)");
+        h_muCC_Enu_Spec[i]->SetXTitle("log_{10}(E_{#nu}/GeV)");
+        h_eCC_Enu_Spec[i]->SetYTitle("entries");
+        h_muCC_Enu_Spec[i]->SetYTitle("entries");
+        h_eCC_Enu_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
+        h_muCC_Enu_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
     }
-    
 
     for (int i = 0; i < muCC_NPETresE.GetEntries(); i++)
     {
@@ -313,6 +330,8 @@ void ShowNPE_nd_Cuts()
         {
             h_muCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[0]));                    //all for muCC
             h_muCC_NPE_Spec[1]->Fill(log10(NPE_LPMT[0]));                    //true for eCC
+            h_muCC_Enu_Spec[0]->Fill(log10(E_nu_true[0]));                   //all for muCC
+            h_muCC_Enu_Spec[1]->Fill(log10(E_nu_true[0]));                   //true for eCC
             h_muCC_Etrue_NPE->Fill(log10(E_nu_true[0]), log10(NPE_LPMT[0])); //all
         }
         if (NPE_LPMT[0] >= NPE_cut_eCC[0] &&
@@ -321,6 +340,8 @@ void ShowNPE_nd_Cuts()
         {
             h_eCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[0]));                    //all for eCC
             h_eCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[0]));                    //wrong for eCC
+            h_eCC_Enu_Spec[0]->Fill(log10(E_nu_true[0]));                   //all for eCC
+            h_eCC_Enu_Spec[2]->Fill(log10(E_nu_true[0]));                   //wrong for eCC
             h_eCC_Etrue_NPE->Fill(log10(E_nu_true[0]), log10(NPE_LPMT[0])); //all
         }
         if (i < eCC_NPETresE.GetEntries())
@@ -332,6 +353,8 @@ void ShowNPE_nd_Cuts()
             {
                 h_muCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[1]));                    //all for muCC
                 h_muCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[1]));                    //wrong for eCC
+                h_muCC_Enu_Spec[0]->Fill(log10(E_nu_true[1]));                   //all for muCC
+                h_muCC_Enu_Spec[2]->Fill(log10(E_nu_true[1]));                   //wrong for eCC
                 h_muCC_Etrue_NPE->Fill(log10(E_nu_true[1]), log10(NPE_LPMT[1])); //all
             }
             if (NPE_LPMT[1] >= NPE_cut_eCC[0] &&
@@ -340,6 +363,8 @@ void ShowNPE_nd_Cuts()
             {
                 h_eCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[1]));                    //all for eCC
                 h_eCC_NPE_Spec[1]->Fill(log10(NPE_LPMT[1]));                    //true for eCC
+                h_eCC_Enu_Spec[0]->Fill(log10(E_nu_true[1]));                   //all for eCC
+                h_eCC_Enu_Spec[1]->Fill(log10(E_nu_true[1]));                   //true for eCC
                 h_eCC_Etrue_NPE->Fill(log10(E_nu_true[1]), log10(NPE_LPMT[1])); //all
             }
         }
@@ -352,6 +377,8 @@ void ShowNPE_nd_Cuts()
             {
                 h_muCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[2]));                    //all for muCC
                 h_muCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[2]));                    //wrong for eCC
+                h_muCC_Enu_Spec[0]->Fill(log10(E_nu_true[2]));                   //all for muCC
+                h_muCC_Enu_Spec[2]->Fill(log10(E_nu_true[2]));                   //wrong for eCC
                 h_muCC_Etrue_NPE->Fill(log10(E_nu_true[2]), log10(NPE_LPMT[2])); //all
             }
             if (NPE_LPMT[2] >= NPE_cut_eCC[0] &&
@@ -360,34 +387,36 @@ void ShowNPE_nd_Cuts()
             {
                 h_eCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[2]));                    //all for eCC
                 h_eCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[2]));                    //wrong for eCC
+                h_eCC_Enu_Spec[0]->Fill(log10(E_nu_true[2]));                   //all for eCC
+                h_eCC_Enu_Spec[2]->Fill(log10(E_nu_true[2]));                   //wrong for eCC
                 h_eCC_Etrue_NPE->Fill(log10(E_nu_true[2]), log10(NPE_LPMT[2])); //all
             }
         }
     }
 
     {
-        TLegend leg_sel[2];
-        TCanvas *c_Sel_eCC = new TCanvas("Sel_eCC");
-        c_Sel_eCC->cd();
-        h_eCC_NPE_Spec[0]->Draw("");
-        for (int i = 0; i < 3; i++)
-        {
-            h_eCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
-            leg_sel[0].AddEntry(h_eCC_NPE_Spec[i], "#nu_{e}: " + NPE_Spec_Name[i]+" part");
-            h_eCC_NPE_Spec[i]->Draw("SAME");
-        }
-        leg_sel[0].DrawClone("SAME");
+        // TLegend leg_sel[2];
+        // TCanvas *c_Sel_eCC = new TCanvas("Sel_eCC");
+        // c_Sel_eCC->cd();
+        // h_eCC_NPE_Spec[0]->Draw("");
+        // for (int i = 0; i < 3; i++)
+        // {
+        //     h_eCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
+        //     leg_sel[0].AddEntry(h_eCC_NPE_Spec[i], "#nu_{e}: " + NPE_Spec_Name[i]+" part");
+        //     h_eCC_NPE_Spec[i]->Draw("SAME");
+        // }
+        // leg_sel[0].DrawClone("SAME");
 
-        TCanvas *c_Sel_mu = new TCanvas("Sel_muCC");
-        c_Sel_mu->cd();
-        h_muCC_NPE_Spec[0]->Draw();
-        for (int i = 0; i < 3; i++)
-        {
-            h_muCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
-            leg_sel[1].AddEntry(h_muCC_NPE_Spec[i], "#nu_{#mu}: " + NPE_Spec_Name[i]+" part");
-            h_muCC_NPE_Spec[i]->Draw("SAME");
-        }
-        leg_sel[1].DrawClone("SAME");
+        // TCanvas *c_Sel_mu = new TCanvas("Sel_muCC");
+        // c_Sel_mu->cd();
+        // h_muCC_NPE_Spec[0]->Draw();
+        // for (int i = 0; i < 3; i++)
+        // {
+        //     h_muCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
+        //     leg_sel[1].AddEntry(h_muCC_NPE_Spec[i], "#nu_{#mu}: " + NPE_Spec_Name[i]+" part");
+        //     h_muCC_NPE_Spec[i]->Draw("SAME");
+        // }
+        // leg_sel[1].DrawClone("SAME");
 
         // h_muCC_NPE_Spec[0]->Draw("E");
         // h_muCC_Etrue_NPE->Draw("colz");
@@ -417,17 +446,52 @@ void ShowNPE_nd_Cuts()
     h_Honda_flux_mu->SetYTitle("P_{0}(E_{i})");
 
     // h_Honda_flux_mu->Draw("E");
-    // TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "RECREATE");
-    // for (int i = 0; i < 3; i++)
-    // {
-    //     h_eCC_NPE_Spec[i]->Write();
-    //     h_muCC_NPE_Spec[i]->Write();
-    // }
-    // h_muCC_Etrue_NPE->Write();
-    // h_eCC_Etrue_NPE->Write();
-    // h_Honda_flux_e->Write();
-    // h_Honda_flux_mu->Write();
-    // ff_unfold->Close();
+    TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "RECREATE");
+    for (int i = 0; i < 3; i++)
+    {
+        h_eCC_NPE_Spec[i]->Write();
+        h_muCC_NPE_Spec[i]->Write();
+        h_eCC_Enu_Spec[i]->Write();
+        h_muCC_Enu_Spec[i]->Write();
+    }
+    h_muCC_Etrue_NPE->Write();
+    h_eCC_Etrue_NPE->Write();
+    h_Honda_flux_e->Write();
+    h_Honda_flux_mu->Write();
+    ff_unfold->Close();
+
+    {
+        // double A_ji_ecc[NPE_BINNUM_eCC][Etrue_BINNUM_eCC];
+        // double Response_SUM[Etrue_BINNUM_eCC];
+        // for (int i = 0; i < Etrue_BINNUM_eCC; i++)
+        // {
+        //     Response_SUM[i] = h_eCC_Etrue_NPE->Integral(i + 1, i + 1, 1, NPE_BINNUM_eCC);
+        //     for (int j = 0; j < NPE_BINNUM_eCC; j++)
+        //     {
+        //         //normalize the the likelihood sum of a row to 1-epsilon
+        //         A_ji_ecc[j][i] = h_eCC_Etrue_NPE->GetBinContent(i + 1, j + 1) *
+        //                          (1 - 0) / Response_SUM[i];
+        //         h_eCC_Etrue_NPE->SetBinContent(i + 1, j + 1, A_ji_ecc[j][i]);
+        //     }
+        // }
+        // // h_eCC_Etrue_NPE->Draw("colz");
+        // // gPad->SetLogz();
+        // double A_ji_mucc[NPE_BINNUM_muCC][Etrue_BINNUM_muCC];
+        // // double Response_SUM[Etrue_BINNUM_muCC];
+        // for (int i = 0; i < Etrue_BINNUM_muCC; i++)
+        // {
+        //     Response_SUM[i] = h_muCC_Etrue_NPE->Integral(i + 1, i + 1, 1, NPE_BINNUM_muCC);
+        //     for (int j = 0; j < NPE_BINNUM_muCC; j++)
+        //     {
+        //         //normalize the the likelihood sum of a row to 1-epsilon
+        //         A_ji_mucc[j][i] = h_muCC_Etrue_NPE->GetBinContent(i + 1, j + 1) *
+        //                           (1 - 0) / Response_SUM[i];
+        //         h_muCC_Etrue_NPE->SetBinContent(i + 1, j + 1, A_ji_mucc[j][i]);
+        //     }
+        // }
+        // h_muCC_Etrue_NPE->Draw("colz");
+        // gPad->SetLogz();
+    }
 }
 
 //get result for all PEs
