@@ -23,10 +23,18 @@ Author: Jinnan Zhang: jinnan.zhang@ihep.ac.cn
 #include <fstream>
 
 void LoadFile(std::string filename, std::vector<std::vector<double>> &v, int Length = 2, int SkipLines = 0);
+void BayesUnfold();
 
 int Unfold()
 {
+    BayesUnfold();
     return 0;
+}
+
+//apply Bayesian iterration to unfold the spectras
+void BayesUnfold()
+{
+
 }
 
 //may load data inte vector from txt file

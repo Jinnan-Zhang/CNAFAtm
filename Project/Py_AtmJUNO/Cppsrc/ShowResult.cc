@@ -12,6 +12,8 @@ author: Jinnan Zhang:Jinnan.Zhang@ihep.ac.cn
 #include <TCanvas.h>
 #include <TLegend.h>
 #include <iostream>
+#include <fstream>
+#include <vector>
 #include <TString.h>
 #include <TROOT.h>
 using namespace std;
@@ -20,8 +22,10 @@ void ViewFlavor();
 void ViewEffandCONT();
 void ForAllPEs();
 void GetObjFromFile(TFile *File, TH1 *h[], TString ObjNames[], int NUMObj);
+void LoadFile(std::string filename, std::vector<std::vector<double>> &v, int Length = 2, int SkipLines = 0);
 void ShowNPE_nd_Cuts();
 
+using namespace std;
 int ShowResult()
 {
     // ViewFlavor();
@@ -53,6 +57,10 @@ void ShowNPE_nd_Cuts()
     NC_NPETresE.SetBranchAddress("E_nu_true", &E_nu_true[2]);
     double Total_mu_eventsNUM = 152073.00;
     double Total_e_eventsNUM = 86731.000;
+    double Sigma_cut_muCC = 114; //ns
+    double Sigma_cut_eCC = 85;   //ns
+    double NPE_cut_muCC[2] = {5e5, 1.6e7};
+    double NPE_cut_eCC[2] = {1e5, 1.6e7};
 
     //mu,e,NC
     Color_t hist_cor[3] = {kBlue, kRed, kGreen};
@@ -207,8 +215,7 @@ void ShowNPE_nd_Cuts()
         // // h_Eff_eCC->Write();
         // leg_EffCONT[1].DrawClone("SAME");
         // // ff_EffCONT->Close();
-        // double Sigma_cut_muCC = 114;
-        // double Sigma_cut_eCC = 85;
+
         // printf("mu CC: Eff:%f\tCONT:%f\n",
         //        h_Eff_muCC->Interpolate(Sigma_cut_muCC),
         //        h_CONT_muCC->Interpolate(Sigma_cut_muCC));
@@ -252,21 +259,175 @@ void ShowNPE_nd_Cuts()
         "Sel.",
         "True",
         "Wrong"};
+    Color_t NPE_Spec_Color[] = {
+        kBlack,
+        kViolet,
+        kGreen+3};
+    const int NPE_BINNUM_eCC = 7;
+    const int NPE_BINNUM_muCC = 8;
+    const int Etrue_BINNUM_eCC = 7;
+    const int Etrue_BINNUM_muCC = 7;
+    double logNPE_range_eCC[2] = {5, 6.7};
+    double logNPE_range_muCC[2] = {5.7, 6.7};
+    double logEtrue_range_eCC[2] = {-1, 1.05};
+    double logEtrue_range_muCC[2] = {-0.3, 1.05};
+
     TH1 *h_eCC_NPE_Spec[3];
     TH1 *h_muCC_NPE_Spec[3];
     TH2D *h_eCC_Etrue_NPE = new TH2D("eCC_Likely_hood",
-                                     "#nu_{e} Likelyhood Matrix",
-                                     7, -1, 1.05,
-                                     7, 5, 7.2);
+                                     "#nu_{e} Likelihood Matrix",
+                                     Etrue_BINNUM_eCC, -1, 1.05,
+                                     NPE_BINNUM_eCC, logNPE_range_eCC[0], logNPE_range_eCC[1]);
     TH2D *h_muCC_Etrue_NPE = new TH2D("muCC_Likely_hood",
-                                      "#nu_{#mu} Likelyhood Matrix",
-                                      7, -0.3, 1.05,
-                                      8, 5.7, 7.2);
+                                      "#nu_{#mu} Likelihood Matrix",
+                                      Etrue_BINNUM_muCC, -0.3, 1.05,
+                                      NPE_BINNUM_muCC, logNPE_range_muCC[0], logNPE_range_muCC[1]);
+    h_muCC_Etrue_NPE->SetXTitle("log_{10}(E_{#nu}/GeV)");
+    h_muCC_Etrue_NPE->SetYTitle("log_{10}(NPE_{LPMT})");
+    h_eCC_Etrue_NPE->SetXTitle("log_{10}(E_{#nu}/GeV)");
+    h_eCC_Etrue_NPE->SetYTitle("log_{10}(NPE_{LPMT})");
+
     for (int i = 0; i < 3; i++)
     {
-        h_eCC_NPE_Spec[i]=new TH1D("eCC"+NPE_Spec_Name[i],"#nu_{e} CC Spectra",7,5,7.2);
-        h_muCC_NPE_Spec[i]=new TH1D("muCC"+NPE_Spec_Name[i],"#nu_{#mu} CC Spectra",8,5.7,7.2);
+        h_eCC_NPE_Spec[i] = new TH1D("eCC" + NPE_Spec_Name[i],
+                                     "#nu_{e} CC Spectra",
+                                     NPE_BINNUM_eCC, logNPE_range_eCC[0], logNPE_range_eCC[1]);
+        h_muCC_NPE_Spec[i] = new TH1D("muCC" + NPE_Spec_Name[i],
+                                      "#nu_{#mu} CC Spectra",
+                                      NPE_BINNUM_muCC, logNPE_range_muCC[0], logNPE_range_muCC[1]);
+        h_eCC_NPE_Spec[i]->SetXTitle("log_{10}(NPE_{LPMT})");
+        h_muCC_NPE_Spec[i]->SetXTitle("log_{10}(NPE_{LPMT})");
+        h_eCC_NPE_Spec[i]->SetYTitle("entries");
+        h_muCC_NPE_Spec[i]->SetYTitle("entries");
+        h_eCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
+        h_muCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
     }
+    
+
+    for (int i = 0; i < muCC_NPETresE.GetEntries(); i++)
+    {
+        muCC_NPETresE.GetEntry(i);
+        if (NPE_LPMT[0] >= NPE_cut_muCC[0] &&
+            NPE_LPMT[0] <= NPE_cut_muCC[1] &&
+            sigma_tres[0] >= Sigma_cut_muCC)
+        {
+            h_muCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[0]));                    //all for muCC
+            h_muCC_NPE_Spec[1]->Fill(log10(NPE_LPMT[0]));                    //true for eCC
+            h_muCC_Etrue_NPE->Fill(log10(E_nu_true[0]), log10(NPE_LPMT[0])); //all
+        }
+        if (NPE_LPMT[0] >= NPE_cut_eCC[0] &&
+            NPE_LPMT[0] <= NPE_cut_eCC[1] &&
+            sigma_tres[0] <= Sigma_cut_eCC)
+        {
+            h_eCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[0]));                    //all for eCC
+            h_eCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[0]));                    //wrong for eCC
+            h_eCC_Etrue_NPE->Fill(log10(E_nu_true[0]), log10(NPE_LPMT[0])); //all
+        }
+        if (i < eCC_NPETresE.GetEntries())
+        {
+            eCC_NPETresE.GetEntry(i);
+            if (NPE_LPMT[1] >= NPE_cut_muCC[0] &&
+                NPE_LPMT[1] <= NPE_cut_muCC[1] &&
+                sigma_tres[1] >= Sigma_cut_muCC)
+            {
+                h_muCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[1]));                    //all for muCC
+                h_muCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[1]));                    //wrong for eCC
+                h_muCC_Etrue_NPE->Fill(log10(E_nu_true[1]), log10(NPE_LPMT[1])); //all
+            }
+            if (NPE_LPMT[1] >= NPE_cut_eCC[0] &&
+                NPE_LPMT[1] <= NPE_cut_eCC[1] &&
+                sigma_tres[1] <= Sigma_cut_eCC)
+            {
+                h_eCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[1]));                    //all for eCC
+                h_eCC_NPE_Spec[1]->Fill(log10(NPE_LPMT[1]));                    //true for eCC
+                h_eCC_Etrue_NPE->Fill(log10(E_nu_true[1]), log10(NPE_LPMT[1])); //all
+            }
+        }
+        if (i < NC_NPETresE.GetEntries())
+        {
+            NC_NPETresE.GetEntry(i);
+            if (NPE_LPMT[2] >= NPE_cut_muCC[0] &&
+                NPE_LPMT[2] <= NPE_cut_muCC[1] &&
+                sigma_tres[2] >= Sigma_cut_muCC)
+            {
+                h_muCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[2]));                    //all for muCC
+                h_muCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[2]));                    //wrong for eCC
+                h_muCC_Etrue_NPE->Fill(log10(E_nu_true[2]), log10(NPE_LPMT[2])); //all
+            }
+            if (NPE_LPMT[2] >= NPE_cut_eCC[0] &&
+                NPE_LPMT[2] <= NPE_cut_eCC[1] &&
+                sigma_tres[2] <= Sigma_cut_eCC)
+            {
+                h_eCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[2]));                    //all for eCC
+                h_eCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[2]));                    //wrong for eCC
+                h_eCC_Etrue_NPE->Fill(log10(E_nu_true[2]), log10(NPE_LPMT[2])); //all
+            }
+        }
+    }
+
+    {
+        TLegend leg_sel[2];
+        TCanvas *c_Sel_eCC = new TCanvas("Sel_eCC");
+        c_Sel_eCC->cd();
+        h_eCC_NPE_Spec[0]->Draw("");
+        for (int i = 0; i < 3; i++)
+        {
+            h_eCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
+            leg_sel[0].AddEntry(h_eCC_NPE_Spec[i], "#nu_{e}: " + NPE_Spec_Name[i]+" part");
+            h_eCC_NPE_Spec[i]->Draw("SAME");
+        }
+        leg_sel[0].DrawClone("SAME");
+
+        TCanvas *c_Sel_mu = new TCanvas("Sel_muCC");
+        c_Sel_mu->cd();
+        h_muCC_NPE_Spec[0]->Draw();
+        for (int i = 0; i < 3; i++)
+        {
+            h_muCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
+            leg_sel[1].AddEntry(h_muCC_NPE_Spec[i], "#nu_{#mu}: " + NPE_Spec_Name[i]+" part");
+            h_muCC_NPE_Spec[i]->Draw("SAME");
+        }
+        leg_sel[1].DrawClone("SAME");
+
+        // h_muCC_NPE_Spec[0]->Draw("E");
+        // h_muCC_Etrue_NPE->Draw("colz");
+        // h_eCC_Etrue_NPE->Draw("colz");
+        // muCC_NPETresE.Draw("NPE_LPMT:E_nu_true>>+h_2DmuCC","","colz");
+        // eCC_NPETresE.Draw("NPE_LPMT:E_nu_true>>+h_2DeCC","","colz");
+        // NC_NPETresE.Draw("NPE_LPMT:E_nu_true>>+h_2DNC","","colz");
+    }
+    TH1D *h_Honda_flux_e = new TH1D("Honda_flux_e", "HKKM14 Flux for #nu_{e}",
+                                    Etrue_BINNUM_eCC,
+                                    logEtrue_range_eCC[0], logEtrue_range_eCC[1]);
+    TH1D *h_Honda_flux_mu = new TH1D("Honda_flux_mu", "HKKM14 Flux for #nu_{#mu}",
+                                     Etrue_BINNUM_muCC,
+                                     logEtrue_range_muCC[0], logEtrue_range_muCC[1]);
+    vector<vector<double>> Data_vec;
+    LoadFile("../data/Flux/JUNOFlux_Honda_HKKM2014.txt", Data_vec, 5, 2);
+    for (int i = 0; i < Data_vec.size(); i++)
+    {
+        h_Honda_flux_e->Fill(log10(Data_vec[i][0]), Data_vec[i][3] + Data_vec[i][4]);
+        h_Honda_flux_mu->Fill(log10(Data_vec[i][0]), Data_vec[i][1] + Data_vec[i][2]);
+    }
+    h_Honda_flux_e->Scale(1 / h_Honda_flux_e->Integral());
+    h_Honda_flux_mu->Scale(1 / h_Honda_flux_mu->Integral());
+    h_Honda_flux_e->SetXTitle("log_{10}(E_{#nu}/GeV)");
+    h_Honda_flux_mu->SetXTitle("log_{10}(E_{#nu}/GeV)");
+    h_Honda_flux_e->SetYTitle("P_{0}(E_{i})");
+    h_Honda_flux_mu->SetYTitle("P_{0}(E_{i})");
+
+    // h_Honda_flux_mu->Draw("E");
+    // TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "RECREATE");
+    // for (int i = 0; i < 3; i++)
+    // {
+    //     h_eCC_NPE_Spec[i]->Write();
+    //     h_muCC_NPE_Spec[i]->Write();
+    // }
+    // h_muCC_Etrue_NPE->Write();
+    // h_eCC_Etrue_NPE->Write();
+    // h_Honda_flux_e->Write();
+    // h_Honda_flux_mu->Write();
+    // ff_unfold->Close();
 }
 
 //get result for all PEs
@@ -581,4 +742,39 @@ void GetObjFromFile(TFile *File, TH1 *h[], TString ObjNames[], int NUMObj)
     {
         h[i] = (TH1 *)File->Get(ObjNames[i]);
     }
+}
+
+//may load data inte vector from txt file
+void LoadFile(std::string filename,
+              std::vector<std::vector<double>> &v,
+              int Length,
+              int SkipLines)
+{
+    std::ifstream infile;
+    infile.open(filename, std::ios::in);
+    if (!infile)
+    {
+        printf("Fail to open file:%s.", filename.c_str());
+    }
+    double t1;
+    int CountSkip = 0;
+    while (!infile.eof())
+    {
+        if (CountSkip < SkipLines)
+        {
+            if (infile.get() == '\n')
+                CountSkip++;
+        }
+        else
+        {
+            std::vector<double> t(Length);
+            for (int i = 0; i < Length; i++)
+            {
+                infile >> t1;
+                t[i] = t1;
+            }
+            v.push_back(t);
+        }
+    }
+    infile.close();
 }
