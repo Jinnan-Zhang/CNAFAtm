@@ -25,10 +25,12 @@ Author: Jinnan Zhang: jinnan.zhang@ihep.ac.cn
 void LoadFile(std::string filename, std::vector<std::vector<double>> &v, int Length = 2, int SkipLines = 0);
 void BayesUnfold(int Iter_NUM = 1);
 void Iter_Bayes_Once(TH1 *h_input, TH1 *h_prior, TH2 *h_Likelihd_M, TH1 *h_output, double *epsilon_i);
+const int Expected_evt_NUM_eCC[] = {40, 100, 125, 135, 80, 45, 20};
+const int Expected_evt_NUM_muCC[] = {55, 237, 231, 171, 100, 48,17};
 
 int Unfold()
 {
-    BayesUnfold(1);
+    BayesUnfold(1000);
     return 0;
 }
 
@@ -58,10 +60,10 @@ void BayesUnfold(int Iter_NUM)
     {
         epsilon_i_muCC[i] = 0;
     }
-    h_Prior_eCC = (TH1 *)h_MC_true_eCC->Clone("eCC_Prior");
-    h_Prior_muCC = (TH1 *)h_MC_true_muCC->Clone("muCC_Prior");
-    h_Prior_eCC->Scale(1 / h_Prior_eCC->Integral());
-    h_Prior_muCC->Scale(1 / h_Prior_muCC->Integral());
+    // h_Prior_eCC = (TH1 *)h_MC_true_eCC->Clone("eCC_Prior");
+    // h_Prior_muCC = (TH1 *)h_MC_true_muCC->Clone("muCC_Prior");
+    // h_Prior_eCC->Scale(1 / h_Prior_eCC->Integral());
+    // h_Prior_muCC->Scale(1 / h_Prior_muCC->Integral());
     Iter_Bayes_Once(h_sel_eCC, h_Prior_eCC, h_likeli_eCC, h_eCC_result, epsilon_i_eCC);
     Iter_Bayes_Once(h_sel_muCC, h_Prior_muCC, h_likeli_muCC, h_muCC_result, epsilon_i_muCC);
     if (Iter_NUM > 1)
@@ -74,14 +76,40 @@ void BayesUnfold(int Iter_NUM)
             Iter_Bayes_Once(h_sel_eCC, h_Prior_eCC, h_likeli_eCC, h_eCC_result, epsilon_i_eCC);
             Iter_Bayes_Once(h_sel_muCC, h_Prior_muCC, h_likeli_muCC, h_muCC_result, epsilon_i_muCC);
         }
-
+    TCanvas *c_CC_Spec = new TCanvas("muCC_Spec");
     h_muCC_result->SetLineColor(kRed);
     h_muCC_result->Draw();
     h_MC_true_muCC->Draw("SAME");
-    // h_eCC_result->SetLineColor(kRed);
-    // h_eCC_result->Draw();
-    // h_MC_true_eCC->Draw("SAME");
+
+    TCanvas *c_muCC = new TCanvas("muCC_");
+    TH1 *h_ref_muCC = (TH1 *)h_MC_true_muCC->Clone("refLine_muCC");
+    TH1 *h_ratio_muCC = (TH1 *)h_MC_true_muCC->Clone("Ratio_muCC");
+    h_ref_muCC->Divide(h_MC_true_muCC);
+    h_ratio_muCC->Divide(h_muCC_result, h_MC_true_muCC);
+    h_ratio_muCC->SetLineColor(kRed);
+    h_ratio_muCC->SetMarkerColor(kRed);
+    h_ratio_muCC->SetMarkerSize(1.5);
+    h_ratio_muCC->SetMarkerStyle(kFullCircle);
+    h_ratio_muCC->Draw("E1");
+    h_ref_muCC->Draw("SAME");
+
+    TCanvas *c_eCC_Spec = new TCanvas("eCC_Spec");
+    h_eCC_result->SetLineColor(kRed);
+    h_eCC_result->Draw();
+    h_MC_true_eCC->Draw("SAME");
     // h_MC_true_eCC->Draw();
+
+    TCanvas *c_eCC = new TCanvas("eCC_");
+    TH1 *h_ref_eCC = (TH1 *)h_MC_true_eCC->Clone("refLine_eCC");
+    TH1 *h_ratio_eCC = (TH1 *)h_MC_true_eCC->Clone("Ratio_eCC");
+    h_ref_eCC->Divide(h_MC_true_eCC);
+    h_ratio_eCC->Divide(h_eCC_result, h_MC_true_eCC);
+    h_ratio_eCC->SetLineColor(kRed);
+    h_ratio_eCC->SetMarkerColor(kRed);
+    h_ratio_eCC->SetMarkerSize(1.5);
+    h_ratio_eCC->SetMarkerStyle(kFullCircle);
+    h_ratio_eCC->Draw("E1");
+    h_ref_eCC->Draw("SAME");
 }
 
 //input NPE spectra and prios disribution,
@@ -137,6 +165,8 @@ void Iter_Bayes_Once(TH1 *h_input,
         }
     }
     double E_hat = 0;
+    double BinCenter = 0;
+    h_output->Reset();
     for (int i = 0; i < Enu_BINNUM; i++)
     {
         E_hat = 0;
@@ -146,7 +176,15 @@ void Iter_Bayes_Once(TH1 *h_input,
                       h_input->GetBinContent(j + 1));
         }
         // printf("E_hat: %f\n", E_hat);
-        h_output->SetBinContent(i + 1, E_hat);
+        BinCenter = h_output->GetBinCenter(i + 1);
+        // h_output->SetBinContent(i + 1, E_hat);
+        // const int stat_NUM = 100;
+        if (NPE_BINNUM == 7)
+            for (int k = 0; k < Expected_evt_NUM_eCC[i]; k++)
+                h_output->Fill(BinCenter, E_hat / Expected_evt_NUM_eCC[i]);
+        else
+            for (int k = 0; k < Expected_evt_NUM_muCC[i]; k++)
+                h_output->Fill(BinCenter, E_hat / Expected_evt_NUM_muCC[i]);
     }
 }
 
