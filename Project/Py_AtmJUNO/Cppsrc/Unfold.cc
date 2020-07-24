@@ -32,7 +32,7 @@ const int Expected_evt_NUM_muCC[] = {55, 237, 231, 171, 100, 48, 17};
 
 int Unfold()
 {
-    BayesUnfold(1);
+    BayesUnfold(10000);
     return 0;
 }
 
@@ -100,12 +100,12 @@ void BayesUnfold(int Iter_NUM)
     TLegend leg_[2];
     h_muCC_result->SetLineColor(kRed);
     h_muCC_result->SetMarkerColor(kRed);
-    h_muCC_result->SetMarkerSize(1.5);
+    h_muCC_result->SetMarkerSize(2);
 
     h_muCC_result->Draw();
     h_MC_true_muCC->Draw("SAME");
-    leg_[0].AddEntry(h_MC_true_muCC, "MC Truth");
-    leg_[0].AddEntry(h_muCC_result, "Unfolded");
+    leg_[0].AddEntry(h_MC_true_muCC, "#nu_{#mu} MC Truth");
+    leg_[0].AddEntry(h_muCC_result, "#nu_{#mu} Unfolded");
     leg_[0].DrawClone("SAME");
 
     // TCanvas *c_muCC = new TCanvas("muCC_");
@@ -116,9 +116,15 @@ void BayesUnfold(int Iter_NUM)
     h_ratio_muCC->Divide(h_muCC_result, h_MC_true_muCC);
     h_ratio_muCC->SetLineColor(kRed);
     h_ratio_muCC->SetMarkerColor(kRed);
-    h_ratio_muCC->SetMarkerSize(1.5);
+    h_ratio_muCC->SetMarkerSize(2);
     h_ratio_muCC->SetMarkerStyle(kFullCircle);
     h_ratio_muCC->SetYTitle("Reco/MC");
+    h_ratio_muCC->GetYaxis()->SetTitleSize(0.15);
+    h_ratio_muCC->GetYaxis()->SetTitleOffset(0.3);
+    h_ratio_muCC->GetYaxis()->SetLabelSize(0.1);
+    h_ratio_muCC->GetXaxis()->SetTitleSize(0.11);
+    h_ratio_muCC->GetXaxis()->SetTitleOffset(0.9);
+    h_ratio_muCC->GetXaxis()->SetLabelSize(0.1);
     h_ratio_muCC->Draw("E1");
     h_ref_muCC->Draw("SAME");
 
@@ -143,11 +149,11 @@ void BayesUnfold(int Iter_NUM)
     p3->cd();
     h_eCC_result->SetLineColor(kRed);
     h_eCC_result->SetMarkerColor(kRed);
-    h_eCC_result->SetMarkerSize(1.5);
+    h_eCC_result->SetMarkerSize(2);
     h_eCC_result->Draw();
     h_MC_true_eCC->Draw("SAME");
-    leg_[1].AddEntry(h_MC_true_eCC, "MC Truth");
-    leg_[1].AddEntry(h_eCC_result, "Unfolded");
+    leg_[1].AddEntry(h_MC_true_eCC, "#nu_{e} MC Truth");
+    leg_[1].AddEntry(h_eCC_result, "#nu_{e}  Unfolded");
     leg_[1].DrawClone("SAME");
     // h_MC_true_eCC->Draw();
 
@@ -159,9 +165,16 @@ void BayesUnfold(int Iter_NUM)
     h_ratio_eCC->Divide(h_eCC_result, h_MC_true_eCC);
     h_ratio_eCC->SetLineColor(kRed);
     h_ratio_eCC->SetMarkerColor(kRed);
-    h_ratio_eCC->SetMarkerSize(1.5);
+    h_ratio_eCC->SetMarkerSize(2);
     h_ratio_eCC->SetMarkerStyle(kFullCircle);
     h_ratio_eCC->SetYTitle("Reco/MC");
+    h_ratio_eCC->GetYaxis()->SetTitleSize(0.15);
+    h_ratio_eCC->GetYaxis()->SetTitleOffset(0.3);
+    h_ratio_eCC->GetYaxis()->SetLabelSize(0.1);
+    h_ratio_eCC->GetXaxis()->SetTitleSize(0.11);
+    h_ratio_eCC->GetXaxis()->SetTitleOffset(0.9);
+    h_ratio_eCC->GetXaxis()->SetLabelSize(0.1);
+
     h_ratio_eCC->Draw("E1");
     h_ref_eCC->Draw("SAME");
 }
