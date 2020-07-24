@@ -263,8 +263,8 @@ void ShowNPE_nd_Cuts()
         "Wrong"};
     Color_t NPE_Spec_Color[] = {
         kBlack,
-        kViolet,
-        kGreen + 3};
+        kBlue - 10,
+        kGreen - 2};
     const int NPE_BINNUM_eCC = 7;
     const int NPE_BINNUM_muCC = 8;
     const int Etrue_BINNUM_eCC = 7;
@@ -397,58 +397,61 @@ void ShowNPE_nd_Cuts()
     }
 
     {
-        TLegend leg_sel[2];
-        TCanvas *c_Sel_eCC = new TCanvas("Sel_eCC");
-        c_Sel_eCC->cd();
-        double t_evt[NPE_BINNUM_muCC];
-        double Bin_center;
-        for (int i = 0; i < h_eCC_NPE_Spec[0]->GetNbinsX(); i++)
-            t_evt[i] = h_eCC_NPE_Spec[0]->GetBinContent(i + 1);
-        h_eCC_NPE_Spec[0]->Reset();
-        for (int i = 0; i < NPE_BINNUM_eCC; i++)
-        {
-            Bin_center = h_eCC_NPE_Spec[0]->GetBinCenter(i + 1);
-            for (int j = 0; j < Expected_evt_NUM_eCC[i]; j++)
-                h_eCC_NPE_Spec[0]->Fill(Bin_center, t_evt[i] / Expected_evt_NUM_eCC[i]);
-        }
-        h_eCC_NPE_Spec[0]->SetMarkerColor(kBlack);
-        h_eCC_NPE_Spec[0]->SetMarkerSize(1.5);
-        h_eCC_NPE_Spec[0]->Draw("E1");
-        for (int i = 0; i < 3; i++)
-        {
-            h_eCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
-            leg_sel[0].AddEntry(h_eCC_NPE_Spec[i], "#nu_{e}: " + NPE_Spec_Name[i] + " part");
-            h_eCC_NPE_Spec[i]->Draw("SAME");
-        }
-        leg_sel[0].DrawClone("SAME");
+        // TLegend leg_sel[2];
+        // TCanvas *c_Sel_eCC = new TCanvas("Sel_eCC");
+        // c_Sel_eCC->cd();
+        // double t_evt[NPE_BINNUM_muCC];
+        // double Bin_center;
+        // for (int i = 0; i < h_eCC_NPE_Spec[0]->GetNbinsX(); i++)
+        //     t_evt[i] = h_eCC_NPE_Spec[0]->GetBinContent(i + 1);
+        // h_eCC_NPE_Spec[0]->Reset();
+        // for (int i = 0; i < NPE_BINNUM_eCC; i++)
+        // {
+        //     Bin_center = h_eCC_NPE_Spec[0]->GetBinCenter(i + 1);
+        //     for (int j = 0; j < Expected_evt_NUM_eCC[i]; j++)
+        //         h_eCC_NPE_Spec[0]->Fill(Bin_center, t_evt[i] / Expected_evt_NUM_eCC[i]);
+        // }
+        // h_eCC_NPE_Spec[0]->SetMarkerColor(kBlack);
+        // h_eCC_NPE_Spec[0]->SetMarkerSize(1.5);
+        // h_eCC_NPE_Spec[0]->Draw("E1");
+        // for (int i = 0; i < 3; i++)
+        // {
+        //     if (i > 0)
+        //         h_eCC_NPE_Spec[i]->SetFillColor(NPE_Spec_Color[i]);
+        //     leg_sel[0].AddEntry(h_eCC_NPE_Spec[i], "#nu_{e}: " + NPE_Spec_Name[i] + " part");
+        //     h_eCC_NPE_Spec[i]->Draw("SAME");
+        // }
+        // h_eCC_NPE_Spec[0]->Draw("SAME E1");
+        // leg_sel[0].DrawClone("SAME");
 
-        TCanvas *c_Sel_mu = new TCanvas("Sel_muCC");
-        c_Sel_mu->cd();
-        for (int i = 0; i < h_muCC_NPE_Spec[0]->GetNbinsX(); i++)
-            t_evt[i] = h_muCC_NPE_Spec[0]->GetBinContent(i + 1);
-        h_muCC_NPE_Spec[0]->Reset();
-        for (int i = 0; i < NPE_BINNUM_muCC; i++)
-        {
-            Bin_center = h_muCC_NPE_Spec[0]->GetBinCenter(i + 1);
-            for (int j = 0; j < Expected_evt_NUM_muCC[i]; j++)
-                h_muCC_NPE_Spec[0]->Fill(Bin_center, t_evt[i] / Expected_evt_NUM_muCC[i]);
-        }
-        h_muCC_NPE_Spec[0]->SetMarkerColor(kBlack);
-        h_muCC_NPE_Spec[0]->SetMarkerSize(1.5);
-        h_muCC_NPE_Spec[0]->Draw("E1");
-        h_muCC_NPE_Spec[0]->Draw("E1");
-        for (int i = 0; i < 3; i++)
-        {
-            h_muCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
-            leg_sel[1].AddEntry(h_muCC_NPE_Spec[i], "#nu_{#mu}: " + NPE_Spec_Name[i] + " part");
-            h_muCC_NPE_Spec[i]->Draw("SAME");
-        }
-        leg_sel[1].DrawClone("SAME");
+        // TCanvas *c_Sel_mu = new TCanvas("Sel_muCC");
+        // c_Sel_mu->cd();
+        // for (int i = 0; i < h_muCC_NPE_Spec[0]->GetNbinsX(); i++)
+        //     t_evt[i] = h_muCC_NPE_Spec[0]->GetBinContent(i + 1);
+        // h_muCC_NPE_Spec[0]->Reset();
+        // for (int i = 0; i < NPE_BINNUM_muCC; i++)
+        // {
+        //     Bin_center = h_muCC_NPE_Spec[0]->GetBinCenter(i + 1);
+        //     for (int j = 0; j < Expected_evt_NUM_muCC[i]; j++)
+        //         h_muCC_NPE_Spec[0]->Fill(Bin_center, t_evt[i] / Expected_evt_NUM_muCC[i]);
+        // }
+        // h_muCC_NPE_Spec[0]->SetMarkerColor(kBlack);
+        // h_muCC_NPE_Spec[0]->SetMarkerSize(1.5);
+        // h_muCC_NPE_Spec[0]->Draw("E1");
+        // for (int i = 0; i < 3; i++)
+        // {
+        //     if (i > 0)
+        //         h_muCC_NPE_Spec[i]->SetFillColor(NPE_Spec_Color[i]);
+        //     leg_sel[1].AddEntry(h_muCC_NPE_Spec[i], "#nu_{#mu}: " + NPE_Spec_Name[i] + " part");
+        //     h_muCC_NPE_Spec[i]->Draw("SAME");
+        // }
+        // h_muCC_NPE_Spec[0]->Draw("SAME E1");
+        // leg_sel[1].DrawClone("SAME");
 
         // h_muCC_NPE_Spec[0]->Draw("E");
         // h_muCC_Etrue_NPE->Draw("colz");
         // h_eCC_Etrue_NPE->Draw("colz");
-        // muCC_NPETresE.Draw("NPE_LPMT:E_nu_true>>+h_2DmuCC","E_nu_true<2","colz");
+        muCC_NPETresE.Draw("NPE_LPMT:E_nu_true>>+h_2DmuCC","","colz");
         // muCC_NPETresE.Draw("E_nu_true>>+h_2DmuCC","","");
         // eCC_NPETresE.Draw("NPE_LPMT:E_nu_true>>+h_2DeCC","","colz");
         // NC_NPETresE.Draw("NPE_LPMT:E_nu_true>>+h_2DNC","","colz");

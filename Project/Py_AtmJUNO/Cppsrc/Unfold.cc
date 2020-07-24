@@ -32,7 +32,7 @@ const int Expected_evt_NUM_muCC[] = {55, 237, 231, 171, 100, 48, 17};
 
 int Unfold()
 {
-    BayesUnfold(10000);
+    BayesUnfold(100);
     return 0;
 }
 
