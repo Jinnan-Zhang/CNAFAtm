@@ -1,7 +1,7 @@
 /*
-Purpose: to inplement the bayes unfolding procedure.
-Author: Jinnan Zhang: jinnan.zhang@ihep.ac.cn
-2020.07.21
+* @Purpose: to inplement the bayes unfolding procedure.
+* @Author: Jinnan Zhang: jinnan.zhang@ihep.ac.cn
+* @Date 2020.07.21
 */
 
 #include <TChain.h>
@@ -37,6 +37,7 @@ int Unfold()
 }
 
 //apply Bayesian iterration to unfold the spectras
+//* @param Iter_NUM number of Bayes iteration times.
 void BayesUnfold(int Iter_NUM)
 {
     TFile *ff_unfold_data = TFile::Open("../data/UnfoldData.root", "READ");

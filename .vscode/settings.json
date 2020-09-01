@@ -69,7 +69,9 @@
         "NuSpectrum2.C": "cpp",
         "NuSpectrum.C": "cpp",
         "ALL_systcut_Numu.C": "cpp",
-        "Data.C": "cpp"
+        "Data.C": "cpp",
+        "hstack.C": "cpp",
+        "circular.C": "cpp"
     },
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
