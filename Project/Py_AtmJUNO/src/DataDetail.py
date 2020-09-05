@@ -24,6 +24,7 @@ def ViewNPE_LPMT(NFiles, WhichEntry=0, SaveFileName="NPE_LPMT"):
     AddUserFile2TChain(evt, NFiles=NFiles)
     evt.SetBranchStatus("*", 0)
     evt.SetBranchStatus("nPE", 1)
+    evt.SetBranchStatus("pmtID",1)
     c = ROOT.TCanvas("myCanvasName", "", 800, 600)
     evt.Draw("nPE>>+h_NPE", "pmtID<20000")
     ROOT.gStyle.SetOptStat("ne")
