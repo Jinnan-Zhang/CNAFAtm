@@ -325,6 +325,7 @@ def GetNPE_Tres_Energy_Profile(NFiles,
     geninfo.SetBranchStatus("InitZ", 1)
     geninfo.SetBranchStatus("InitPDGID", 1)
     evt.SetBranchStatus("hitTime", 1)
+    evt.SetBranchStatus("nPE", 1)
     evt.SetBranchStatus("pmtID", 1)
     evt.SetBranchStatus("GlobalPosX", 1)
     evt.SetBranchStatus("GlobalPosY", 1)
@@ -342,13 +343,15 @@ def GetNPE_Tres_Energy_Profile(NFiles,
         if (np.sqrt(Smear_X**2 + Smear_Y**2 + Smear_Z**2) < R_vertex_cut):
             evt.GetEntry(entry)
             pmtID = np.asarray(evt.pmtID)
+            nPE = np.asarray(evt.nPE)
             # index for different kind of pmts
             SPMTs = np.where((pmtID >= sPMTID_low) & (pmtID <= sPMTID_up))[0]
             WPPMTs = np.where((pmtID >= WPPMTID_low)
                               & (pmtID <= WPPMTID_up))[0]
+            NPE_WPPMTs = np.sum(nPE[tuple(WPPMTs)])
             LPMTs = np.where((pmtID >= LPMTID_low) & (pmtID <= LPMTID_up))[0]
-            NPE_LPMT[0] = LPMTs.shape[0]
-            if (WPPMTs.shape[0] < WP_NPE_cut):  #only WP cut
+            NPE_LPMT[0] = np.sum(nPE[tuple(LPMTs)])
+            if (NPE_WPPMTs < WP_NPE_cut):  #only WP cut
                 # & (NPE_LPMT > LPMT_NPE_cut) & (NPE_LPMT <LPMT_NPE_cut_up):
                 # hit position only for sPMT
                 Hit_x, Hit_y, Hit_z = np.asarray(
