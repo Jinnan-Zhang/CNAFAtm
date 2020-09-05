@@ -32,3 +32,5 @@ if __name__ == "__main__":
                                    SaveFileName="result_NPETE")
     elif (sys.argv[1] == "E_v"):  #view if neutrino energy right
         ViewNetrinoEnergy(int(sys.argv[2]))
+    elif (sys.argv[1] == "NPE"):
+        ViewNPE_LPMT(int(sys.argv[2]))
