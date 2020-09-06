@@ -1,5 +1,6 @@
 #!/bin/bash
-for((Target=1;Target<5101;Target+=100))
+# for((Target=1;Target<5101;Target+=100))
+for((Target=1;Target<5001;Target+=100))
 do
     echo dealing...Files begin from:$Target 
     sed "s/START/$Target/g"  $1.sh > $1$Target.sh
