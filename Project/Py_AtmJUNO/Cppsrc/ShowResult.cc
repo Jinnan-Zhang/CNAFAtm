@@ -18,12 +18,20 @@ author: Jinnan Zhang:Jinnan.Zhang@ihep.ac.cn
 #include <TROOT.h>
 using namespace std;
 
+//in ns, muCC eCC
+const double Cut_sigma_tres_Sg_muCC = 95;
+const double Cut_sigma_tres_Sg_eCC = 75;
+//NPE_LPMT cut muCC then eCC
+const double Cut_NPE_low_Sg[2] = {5.012e5, 5e5};
+const double Cut_NPE_up_Sg[2] = {1.585e7, 1.585e7};
+
 void ViewFlavor();
 void ViewEffandCONT();
 void ForAllPEs();
 void GetObjFromFile(TFile *File, TH1 *h[], TString ObjNames[], int NUMObj);
 void LoadFile(std::string filename, std::vector<std::vector<double>> &v, int Length = 2, int SkipLines = 0);
 void ShowNPE_nd_Cuts();
+void ShowNPE_Sg_Cuts(bool WithCut = true);
 const int Expected_evt_NUM_eCC[] = {40, 100, 125, 135, 80, 45, 20};
 const int Expected_evt_NUM_muCC[] = {165, 170, 155, 145, 100, 60, 35, 20};
 
@@ -33,8 +41,32 @@ int ShowResult()
     // ViewFlavor();
     // ViewEffandCONT();
     // ForAllPEs();
-    ShowNPE_nd_Cuts();
+    // ShowNPE_nd_Cuts();
+    ShowNPE_Sg_Cuts();
     return 0;
+}
+
+//show the NPE profile
+//*@param: WithCut: Wherther apply cuts
+void ShowNPE_Sg_Cuts(bool WithCut)
+{
+    TChain muCC_NPETresE("muCC_NPETresE");
+    TChain eCC_NPETresE("eCC_NPETresE");
+    TChain NC_NPETresE("NC_NPETresE");
+    muCC_NPETresE.Add("../results/result_NPETE*.root");
+    eCC_NPETresE.Add("../results/result_NPETE*.root");
+    NC_NPETresE.Add("../results/result_NPETE*.root");
+    //mu,e,NC
+    float sigma_tres[3] = {0}, NPE_LPMT[3] = {0}, E_nu_true[3] = {0};
+    muCC_NPETresE.SetBranchAddress("sigma_tres", &sigma_tres[0]);
+    muCC_NPETresE.SetBranchAddress("NPE_LPMT", &NPE_LPMT[0]);
+    muCC_NPETresE.SetBranchAddress("E_nu_true", &E_nu_true[0]);
+    eCC_NPETresE.SetBranchAddress("sigma_tres", &sigma_tres[1]);
+    eCC_NPETresE.SetBranchAddress("NPE_LPMT", &NPE_LPMT[1]);
+    eCC_NPETresE.SetBranchAddress("E_nu_true", &E_nu_true[1]);
+    NC_NPETresE.SetBranchAddress("sigma_tres", &sigma_tres[2]);
+    NC_NPETresE.SetBranchAddress("NPE_LPMT", &NPE_LPMT[2]);
+    NC_NPETresE.SetBranchAddress("E_nu_true", &E_nu_true[2]);
 }
 
 //show NPE profile with/without cuts
@@ -451,7 +483,7 @@ void ShowNPE_nd_Cuts()
         // h_muCC_NPE_Spec[0]->Draw("E");
         // h_muCC_Etrue_NPE->Draw("colz");
         // h_eCC_Etrue_NPE->Draw("colz");
-        muCC_NPETresE.Draw("NPE_LPMT:E_nu_true>>+h_2DmuCC","","colz");
+        muCC_NPETresE.Draw("NPE_LPMT:E_nu_true>>+h_2DmuCC", "", "colz");
         // muCC_NPETresE.Draw("E_nu_true>>+h_2DmuCC","","");
         // eCC_NPETresE.Draw("NPE_LPMT:E_nu_true>>+h_2DeCC","","colz");
         // NC_NPETresE.Draw("NPE_LPMT:E_nu_true>>+h_2DNC","","colz");
