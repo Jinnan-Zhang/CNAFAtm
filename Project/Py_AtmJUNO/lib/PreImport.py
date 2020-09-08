@@ -46,7 +46,8 @@ LPMT_NPE_cut_up = 10**7.2
 LPMT_NPE_steps = [1e5, 4.73e5, 1.01e6, 2.32e6,10**7.2]
 
 sigma_vertex = 1.  # 1m
-sigma_hitTime = 4  # 4ns
+# sigma_hitTime = 4  # 4ns
+sigma_hitTime = 1.6  # new 1.6ns
 # HitTimeCut_up = 1500  # 1500 ns
 HitTimeCut_up = 1200  # 1200 ns (1.2 mus) according to Giulio
 
