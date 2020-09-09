@@ -41,13 +41,13 @@ int ShowResult()
     // ViewFlavor();
     // ViewEffandCONT();
     // ForAllPEs();
-    // ShowNPE_nd_Cuts();
-    ShowNPE_Sg_Cuts();
+    ShowNPE_nd_Cuts();
+    // ShowNPE_Sg_Cuts();
     return 0;
 }
 
 //show the NPE profile
-//*@param: WithCut: Wherther apply cuts
+//* @param WithCut: Wherther apply cuts
 void ShowNPE_Sg_Cuts(bool WithCut)
 {
     TChain muCC_NPETresE("muCC_NPETresE");
@@ -67,6 +67,54 @@ void ShowNPE_Sg_Cuts(bool WithCut)
     NC_NPETresE.SetBranchAddress("sigma_tres", &sigma_tres[2]);
     NC_NPETresE.SetBranchAddress("NPE_LPMT", &NPE_LPMT[2]);
     NC_NPETresE.SetBranchAddress("E_nu_true", &E_nu_true[2]);
+
+    //mu,e,NC
+    Color_t hist_cor[3] = {kBlue, kRed, kGreen};
+    TString hist_name[3] = {"#nu_{#mu} CC", "#nu_{e} CC", "#nu_{x} NC"};
+
+    //mu,e,NC
+    TH1 *h_NPE_all[3];
+    TH1 *h_tres_all[3];
+    if (WithCut)
+    {
+    }
+    else
+    {
+        muCC_NPETresE.Draw("NPE_LPMT>>+h_NPE_mu", "", "goff");
+        eCC_NPETresE.Draw("NPE_LPMT>>+h_NPE_e", "", "goff");
+        NC_NPETresE.Draw("NPE_LPMT>>+h_NPE_NC", "", "goff");
+        h_NPE_all[0] = dynamic_cast<TH1 *>(gDirectory->Get("h_NPE_mu"));
+        h_NPE_all[1] = dynamic_cast<TH1 *>(gDirectory->Get("h_NPE_e"));
+        h_NPE_all[2] = dynamic_cast<TH1 *>(gDirectory->Get("h_NPE_NC"));
+
+        muCC_NPETresE.Draw("sigma_tres>>+h_tres_mu(500,0,500)", "", "goff");
+        eCC_NPETresE.Draw("sigma_tres>>+h_tres_e(500,0,500)", "", "goff");
+        NC_NPETresE.Draw("sigma_tres>>+h_tres_NC(500,0,500)", "", "goff");
+
+        h_tres_all[0] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_mu"));
+        h_tres_all[1] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_e"));
+        h_tres_all[2] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_NC"));
+
+        TCanvas *c_NPE = new TCanvas("cNPE", "", 800, 600);
+        TCanvas *c_res = new TCanvas("ctres", "", 800, 600);
+        TLegend *leg_NPE = new TLegend();
+        TLegend *leg_tres = new TLegend();
+        c_NPE->cd();
+        h_NPE_all[2]->SetXTitle("NPE_{LPMT}");
+        h_NPE_all[2]->SetYTitle("entries");
+        h_NPE_all[2]->Draw();
+        for (int i = 0; i < 3; i++)
+        {
+            h_NPE_all[i]->SetLineColor(hist_cor[i]);
+            h_tres_all[i]->SetLineColor(hist_cor[i]);
+            leg_NPE->AddEntry(h_NPE_all[i], hist_name[i]);
+            leg_tres->AddEntry(h_tres_all[i], hist_name[i]);
+            h_NPE_all[i]->SetXTitle("NPE_{LPME}");
+            h_NPE_all[i]->SetYTitle("entries");
+            h_tres_all[i]->SetXTitle("#sigma(t_{res}) [ns]");
+            h_tres_all[i]->SetYTitle("entries");
+        }
+    }
 }
 
 //show NPE profile with/without cuts

@@ -14,4 +14,5 @@ def ViewXsec(filename="guowl/spectrum.dat", skiprows=6):
 
 if __name__ == "__main__":
     with plt.style.context("../../lib/Style/Paper.mplstyle"):
-        ViewXsec()
+        # ViewXsec()
+        ViewXsec(filename="guowl/CC.dat",skiprows=0)
