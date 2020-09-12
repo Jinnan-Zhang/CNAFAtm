@@ -12,4 +12,5 @@ do
 done
 sed "s/100 START/65 5001/g"  NPETE.sh > NPETE5001.sh
 sed "s/NPETE/NPETE5001/g" NPETE.sub > NPETE5001.sub
+condor_submit -name sn-01.cr.cnaf.infn.it -spool NPETE5001.sub
 #end
