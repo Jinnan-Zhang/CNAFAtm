@@ -63,7 +63,9 @@ PDG_ID = {11: 'electron',
           -11: 'positron',
           -12: 'nu_e_bar',
           13: 'muon',
-          -13: 'anti_muon'}
+          -13: 'anti_muon',
+          14: 'nu_mu',
+          -14: 'nu_mu_bar'}
 
 # class SimPMTHit(ROOT.TObject):
 #     def __init__(self):

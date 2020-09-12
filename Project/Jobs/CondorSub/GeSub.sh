@@ -10,6 +10,6 @@ do
     # bsub -q juno -o ${PWD}/logs/NEPTE_$Target.log -hl -M 4000000 ${PWD}/$1$Target.sh
     echo ${PWD}/$1$Target.sh
 done
+sed "s/100 START/65 5001/g"  NPETE.sh > NPETE5001.sh
+sed "s/NPETE/NPETE5001/g" NPETE.sub > NPETE5001.sub
 #end
-# sed "s/100 START/65 5001/g"  NPETE.sh > NPETE5001.sh
-# sed "s/NPETE/NPETE5001/g" NPETE.sub > NPETE5001.sub

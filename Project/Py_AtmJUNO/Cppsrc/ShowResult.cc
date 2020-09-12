@@ -17,11 +17,12 @@ author: Jinnan Zhang:Jinnan.Zhang@ihep.ac.cn
 #include <vector>
 #include <TString.h>
 #include <TROOT.h>
+#include <TLine.h>
 using namespace std;
 
 //in ns, muCC eCC
-const double Cut_sigma_tres_Sg_muCC = 95;
-const double Cut_sigma_tres_Sg_eCC = 75;
+const double Cut_sigma_tres_Sg_muCC = 113;
+const double Cut_sigma_tres_Sg_eCC = 76;
 // muCC then eCC
 const double Cut_NPE_low_Sg[2] = {5.012e5, 1e5};
 const double Cut_NPE_up_Sg[2] = {1.585e7, 1.585e7};
@@ -125,9 +126,12 @@ void ShowNPE_nd_Cuts()
     TChain muCC_NPETresE("muCC_NPETresE");
     TChain eCC_NPETresE("eCC_NPETresE");
     TChain NC_NPETresE("NC_NPETresE");
-    muCC_NPETresE.Add("../results/result_NPETE*_100.root");
-    eCC_NPETresE.Add("../results/result_NPETE*_100.root");
-    NC_NPETresE.Add("../results/result_NPETE*_100.root");
+    // muCC_NPETresE.Add("../results/result_NPETE*_100.root");
+    // eCC_NPETresE.Add("../results/result_NPETE*_100.root");
+    // NC_NPETresE.Add("../results/result_NPETE*_100.root");
+    muCC_NPETresE.Add("../results/FakeData.root");
+    eCC_NPETresE.Add("../results/FakeData.root");
+    NC_NPETresE.Add("../results/FakeData.root");
     //mu,e,NC
     float sigma_tres[3] = {0}, NPE_LPMT[3] = {0}, E_nu_true[3] = {0};
     muCC_NPETresE.SetBranchAddress("sigma_tres", &sigma_tres[0]);
@@ -147,7 +151,7 @@ void ShowNPE_nd_Cuts()
     double NPE_cut_eCC[2] = {Cut_NPE_low_Sg[1], Cut_NPE_up_Sg[1]};
 
     TCanvas *c_2dd = new TCanvas("c_2dd");
-    eCC_NPETresE.Draw("NPE_LPMT:sigma_tres>>+", "(NPE_LPMT>1e5)&&(sigma_tres<=80)", "colz");
+    eCC_NPETresE.Draw("NPE_LPMT:sigma_tres>>+", "", "colz");
 
     //mu,e,NC
     Color_t hist_cor[3] = {kBlue, kRed, kGreen};
@@ -165,23 +169,23 @@ void ShowNPE_nd_Cuts()
         h_NPE_initial[1] = dynamic_cast<TH1 *>(gDirectory->Get("h_NPE_initial_e"));
         h_NPE_initial[2] = dynamic_cast<TH1 *>(gDirectory->Get("h_NPE_initial_NC"));
 
-        // TLegend leg_NPE;
-        // h_NPE_initial[2]->SetXTitle("NPE_{LPMT}");
-        // h_NPE_initial[2]->SetYTitle("entries");
-        // TCanvas *c_NPE = new TCanvas("NPE");
-        // c_NPE->cd();
-        // h_NPE_initial[2]->Draw("hist");
-        // for (int i = 0; i < 3; i++)
-        // {
-        //     h_NPE_initial[i]->SetLineColor(hist_cor[i]);
-        //     leg_NPE.AddEntry(h_NPE_initial[i], hist_name[i]);
-        //     h_NPE_initial[i]->Draw("SAME");
-        //     // h_NPE_initial[i]->Write();
-        // }
-        // leg_NPE.DrawClone("SAME");
-        // // c_NPE->DrawClone();
-        // // gPad->SetLogx();
-        // gPad->SetLogy();
+        TLegend leg_NPE;
+        h_NPE_initial[2]->SetXTitle("NPE_{LPMT}");
+        h_NPE_initial[2]->SetYTitle("entries");
+        TCanvas *c_NPE = new TCanvas("NPE");
+        c_NPE->cd();
+        h_NPE_initial[2]->Draw("hist");
+        for (int i = 0; i < 3; i++)
+        {
+            h_NPE_initial[i]->SetLineColor(hist_cor[i]);
+            leg_NPE.AddEntry(h_NPE_initial[i], hist_name[i]);
+            h_NPE_initial[i]->Draw("SAME");
+            // h_NPE_initial[i]->Write();
+        }
+        leg_NPE.DrawClone("SAME");
+        // c_NPE->DrawClone();
+        // gPad->SetLogx();
+        gPad->SetLogy();
 
         TH1 *h_tres_initial[3];
         TH1 *h_tres_FidCut[3];
@@ -210,7 +214,7 @@ void ShowNPE_nd_Cuts()
         }
         c_tres->cd();
         leg_tres.DrawClone("SAME");
-        c_tres->DrawClone();
+        // c_tres->DrawClone();
         // gPad->SetLogx();
         // gPad->SetLogy();
 
@@ -282,6 +286,9 @@ void ShowNPE_nd_Cuts()
         c_EffCONT[0]->cd();
         h_Eff_muCC->Draw();
         h_CONT_muCC->Draw("SAME");
+        TLine *l_muCC = new TLine(Cut_sigma_tres_Sg_muCC, 0, Cut_sigma_tres_Sg_muCC, 1);
+        l_muCC->SetLineWidth(3);
+        l_muCC->Draw("SAME");
         // h_Eff_muCC->Draw("SAME");
         // h_CONT_muCC->Write();
         // h_Eff_muCC->Write();
@@ -298,6 +305,9 @@ void ShowNPE_nd_Cuts()
         c_EffCONT[1]->cd();
         h_Eff_eCC->Draw();
         h_CONT_eCC->Draw("SAME");
+        TLine *l_eCC = new TLine(Cut_sigma_tres_Sg_eCC, 0, Cut_sigma_tres_Sg_eCC, 1);
+        l_eCC->SetLineWidth(3);
+        l_eCC->Draw("SAME");
         // h_Eff_eCC->Draw("SAME");
         // h_CONT_eCC->Write();
         // h_Eff_eCC->Write();
