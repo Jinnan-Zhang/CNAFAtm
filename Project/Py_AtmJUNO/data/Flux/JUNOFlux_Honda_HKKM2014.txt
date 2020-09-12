@@ -1,4 +1,4 @@
-average over solar max and min flux in [cosZ =-1.00 --  1.00, phi_Az =   0 -- 360]
+average over solar max and min flux in [cosZ =-1.00 --  1.00, phi_Az =   0 -- 360] unit:[GeV^-1][m^-2][s^-1][sr^-1]
 Enu(GeV)	NuMu	NuMubar	NuE	NuEbar
 0.1	5987	6093.45	2877.35	2855
 0.1122	5258	5338	2546.35	2503.9
