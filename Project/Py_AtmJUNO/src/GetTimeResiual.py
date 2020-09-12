@@ -351,8 +351,8 @@ def GetNPE_Tres_Energy_Profile(NFiles,
             NPE_WPPMTs = np.sum(nPE[WPPMTs])
             LPMTs = np.where((pmtID >= LPMTID_low) & (pmtID <= LPMTID_up))[0]
             LPMTs_badTime = np.where(
-                np.asarray(evt.hitTime)[LPMTs] > HitTimeCut_up)
-            NPE_LPMT[0] = np.sum(nPE[LPMTs]) - np.sum(nPE[LPMTs_badTime])[0]
+                np.asarray(evt.hitTime)[LPMTs] > HitTimeCut_up)[0]
+            NPE_LPMT[0] = np.sum(nPE[LPMTs]) - np.sum(nPE[LPMTs_badTime])
             if (NPE_WPPMTs < WP_NPE_cut):  #only WP cut
                 # & (NPE_LPMT > LPMT_NPE_cut) & (NPE_LPMT <LPMT_NPE_cut_up):
                 # hit position only for sPMT
