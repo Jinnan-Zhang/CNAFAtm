@@ -3,6 +3,7 @@ Show the preliminary results
 author: Jinnan Zhang:Jinnan.Zhang@ihep.ac.cn
 */
 #include <vector>
+#include <TObject.h>
 #include <TH1.h>
 #include <TH2.h>
 #include <TF1.h>
@@ -504,10 +505,10 @@ void ShowNPE_nd_Cuts()
     h_muCC_Etrue_NPE->Draw("colz");
     TCanvas *c_MA_eCC = new TCanvas("c_MA_eCC");
     h_eCC_Etrue_NPE->Draw("colz");
-    // TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "update");
-    // ff_unfold->cd();
-    // h_muCC_Etrue_NPE->Write();
-    // h_eCC_Etrue_NPE->Write();
+    TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "update");
+    ff_unfold->cd();
+    h_muCC_Etrue_NPE->Write(h_muCC_Etrue_NPE->GetName(), kOverwrite);
+    h_eCC_Etrue_NPE->Write(h_eCC_Etrue_NPE->GetName(), kOverwrite);
 
     {
         TLegend *leg_sel[2];
