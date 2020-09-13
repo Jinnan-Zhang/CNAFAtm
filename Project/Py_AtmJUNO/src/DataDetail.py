@@ -29,3 +29,7 @@ def ViewNPE_LPMT(NFiles, WhichEntry=0, SaveFileName="NPE_LPMT"):
     evt.Draw("nPE>>+h_NPE", "pmtID<20000")
     ROOT.gStyle.SetOptStat("ne")
     c.SaveAs("./pics/" + SaveFileName + ".png")
+
+def ViewFakeData():
+    ROOT.ROOT.EnableImplicitMT()
+    
