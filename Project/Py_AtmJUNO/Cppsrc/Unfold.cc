@@ -19,6 +19,8 @@
 #include "TLine.h"
 #include "TMath.h"
 #include <TPad.h>
+#include <TObject.h>
+#include <TGraph.h>
 #include <TLegend.h>
 #include <vector>
 #include <string>
@@ -27,12 +29,30 @@
 void LoadFile(std::string filename, std::vector<std::vector<double>> &v, int Length = 2, int SkipLines = 0);
 void BayesUnfold(int Iter_NUM = 1);
 void Iter_Bayes_Once(TH1 *h_input, TH1 *h_prior, TH2 *h_Likelihd_M, TH1 *h_output, double *epsilon_i);
+void Pre_Flux();
+template <typename T>
+void GetObjFromFile(TFile *File, T *h[], TString ObjNames[], int NUMObj)
+{
+    for (int i = 0; i < NUMObj; i++)
+    {
+        h[i] = dynamic_cast<T *>(File->Get(ObjNames[i]));
+    }
+}
 const int Expected_evt_NUM_eCC[] = {40, 100, 125, 135, 80, 45, 20};
 const int Expected_evt_NUM_muCC[] = {55, 237, 231, 171, 100, 48, 17};
+const int NPE_BINNUM_eCC = 7;
+const int NPE_BINNUM_muCC = 8;
+const int Etrue_BINNUM_eCC = 7;
+const int Etrue_BINNUM_muCC = 7;
+double logNPE_range_eCC[2] = {5, 7.2};
+double logNPE_range_muCC[2] = {5.7, 7.2};
+double logEtrue_range_eCC[2] = {-1, 1.05};
+double logEtrue_range_muCC[2] = {-0.3, 1.05};
 
 int Unfold()
 {
-    BayesUnfold(100);
+    BayesUnfold(1);
+    // Pre_Flux();
     return 0;
 }
 
@@ -43,12 +63,14 @@ void BayesUnfold(int Iter_NUM)
     TFile *ff_unfold_data = TFile::Open("../data/UnfoldData.root", "READ");
     TH2 *h_likeli_eCC = (TH2 *)ff_unfold_data->Get("eCC_Likely_hood");
     TH2 *h_likeli_muCC = (TH2 *)ff_unfold_data->Get("muCC_Likely_hood");
-    TH1 *h_sel_eCC = (TH1 *)ff_unfold_data->Get("NPEeCCSel.");
-    TH1 *h_sel_muCC = (TH1 *)ff_unfold_data->Get("NPEmuCCSel.");
+    TH1 *h_sel_eCC = (TH1 *)ff_unfold_data->Get("NPEeCCSel");
+    TH1 *h_sel_muCC = (TH1 *)ff_unfold_data->Get("NPEmuCCSel");
     TH1 *h_Prior_eCC = (TH1 *)ff_unfold_data->Get("Honda_flux_e");
     TH1 *h_Prior_muCC = (TH1 *)ff_unfold_data->Get("Honda_flux_mu");
-    TH1 *h_MC_true_eCC = (TH1 *)ff_unfold_data->Get("Enu_eCCTrue");
-    TH1 *h_MC_true_muCC = (TH1 *)ff_unfold_data->Get("Enu_muCCTrue");
+    // TH1 *h_MC_true_eCC = (TH1 *)ff_unfold_data->Get("Enu_eCCTrue");
+    // TH1 *h_MC_true_muCC = (TH1 *)ff_unfold_data->Get("Enu_muCCTrue");
+    TH1 *h_MC_true_eCC = (TH1 *)ff_unfold_data->Get("Enu_eCCSel;1");
+    TH1 *h_MC_true_muCC = (TH1 *)ff_unfold_data->Get("Enu_muCCSel;1");
     TH1 *h_eCC_result = (TH1 *)h_MC_true_eCC->Clone("eCC_result");
     TH1 *h_muCC_result = (TH1 *)h_MC_true_muCC->Clone("muCC_result");
     const int Enu_BINNUM_eCC = h_Prior_eCC->GetNbinsX();
@@ -194,12 +216,13 @@ void Iter_Bayes_Once(TH1 *h_input,
     double Response_SUM[Enu_BINNUM];
     for (int i = 0; i < Enu_BINNUM; i++)
     {
-        Response_SUM[i] = h_Likelihd_M->Integral(i + 1, i + 1, 1, NPE_BINNUM);
+        // Response_SUM[i] = h_Likelihd_M->Integral(i + 1, i + 1, 1, NPE_BINNUM);
         for (int j = 0; j < NPE_BINNUM; j++)
         {
             //normalize the the likelihood sum of a row to 1-epsilon
-            A_ji[j][i] = h_Likelihd_M->GetBinContent(i + 1, j + 1) *
-                         (1 - epsilon_i[i]) / Response_SUM[i];
+            // A_ji[j][i] = h_Likelihd_M->GetBinContent(i + 1, j + 1) *
+            //              (1 - epsilon_i[i]) / Response_SUM[i];
+            A_ji[j][i] = h_Likelihd_M->GetBinContent(i + 1, j + 1);
         }
     }
     {
@@ -245,14 +268,15 @@ void Iter_Bayes_Once(TH1 *h_input,
         }
         // printf("E_hat: %f\n", E_hat);
         BinCenter = h_output->GetBinCenter(i + 1);
-        // h_output->SetBinContent(i + 1, E_hat);
+        h_output->SetBinContent(i + 1, E_hat);
+        h_output->SetBinError(i + 1, sqrt(E_hat));
         // const int stat_NUM = 100;
-        if (NPE_BINNUM == 7)
-            for (int k = 0; k < Expected_evt_NUM_eCC[i]; k++)
-                h_output->Fill(BinCenter, E_hat / Expected_evt_NUM_eCC[i]);
-        else
-            for (int k = 0; k < Expected_evt_NUM_muCC[i]; k++)
-                h_output->Fill(BinCenter, E_hat / Expected_evt_NUM_muCC[i]);
+        // if (NPE_BINNUM == 7)
+        //     for (int k = 0; k < Expected_evt_NUM_eCC[i]; k++)
+        //         h_output->Fill(BinCenter, E_hat / Expected_evt_NUM_eCC[i]);
+        // else
+        //     for (int k = 0; k < Expected_evt_NUM_muCC[i]; k++)
+        //         h_output->Fill(BinCenter, E_hat / Expected_evt_NUM_muCC[i]);
     }
 }
 
@@ -289,4 +313,59 @@ void LoadFile(std::string filename,
         }
     }
     infile.close();
+}
+
+//prepraing flux for the unfolding
+//which is honda flux times cross section
+void Pre_Flux()
+{
+    TFile *ff_Xsec = TFile::Open("../data/Xsec/CCXsecFlux.root", "READ");
+    TString XsecName[] = {
+        "muCCXsec",
+        "muCCXsecbar",
+        "eCCXsec",
+        "eCCXsecbar",
+    };
+    TH1 *h_Xsec[4];
+    GetObjFromFile(ff_Xsec, h_Xsec, XsecName, 4);
+    TString FluxName[] = {
+        "muCCflux",
+        "muCCbarfluc",
+        "eCCflux",
+        "eCCbarFlux",
+    };
+    TGraph *g_Flux[4];
+    GetObjFromFile(ff_Xsec, g_Flux, FluxName, 4);
+    // g_Flux[0]->Draw();
+    TH1D *h_Honda_flux_e = new TH1D("Honda_flux_e", "HKKM14 Flux for #nu_{e} times cross section",
+                                    Etrue_BINNUM_eCC,
+                                    logEtrue_range_eCC[0], logEtrue_range_eCC[1]);
+    TH1D *h_Honda_flux_mu = new TH1D("Honda_flux_mu", "HKKM14 Flux for #nu_{#mu} times cross section",
+                                     Etrue_BINNUM_muCC,
+                                     logEtrue_range_muCC[0], logEtrue_range_muCC[1]);
+    double binw_eCC, binw_muCC;
+    double binc_eCC, binc_muCC;
+    for (int i = 0; i < Etrue_BINNUM_eCC; i++)
+    {
+        binw_eCC = h_Honda_flux_e->GetBinWidth(i + 1);
+        binw_muCC = h_Honda_flux_mu->GetBinWidth(i + 1);
+        binc_eCC = h_Honda_flux_e->GetBinCenter(i + 1);
+        binc_muCC = h_Honda_flux_mu->GetBinCenter(i + 1);
+        binc_eCC = exp10(binc_eCC);
+        binc_muCC = exp10(binc_muCC);
+        h_Honda_flux_e->SetBinContent(i + 1,
+                                      h_Xsec[2]->Interpolate(binc_eCC) * g_Flux[2]->Eval(binc_eCC) + h_Xsec[3]->Interpolate(binc_eCC) * g_Flux[3]->Eval(binc_eCC));
+        h_Honda_flux_mu->SetBinContent(i + 1, h_Xsec[0]->Interpolate(binc_eCC) * g_Flux[0]->Eval(binc_eCC) + h_Xsec[1]->Interpolate(binc_eCC) * g_Flux[1]->Eval(binc_eCC));
+    }
+    h_Honda_flux_e->Scale(1 / h_Honda_flux_e->Integral());
+    h_Honda_flux_mu->Scale(1 / h_Honda_flux_mu->Integral());
+    TCanvas *c_e = new TCanvas("c_e");
+    h_Honda_flux_e->Draw();
+    TCanvas *c_mu = new TCanvas("c_mu");
+    h_Honda_flux_mu->Draw();
+    TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "update");
+    ff_unfold->cd();
+    h_Honda_flux_e->Write(h_Honda_flux_e->GetName(),TObject::kOverwrite);
+    h_Honda_flux_mu->Write(h_Honda_flux_mu->GetName(),TObject::kOverwrite);
+
 }

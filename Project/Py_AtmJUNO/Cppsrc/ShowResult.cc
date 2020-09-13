@@ -137,12 +137,12 @@ void ShowNPE_nd_Cuts()
     TChain muCC_NPETresE("muCC_NPETresE");
     TChain eCC_NPETresE("eCC_NPETresE");
     TChain NC_NPETresE("NC_NPETresE");
-    // muCC_NPETresE.Add("../results/result_NPETE*_100.root");
-    // eCC_NPETresE.Add("../results/result_NPETE*_100.root");
-    // NC_NPETresE.Add("../results/result_NPETE*_100.root");
-    muCC_NPETresE.Add("../results/FakeData.root");
-    eCC_NPETresE.Add("../results/FakeData.root");
-    NC_NPETresE.Add("../results/FakeData.root");
+    muCC_NPETresE.Add("../results/result_NPETE*_100.root");
+    eCC_NPETresE.Add("../results/result_NPETE*_100.root");
+    NC_NPETresE.Add("../results/result_NPETE*_100.root");
+    // muCC_NPETresE.Add("../results/FakeData.root");
+    // eCC_NPETresE.Add("../results/FakeData.root");
+    // NC_NPETresE.Add("../results/FakeData.root");
     //mu,e,NC
     float sigma_tres[3] = {0}, NPE_LPMT[3] = {0}, E_nu_true[3] = {0};
     muCC_NPETresE.SetBranchAddress("sigma_tres", &sigma_tres[0]);
@@ -161,8 +161,12 @@ void ShowNPE_nd_Cuts()
     double NPE_cut_muCC[2] = {Cut_NPE_low_Sg[0], Cut_NPE_up_Sg[0]};
     double NPE_cut_eCC[2] = {Cut_NPE_low_Sg[1], Cut_NPE_up_Sg[1]};
 
-    TCanvas *c_2dd = new TCanvas("c_2dd");
-    eCC_NPETresE.Draw("NPE_LPMT:E_nu_true>>+", "sigma_tres<86", "colz");
+    TCanvas *c_2dd_eCC = new TCanvas("c_2dd_eCC");
+    eCC_NPETresE.Draw("log10(NPE_LPMT):log10(E_nu_true)>>+h_eCC2D(7,-1,1.05,7,5,7.2)", "", "colz");
+    // eCC_NPETresE.Draw("log10(NPE_LPMT):log10(E_nu_true)>>+h_eCC2D", "", "colz");
+    TCanvas *c_2dd_muCC = new TCanvas("c_2dd_muCC");
+    muCC_NPETresE.Draw("log10(NPE_LPMT):log10(E_nu_true)>>+h_muCC2D(7,-0.3,1.05,8,5,7.2)", "", "colz");
+    // muCC_NPETresE.Draw("log10(NPE_LPMT):log10(E_nu_true)>>+h_muCC2D", "", "colz");
 
     //mu,e,NC
     Color_t hist_cor[3] = {kBlue, kRed, kGreen};
@@ -501,10 +505,7 @@ void ShowNPE_nd_Cuts()
             }
         }
     }
-    TCanvas *c_MA_muCC = new TCanvas("c_MA_muCC");
-    h_muCC_Etrue_NPE->Draw("colz");
-    TCanvas *c_MA_eCC = new TCanvas("c_MA_eCC");
-    h_eCC_Etrue_NPE->Draw("colz");
+
     // TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "update");
     // ff_unfold->cd();
     // h_muCC_Etrue_NPE->Write(h_muCC_Etrue_NPE->GetName(), TObject::kOverwrite);
@@ -620,36 +621,56 @@ void ShowNPE_nd_Cuts()
     // ff_unfold->Close();
 
     {
-        // double A_ji_ecc[NPE_BINNUM_eCC][Etrue_BINNUM_eCC];
-        // double Response_SUM[Etrue_BINNUM_eCC];
-        // for (int i = 0; i < Etrue_BINNUM_eCC; i++)
-        // {
-        //     Response_SUM[i] = h_eCC_Etrue_NPE->Integral(i + 1, i + 1, 1, NPE_BINNUM_eCC);
-        //     for (int j = 0; j < NPE_BINNUM_eCC; j++)
-        //     {
-        //         //normalize the the likelihood sum of a row to 1-epsilon
-        //         A_ji_ecc[j][i] = h_eCC_Etrue_NPE->GetBinContent(i + 1, j + 1) *
-        //                          (1 - 0) / Response_SUM[i];
-        //         h_eCC_Etrue_NPE->SetBinContent(i + 1, j + 1, A_ji_ecc[j][i]);
-        //     }
-        // }
-        // // h_eCC_Etrue_NPE->Draw("colz");
-        // // gPad->SetLogz();
-        // double A_ji_mucc[NPE_BINNUM_muCC][Etrue_BINNUM_muCC];
-        // // double Response_SUM[Etrue_BINNUM_muCC];
-        // for (int i = 0; i < Etrue_BINNUM_muCC; i++)
-        // {
-        //     Response_SUM[i] = h_muCC_Etrue_NPE->Integral(i + 1, i + 1, 1, NPE_BINNUM_muCC);
-        //     for (int j = 0; j < NPE_BINNUM_muCC; j++)
-        //     {
-        //         //normalize the the likelihood sum of a row to 1-epsilon
-        //         A_ji_mucc[j][i] = h_muCC_Etrue_NPE->GetBinContent(i + 1, j + 1) *
-        //                           (1 - 0) / Response_SUM[i];
-        //         h_muCC_Etrue_NPE->SetBinContent(i + 1, j + 1, A_ji_mucc[j][i]);
-        //     }
-        // }
-        // h_muCC_Etrue_NPE->Draw("colz");
-        // gPad->SetLogz();
+        double A_ji_ecc[NPE_BINNUM_eCC][Etrue_BINNUM_eCC];
+        //
+        double epsilon_eCC[Etrue_BINNUM_eCC];
+        double epsilon_muCC[Etrue_BINNUM_eCC];
+        TH2 *h_eCC2D = dynamic_cast<TH2 *>(gDirectory->Get("h_eCC2D"));
+        TH2 *h_muCC2D = dynamic_cast<TH2 *>(gDirectory->Get("h_muCC2D"));
+        for (int i = 0; i < Etrue_BINNUM_eCC; i++)
+            epsilon_eCC[i] = h_eCC2D->GetBinContent(i + 1, 0) / h_eCC2D->Integral(i + 1, i + 1, 0, NPE_BINNUM_eCC + 1);
+        for (int i = 0; i < Etrue_BINNUM_muCC; i++)
+            epsilon_muCC[i] = h_muCC2D->GetBinContent(i + 1, 0) / h_muCC2D->Integral(i + 1, i + 1, 0, NPE_BINNUM_muCC + 1);
+
+        double Response_SUM[Etrue_BINNUM_eCC];
+        for (int i = 0; i < Etrue_BINNUM_eCC; i++)
+        {
+            Response_SUM[i] = h_eCC_Etrue_NPE->Integral(i + 1, i + 1, 1, NPE_BINNUM_eCC);
+            for (int j = 0; j < NPE_BINNUM_eCC; j++)
+            {
+                //normalize the the likelihood sum of a row to 1-epsilon
+                A_ji_ecc[j][i] = h_eCC_Etrue_NPE->GetBinContent(i + 1, j + 1) *
+                                 (1 - epsilon_eCC[i]) / Response_SUM[i];
+                h_eCC_Etrue_NPE->SetBinContent(i + 1, j + 1, A_ji_ecc[j][i]);
+            }
+            printf("epsilon_eCC:%f\n", epsilon_eCC[i]);
+        }
+        TCanvas *c_redu_Ml_eCC = new TCanvas("c_redu_Ml_eCC");
+        h_eCC_Etrue_NPE->Draw("colz");
+        gPad->SetLogz();
+        double A_ji_mucc[NPE_BINNUM_muCC][Etrue_BINNUM_muCC];
+        // double Response_SUM[Etrue_BINNUM_muCC];
+        for (int i = 0; i < Etrue_BINNUM_muCC; i++)
+        {
+            Response_SUM[i] = h_muCC_Etrue_NPE->Integral(i + 1, i + 1, 1, NPE_BINNUM_muCC);
+            for (int j = 0; j < NPE_BINNUM_muCC; j++)
+            {
+                //normalize the the likelihood sum of a row to 1-epsilon
+                A_ji_mucc[j][i] = h_muCC_Etrue_NPE->GetBinContent(i + 1, j + 1) *
+                                  (1 - epsilon_muCC[i]) / Response_SUM[i];
+                h_muCC_Etrue_NPE->SetBinContent(i + 1, j + 1, A_ji_mucc[j][i]);
+            }
+            printf("epsilon_muCC:%f\n", epsilon_muCC[i]);
+
+        }
+        TCanvas *c_redu_Ml_muCC = new TCanvas("c_redu_Ml_muCC");
+        c_redu_Ml_muCC->cd();
+        h_muCC_Etrue_NPE->Draw("colz");
+        gPad->SetLogz();
+        TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "update");
+        ff_unfold->cd();
+        h_muCC_Etrue_NPE->Write(h_muCC_Etrue_NPE->GetName(), TObject::kOverwrite);
+        h_eCC_Etrue_NPE->Write(h_eCC_Etrue_NPE->GetName(), TObject::kOverwrite);
     }
 }
 
