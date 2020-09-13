@@ -27,11 +27,14 @@ void ShowEvtNUM()
     int InitPDGID[10];
     geninfo.SetBranchAddress("InitPDGID", InitPDGID);
     int NUM_muCC = 0;
+    int NUM_eCC = 0;
     for (int i = 0; i < geninfo.GetEntries(); i++)
     {
         geninfo.GetEntry(i);
         if (InitPDGID[0] == 13 || InitPDGID[0] == -13)
             NUM_muCC++;
+        if (InitPDGID[0] == 11 || InitPDGID[0] == -11)
+            NUM_eCC++;
     }
-    printf("muCC total:%d\n", NUM_muCC);
+    printf("muCC NUM:%d\t eCC NUM:%d\n", NUM_muCC, NUM_eCC);
 }
