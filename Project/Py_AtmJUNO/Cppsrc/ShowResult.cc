@@ -18,14 +18,23 @@ author: Jinnan Zhang:Jinnan.Zhang@ihep.ac.cn
 #include <TString.h>
 #include <TROOT.h>
 #include <TLine.h>
+#include <TString.h>
 using namespace std;
 
 //in ns, muCC eCC
 const double Cut_sigma_tres_Sg_muCC = 113;
-const double Cut_sigma_tres_Sg_eCC = 76;
+const double Cut_sigma_tres_Sg_eCC = 86;
 // muCC then eCC
-const double Cut_NPE_low_Sg[2] = {5.012e5, 1e5};
+const double Cut_NPE_low_Sg[2] = {5e5, 1e5};
 const double Cut_NPE_up_Sg[2] = {1.585e7, 1.585e7};
+const int NPE_BINNUM_eCC = 7;
+const int NPE_BINNUM_muCC = 8;
+const int Etrue_BINNUM_eCC = 7;
+const int Etrue_BINNUM_muCC = 7;
+double logNPE_range_eCC[2] = {5, 7.2};
+double logNPE_range_muCC[2] = {5.7, 7.2};
+double logEtrue_range_eCC[2] = {-1, 1.05};
+double logEtrue_range_muCC[2] = {-0.3, 1.05};
 
 void ViewFlavor();
 void ViewEffandCONT();
@@ -35,6 +44,7 @@ void LoadFile(std::string filename, std::vector<std::vector<double>> &v, int Len
 void ShowNPE_nd_Cuts();
 void ShowContEff(TTree *muCC_NPETresE, TTree *eCC_NPETresE, TTree *NC_NPETresE);
 void ShowNPE_Sg_Cuts(bool WithCut = true);
+void GetFakeData(TString FileName = "../results/FakeData.root");
 const int Expected_evt_NUM_eCC[] = {40, 100, 125, 135, 80, 45, 20};
 const int Expected_evt_NUM_muCC[] = {165, 170, 155, 145, 100, 60, 35, 20};
 
@@ -90,9 +100,9 @@ void ShowNPE_Sg_Cuts(bool WithCut)
         h_NPE_all[1] = dynamic_cast<TH1 *>(gDirectory->Get("h_NPE_e"));
         h_NPE_all[2] = dynamic_cast<TH1 *>(gDirectory->Get("h_NPE_NC"));
 
-        muCC_NPETresE.Draw("sigma_tres>>+h_tres_mu(500,0,500)", "", "goff");
-        eCC_NPETresE.Draw("sigma_tres>>+h_tres_e(500,0,500)", "", "goff");
-        NC_NPETresE.Draw("sigma_tres>>+h_tres_NC(500,0,500)", "", "goff");
+        muCC_NPETresE.Draw("sigma_tres>>+h_tres_mu(1000,0,1000)", "", "goff");
+        eCC_NPETresE.Draw("sigma_tres>>+h_tres_e(1000,0,1000)", "", "goff");
+        NC_NPETresE.Draw("sigma_tres>>+h_tres_NC(1000,0,1000)", "", "goff");
 
         h_tres_all[0] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_mu"));
         h_tres_all[1] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_e"));
@@ -126,12 +136,12 @@ void ShowNPE_nd_Cuts()
     TChain muCC_NPETresE("muCC_NPETresE");
     TChain eCC_NPETresE("eCC_NPETresE");
     TChain NC_NPETresE("NC_NPETresE");
-    // muCC_NPETresE.Add("../results/result_NPETE*_100.root");
-    // eCC_NPETresE.Add("../results/result_NPETE*_100.root");
-    // NC_NPETresE.Add("../results/result_NPETE*_100.root");
-    muCC_NPETresE.Add("../results/FakeData.root");
-    eCC_NPETresE.Add("../results/FakeData.root");
-    NC_NPETresE.Add("../results/FakeData.root");
+    muCC_NPETresE.Add("../results/result_NPETE*_100.root");
+    eCC_NPETresE.Add("../results/result_NPETE*_100.root");
+    NC_NPETresE.Add("../results/result_NPETE*_100.root");
+    // muCC_NPETresE.Add("../results/FakeData.root");
+    // eCC_NPETresE.Add("../results/FakeData.root");
+    // NC_NPETresE.Add("../results/FakeData.root");
     //mu,e,NC
     float sigma_tres[3] = {0}, NPE_LPMT[3] = {0}, E_nu_true[3] = {0};
     muCC_NPETresE.SetBranchAddress("sigma_tres", &sigma_tres[0]);
@@ -151,7 +161,7 @@ void ShowNPE_nd_Cuts()
     double NPE_cut_eCC[2] = {Cut_NPE_low_Sg[1], Cut_NPE_up_Sg[1]};
 
     TCanvas *c_2dd = new TCanvas("c_2dd");
-    eCC_NPETresE.Draw("NPE_LPMT:sigma_tres>>+", "", "colz");
+    eCC_NPETresE.Draw("NPE_LPMT:E_nu_true>>+", "sigma_tres<86", "colz");
 
     //mu,e,NC
     Color_t hist_cor[3] = {kBlue, kRed, kGreen};
@@ -191,9 +201,9 @@ void ShowNPE_nd_Cuts()
         TH1 *h_tres_FidCut[3];
         TH1 *h_tres_muCut[3];
         TH1 *h_tres_eCut[3];
-        muCC_NPETresE.Draw("sigma_tres>>+h_tres_initial_mu(500,0,500)", "", "goff");
-        eCC_NPETresE.Draw("sigma_tres>>+h_tres_initial_e(500,0,500)", "", "goff");
-        NC_NPETresE.Draw("sigma_tres>>+h_tres_initial_NC(500,0,500)", "", "goff");
+        muCC_NPETresE.Draw("sigma_tres>>+h_tres_initial_mu(1000,0,1000)", "", "goff");
+        eCC_NPETresE.Draw("sigma_tres>>+h_tres_initial_e(1000,0,1000)", "", "goff");
+        NC_NPETresE.Draw("sigma_tres>>+h_tres_initial_NC(1000,0,1000)", "", "goff");
         h_tres_initial[0] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_initial_mu"));
         h_tres_initial[1] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_initial_e"));
         h_tres_initial[2] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_initial_NC"));
@@ -219,15 +229,15 @@ void ShowNPE_nd_Cuts()
         // gPad->SetLogy();
 
         //different spectra under different cuts
-        muCC_NPETresE.Draw("sigma_tres>>+h_tres_muCut_mu(500,0,500)", "(NPE_LPMT>5.012e5) && (NPE_LPMT<1.59e7)", "goff");
-        eCC_NPETresE.Draw("sigma_tres>>+h_tres_muCut_e(500,0,500)", "(NPE_LPMT>5.012e5) && (NPE_LPMT<1.59e7)", "goff");
-        NC_NPETresE.Draw("sigma_tres>>+h_tres_muCut_NC(500,0,500)", "(NPE_LPMT>5.012e5) && (NPE_LPMT<1.59e7)", "goff");
+        muCC_NPETresE.Draw("sigma_tres>>+h_tres_muCut_mu(1000,0,1000)", "(NPE_LPMT>5.0e5) && (NPE_LPMT<1.59e7)", "goff");
+        eCC_NPETresE.Draw("sigma_tres>>+h_tres_muCut_e(1000,0,1000)", "(NPE_LPMT>5.0e5) && (NPE_LPMT<1.59e7)", "goff");
+        NC_NPETresE.Draw("sigma_tres>>+h_tres_muCut_NC(1000,0,1000)", "(NPE_LPMT>5.0e5) && (NPE_LPMT<1.59e7)", "goff");
         h_tres_muCut[0] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_muCut_mu"));
         h_tres_muCut[1] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_muCut_e"));
         h_tres_muCut[2] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_muCut_NC"));
-        muCC_NPETresE.Draw("sigma_tres>>+h_tres_eCut_mu(500,0,500)", "(NPE_LPMT>1e5) && (NPE_LPMT<1.59e7)", "goff");
-        eCC_NPETresE.Draw("sigma_tres>>+h_tres_eCut_e(500,0,500)", "(NPE_LPMT>1e5) && (NPE_LPMT<1.59e7)", "goff");
-        NC_NPETresE.Draw("sigma_tres>>+h_tres_eCut_NC(500,0,500)", "(NPE_LPMT>1e5) && (NPE_LPMT<1.59e7)", "goff");
+        muCC_NPETresE.Draw("sigma_tres>>+h_tres_eCut_mu(1000,0,1000)", "(NPE_LPMT>1e5) && (NPE_LPMT<1.59e7)", "goff");
+        eCC_NPETresE.Draw("sigma_tres>>+h_tres_eCut_e(1000,0,1000)", "(NPE_LPMT>1e5) && (NPE_LPMT<1.59e7)", "goff");
+        NC_NPETresE.Draw("sigma_tres>>+h_tres_eCut_NC(1000,0,1000)", "(NPE_LPMT>1e5) && (NPE_LPMT<1.59e7)", "goff");
         h_tres_eCut[0] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_eCut_mu"));
         h_tres_eCut[1] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_eCut_e"));
         h_tres_eCut[2] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_eCut_NC"));
@@ -286,7 +296,7 @@ void ShowNPE_nd_Cuts()
         c_EffCONT[0]->cd();
         h_Eff_muCC->Draw();
         h_CONT_muCC->Draw("SAME");
-        TLine *l_muCC = new TLine(Cut_sigma_tres_Sg_muCC, 0, Cut_sigma_tres_Sg_muCC, 1);
+        TLine *l_muCC = new TLine(Cut_sigma_tres_Sg_muCC, 0, Cut_sigma_tres_Sg_muCC, 0.75);
         l_muCC->SetLineWidth(3);
         l_muCC->Draw("SAME");
         // h_Eff_muCC->Draw("SAME");
@@ -320,6 +330,12 @@ void ShowNPE_nd_Cuts()
         printf("e CC:%f\t Eff:%f\tCONT:%f\n", Sigma_cut_eCC,
                h_Eff_eCC->Interpolate(Sigma_cut_eCC),
                h_CONT_eCC->Interpolate(Sigma_cut_eCC));
+        // TFile *ff_unfold=TFile::Open("../data/UnfoldData.root","update");
+        // ff_unfold->cd();
+        // h_CONT_eCC->Write();
+        // h_Eff_eCC->Write();
+        // h_CONT_muCC->Write();
+        // h_Eff_muCC->Write();
 
         // TH1 *h_Etrue_initial[3];
         // TH1 *h_Etrue_FidCut[3];
@@ -354,21 +370,13 @@ void ShowNPE_nd_Cuts()
 
     //0:all selected, 1:true needed, 2:wrong
     TString NPE_Spec_Name[] = {
-        "Sel.",
+        "Sel",
         "True",
         "Wrong"};
     Color_t NPE_Spec_Color[] = {
         kBlack,
         kBlue - 10,
         kGreen - 2};
-    const int NPE_BINNUM_eCC = 7;
-    const int NPE_BINNUM_muCC = 8;
-    const int Etrue_BINNUM_eCC = 7;
-    const int Etrue_BINNUM_muCC = 7;
-    double logNPE_range_eCC[2] = {5, 7.2};
-    double logNPE_range_muCC[2] = {5.7, 7.2};
-    double logEtrue_range_eCC[2] = {-1, 1.05};
-    double logEtrue_range_muCC[2] = {-0.3, 1.05};
 
     //0:all selected, 1:true needed, 2:wrong
     TH1 *h_eCC_NPE_Spec[3];
@@ -492,13 +500,21 @@ void ShowNPE_nd_Cuts()
             }
         }
     }
-    // h_muCC_Etrue_NPE->Draw("colz");
-    // h_eCC_Etrue_NPE->Draw("colz");
+    TCanvas *c_MA_muCC = new TCanvas("c_MA_muCC");
+    h_muCC_Etrue_NPE->Draw("colz");
+    TCanvas *c_MA_eCC = new TCanvas("c_MA_eCC");
+    h_eCC_Etrue_NPE->Draw("colz");
+    // TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "update");
+    // ff_unfold->cd();
+    // h_muCC_Etrue_NPE->Write();
+    // h_eCC_Etrue_NPE->Write();
 
     {
-        // TLegend leg_sel[2];
-        // TCanvas *c_Sel_eCC = new TCanvas("Sel_eCC");
-        // c_Sel_eCC->cd();
+        TLegend *leg_sel[2];
+        leg_sel[0] = new TLegend();
+        leg_sel[1] = new TLegend();
+        TCanvas *c_Sel_eCC = new TCanvas("Sel_eCC");
+        c_Sel_eCC->cd();
         // double t_evt[NPE_BINNUM_muCC];
         // double Bin_center;
         // for (int i = 0; i < h_eCC_NPE_Spec[0]->GetNbinsX(); i++)
@@ -510,21 +526,21 @@ void ShowNPE_nd_Cuts()
         //     for (int j = 0; j < Expected_evt_NUM_eCC[i]; j++)
         //         h_eCC_NPE_Spec[0]->Fill(Bin_center, t_evt[i] / Expected_evt_NUM_eCC[i]);
         // }
-        // h_eCC_NPE_Spec[0]->SetMarkerColor(kBlack);
-        // h_eCC_NPE_Spec[0]->SetMarkerSize(1.5);
-        // h_eCC_NPE_Spec[0]->Draw("E1");
-        // for (int i = 0; i < 3; i++)
-        // {
-        //     if (i > 0)
-        //         h_eCC_NPE_Spec[i]->SetFillColor(NPE_Spec_Color[i]);
-        //     leg_sel[0].AddEntry(h_eCC_NPE_Spec[i], "#nu_{e}: " + NPE_Spec_Name[i] + " part");
-        //     h_eCC_NPE_Spec[i]->Draw("SAME");
-        // }
-        // h_eCC_NPE_Spec[0]->Draw("SAME E1");
-        // leg_sel[0].DrawClone("SAME");
+        h_eCC_NPE_Spec[0]->SetMarkerColor(kBlack);
+        h_eCC_NPE_Spec[0]->SetMarkerSize(1.5);
+        h_eCC_NPE_Spec[0]->Draw("E1");
+        for (int i = 0; i < 3; i++)
+        {
+            if (i > 0)
+                h_eCC_NPE_Spec[i]->SetFillColor(NPE_Spec_Color[i]);
+            leg_sel[0]->AddEntry(h_eCC_NPE_Spec[i], "#nu_{e}: " + NPE_Spec_Name[i] + " part");
+            h_eCC_NPE_Spec[i]->Draw("SAME");
+        }
+        h_eCC_NPE_Spec[0]->Draw("SAME E1");
+        leg_sel[0]->DrawClone("SAME");
 
-        // TCanvas *c_Sel_mu = new TCanvas("Sel_muCC");
-        // c_Sel_mu->cd();
+        TCanvas *c_Sel_mu = new TCanvas("Sel_muCC");
+        c_Sel_mu->cd();
         // for (int i = 0; i < h_muCC_NPE_Spec[0]->GetNbinsX(); i++)
         //     t_evt[i] = h_muCC_NPE_Spec[0]->GetBinContent(i + 1);
         // h_muCC_NPE_Spec[0]->Reset();
@@ -534,20 +550,30 @@ void ShowNPE_nd_Cuts()
         //     for (int j = 0; j < Expected_evt_NUM_muCC[i]; j++)
         //         h_muCC_NPE_Spec[0]->Fill(Bin_center, t_evt[i] / Expected_evt_NUM_muCC[i]);
         // }
-        // h_muCC_NPE_Spec[0]->SetMarkerColor(kBlack);
-        // h_muCC_NPE_Spec[0]->SetMarkerSize(1.5);
-        // h_muCC_NPE_Spec[0]->Draw("E1");
+        h_muCC_NPE_Spec[0]->SetMarkerColor(kBlack);
+        h_muCC_NPE_Spec[0]->SetMarkerSize(1.5);
+        h_muCC_NPE_Spec[0]->Draw("E1");
+        for (int i = 0; i < 3; i++)
+        {
+            if (i > 0)
+                h_muCC_NPE_Spec[i]->SetFillColor(NPE_Spec_Color[i]);
+            leg_sel[1]->AddEntry(h_muCC_NPE_Spec[i], "#nu_{#mu}: " + NPE_Spec_Name[i] + " part");
+
+            if (i > 0)
+                h_muCC_NPE_Spec[i]->Draw("SAME");
+        }
+        h_muCC_NPE_Spec[0]->Draw("SAME E1");
+        leg_sel[1]->DrawClone("SAME");
+        // TFile *ff_FakeData = TFile::Open("../data/UnfoldData.root", "recreate");
+        // ff_FakeData->cd();
         // for (int i = 0; i < 3; i++)
         // {
-        //     if (i > 0)
-        //         h_muCC_NPE_Spec[i]->SetFillColor(NPE_Spec_Color[i]);
-        //     leg_sel[1].AddEntry(h_muCC_NPE_Spec[i], "#nu_{#mu}: " + NPE_Spec_Name[i] + " part");
-        //     h_muCC_NPE_Spec[i]->Draw("SAME");
+        //     h_muCC_NPE_Spec[i]->Write();
+        //     h_eCC_NPE_Spec[i]->Write();
+        //     h_eCC_Enu_Spec[i]->Write();
+        //     h_muCC_Enu_Spec[i]->Write();
         // }
-        // h_muCC_NPE_Spec[0]->Draw("SAME E1");
-        // leg_sel[1].DrawClone("SAME");
 
-        // h_muCC_NPE_Spec[0]->Draw("E");
         // h_muCC_Etrue_NPE->Draw("colz");
         // h_eCC_Etrue_NPE->Draw("colz");
         // gPad->SetLogz();
@@ -990,9 +1016,9 @@ void ShowContEff(TTree &muCC_NPETresE,
     TH1 *h_tres_FidCut[3];
     TH1 *h_tres_muCut[3];
     TH1 *h_tres_eCut[3];
-    muCC_NPETresE.Draw("sigma_tres>>+h_tres_initial_mu(500,0,500)", "", "goff");
-    eCC_NPETresE.Draw("sigma_tres>>+h_tres_initial_e(500,0,500)", "", "goff");
-    NC_NPETresE.Draw("sigma_tres>>+h_tres_initial_NC(500,0,500)", "", "goff");
+    muCC_NPETresE.Draw("sigma_tres>>+h_tres_initial_mu(1000,0,1000)", "", "goff");
+    eCC_NPETresE.Draw("sigma_tres>>+h_tres_initial_e(1000,0,1000)", "", "goff");
+    NC_NPETresE.Draw("sigma_tres>>+h_tres_initial_NC(1000,0,1000)", "", "goff");
     h_tres_initial[0] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_initial_mu"));
     h_tres_initial[1] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_initial_e"));
     h_tres_initial[2] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_initial_NC"));
@@ -1004,15 +1030,15 @@ void ShowContEff(TTree &muCC_NPETresE,
     // // h_NPE_allCut[2] = dynamic_cast<TH1 *>(gDirectory->Get("h_NPE_allCut_NC"));
 
     //different spectra under different cuts
-    muCC_NPETresE.Draw("sigma_tres>>+h_tres_muCut_mu(500,0,500)", "(NPE_LPMT>5.012e5) && (NPE_LPMT<1.59e7)", "goff");
-    eCC_NPETresE.Draw("sigma_tres>>+h_tres_muCut_e(500,0,500)", "(NPE_LPMT>5e5) && (NPE_LPMT<1.59e7)", "goff");
-    NC_NPETresE.Draw("sigma_tres>>+h_tres_muCut_NC(500,0,500)", "(NPE_LPMT>5e5) && (NPE_LPMT<1.59e7)", "goff");
+    muCC_NPETresE.Draw("sigma_tres>>+h_tres_muCut_mu(1000,0,1000)", "(NPE_LPMT>5.012e5) && (NPE_LPMT<1.59e7)", "goff");
+    eCC_NPETresE.Draw("sigma_tres>>+h_tres_muCut_e(1000,0,1000)", "(NPE_LPMT>5e5) && (NPE_LPMT<1.59e7)", "goff");
+    NC_NPETresE.Draw("sigma_tres>>+h_tres_muCut_NC(1000,0,1000)", "(NPE_LPMT>5e5) && (NPE_LPMT<1.59e7)", "goff");
     h_tres_muCut[0] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_muCut_mu"));
     h_tres_muCut[1] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_muCut_e"));
     h_tres_muCut[2] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_muCut_NC"));
-    muCC_NPETresE.Draw("sigma_tres>>+h_tres_eCut_mu(500,0,500)", "(NPE_LPMT>1e5) && (NPE_LPMT<1.59e7)", "goff");
-    eCC_NPETresE.Draw("sigma_tres>>+h_tres_eCut_e(500,0,500)", "(NPE_LPMT>1e5) && (NPE_LPMT<1.59e7)", "goff");
-    NC_NPETresE.Draw("sigma_tres>>+h_tres_eCut_NC(500,0,500)", "(NPE_LPMT>1e5) && (NPE_LPMT<1.59e7)", "goff");
+    muCC_NPETresE.Draw("sigma_tres>>+h_tres_eCut_mu(1000,0,1000)", "(NPE_LPMT>1e5) && (NPE_LPMT<1.59e7)", "goff");
+    eCC_NPETresE.Draw("sigma_tres>>+h_tres_eCut_e(1000,0,1000)", "(NPE_LPMT>1e5) && (NPE_LPMT<1.59e7)", "goff");
+    NC_NPETresE.Draw("sigma_tres>>+h_tres_eCut_NC(1000,0,1000)", "(NPE_LPMT>1e5) && (NPE_LPMT<1.59e7)", "goff");
     h_tres_eCut[0] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_eCut_mu"));
     h_tres_eCut[1] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_eCut_e"));
     h_tres_eCut[2] = dynamic_cast<TH1 *>(gDirectory->Get("h_tres_eCut_NC"));
@@ -1091,4 +1117,117 @@ void ShowContEff(TTree &muCC_NPETresE,
     printf("e CC: Eff:%f\tCONT:%f\n",
            h_Eff_eCC->Interpolate(Sigma_cut_eCC),
            h_CONT_eCC->Interpolate(Sigma_cut_eCC));
+}
+
+//show Fake data
+void GetFakeData(TString FileName = "../results/FakeData.root")
+{
+    // TChain muCC_NPETresE("muCC_NPETresE");
+    // TChain eCC_NPETresE("eCC_NPETresE");
+    // TChain NC_NPETresE("NC_NPETresE");
+    // muCC_NPETresE.Add(FileName);
+    // eCC_NPETresE.Add(FileName);
+    // NC_NPETresE.Add(FileName);
+
+    // //0:all selected, 1:true needed, 2:wrong
+    // TString NPE_Spec_Name[] = {
+    //     "Sel.",
+    //     "True",
+    //     "Wrong"};
+    // Color_t NPE_Spec_Color[] = {
+    //     kBlack,
+    //     kBlue - 10,
+    //     kGreen - 2};
+
+    // //0:all selected, 1:true needed, 2:wrong
+    // TH1 *h_eCC_NPE_Spec[3];
+    // TH1 *h_muCC_NPE_Spec[3];
+    // TH1 *h_eCC_Enu_Spec[3];
+    // TH1 *h_muCC_Enu_Spec[3];
+    // for (int i = 0; i < 3; i++)
+    // {
+    //     h_eCC_NPE_Spec[i] = new TH1D("NPEeCC" + NPE_Spec_Name[i],
+    //                                  "#nu_{e} CC NPE Spectra",
+    //                                  NPE_BINNUM_eCC,
+    //                                  logNPE_range_eCC[0], logNPE_range_eCC[1]);
+    //     h_muCC_NPE_Spec[i] = new TH1D("NPEmuCC" + NPE_Spec_Name[i],
+    //                                   "#nu_{#mu} CC NPE Spectra",
+    //                                   NPE_BINNUM_muCC,
+    //                                   logNPE_range_muCC[0], logNPE_range_muCC[1]);
+    //     h_eCC_NPE_Spec[i]->SetXTitle("log_{10}(NPE_{LPMT})");
+    //     h_muCC_NPE_Spec[i]->SetXTitle("log_{10}(NPE_{LPMT})");
+    //     h_eCC_NPE_Spec[i]->SetYTitle("entries");
+    //     h_muCC_NPE_Spec[i]->SetYTitle("entries");
+    //     h_eCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
+    //     h_muCC_NPE_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
+    //     h_eCC_Enu_Spec[i] = new TH1D("Enu_eCC" + NPE_Spec_Name[i],
+    //                                  "#nu_{e} CC Neutrino Enegry Spectra",
+    //                                  Etrue_BINNUM_eCC,
+    //                                  logEtrue_range_eCC[0], logEtrue_range_eCC[1]);
+    //     h_muCC_Enu_Spec[i] = new TH1D("Enu_muCC" + NPE_Spec_Name[i],
+    //                                   "#nu_{#mu} CC Neutrino Enegry Spectra",
+    //                                   Etrue_BINNUM_muCC,
+    //                                   logEtrue_range_muCC[0], logEtrue_range_muCC[1]);
+    //     h_eCC_Enu_Spec[i]->SetXTitle("log_{10}(E_{#nu}/GeV)");
+    //     h_muCC_Enu_Spec[i]->SetXTitle("log_{10}(E_{#nu}/GeV)");
+    //     h_eCC_Enu_Spec[i]->SetYTitle("entries");
+    //     h_muCC_Enu_Spec[i]->SetYTitle("entries");
+    //     h_eCC_Enu_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
+    //     h_muCC_Enu_Spec[i]->SetLineColor(NPE_Spec_Color[i]);
+    // }
+
+    // TLegend leg_sel[2]->
+    // TCanvas *c_Sel_eCC = new TCanvas("Sel_eCC");
+    // c_Sel_eCC->cd();
+    // double t_evt[NPE_BINNUM_muCC];
+    // double Bin_center;
+    // for (int i = 0; i < h_eCC_NPE_Spec[0]->GetNbinsX(); i++)
+    //     t_evt[i] = h_eCC_NPE_Spec[0]->GetBinContent(i + 1);
+    // h_eCC_NPE_Spec[0]->Reset();
+    // for (int i = 0; i < NPE_BINNUM_eCC; i++)
+    // {
+    //     Bin_center = h_eCC_NPE_Spec[0]->GetBinCenter(i + 1);
+    //     for (int j = 0; j < Expected_evt_NUM_eCC[i]; j++)
+    //         h_eCC_NPE_Spec[0]->Fill(Bin_center, t_evt[i] / Expected_evt_NUM_eCC[i]);
+    // }
+    // h_eCC_NPE_Spec[0]->SetMarkerColor(kBlack);
+    // h_eCC_NPE_Spec[0]->SetMarkerSize(1.5);
+    // h_eCC_NPE_Spec[0]->Draw("E1");
+    // for (int i = 0; i < 3; i++)
+    // {
+    //     if (i > 0)
+    //         h_eCC_NPE_Spec[i]->SetFillColor(NPE_Spec_Color[i]);
+    //     leg_sel[0]->AddEntry(h_eCC_NPE_Spec[i], "#nu_{e}: " + NPE_Spec_Name[i] + " part");
+    //     h_eCC_NPE_Spec[i]->Draw("SAME");
+    // }
+    // h_eCC_NPE_Spec[0]->Draw("SAME E1");
+    // leg_sel[0]->DrawClone("SAME");
+
+    // TCanvas *c_Sel_mu = new TCanvas("Sel_muCC");
+    // c_Sel_mu->cd();
+    // for (int i = 0; i < h_muCC_NPE_Spec[0]->GetNbinsX(); i++)
+    //     t_evt[i] = h_muCC_NPE_Spec[0]->GetBinContent(i + 1);
+    // h_muCC_NPE_Spec[0]->Reset();
+    // for (int i = 0; i < NPE_BINNUM_muCC; i++)
+    // {
+    //     Bin_center = h_muCC_NPE_Spec[0]->GetBinCenter(i + 1);
+    //     for (int j = 0; j < Expected_evt_NUM_muCC[i]; j++)
+    //         h_muCC_NPE_Spec[0]->Fill(Bin_center, t_evt[i] / Expected_evt_NUM_muCC[i]);
+    // }
+    // h_muCC_NPE_Spec[0]->SetMarkerColor(kBlack);
+    // h_muCC_NPE_Spec[0]->SetMarkerSize(1.5);
+    // h_muCC_NPE_Spec[0]->Draw("E1");
+    // for (int i = 0; i < 3; i++)
+    // {
+    //     if (i > 0)
+    //         h_muCC_NPE_Spec[i]->SetFillColor(NPE_Spec_Color[i]);
+    //     leg_sel[1]->AddEntry(h_muCC_NPE_Spec[i], "#nu_{#mu}: " + NPE_Spec_Name[i] + " part");
+    //     h_muCC_NPE_Spec[i]->Draw("SAME");
+    // }
+    // h_muCC_NPE_Spec[0]->Draw("SAME E1");
+    // leg_sel[1]->DrawClone("SAME");
+
+    // h_muCC_NPE_Spec[0]->Draw("E");
+    // h_muCC_Etrue_NPE->Draw("colz");
+    // h_eCC_Etrue_NPE->Draw("colz");
 }

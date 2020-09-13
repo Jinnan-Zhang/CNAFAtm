@@ -60,7 +60,7 @@ def ViewXsec(filename="guowl/spectrum.dat", skiprows=6):
     g_muCCbarflux.Write("muCCbarfluc")
     g_eCCflux.Write("eCCflux")
     g_eCCbarflux.Write("eCCbarFlux")
-
+    
     ff_outXsec.Close()
 
     fig, ax = plt.subplots()
