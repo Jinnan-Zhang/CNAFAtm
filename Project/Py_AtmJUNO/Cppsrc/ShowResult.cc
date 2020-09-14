@@ -137,12 +137,12 @@ void ShowNPE_nd_Cuts()
     TChain muCC_NPETresE("muCC_NPETresE");
     TChain eCC_NPETresE("eCC_NPETresE");
     TChain NC_NPETresE("NC_NPETresE");
-    muCC_NPETresE.Add("../results/result_NPETE*_100.root");
-    eCC_NPETresE.Add("../results/result_NPETE*_100.root");
-    NC_NPETresE.Add("../results/result_NPETE*_100.root");
-    // muCC_NPETresE.Add("../results/FakeData.root");
-    // eCC_NPETresE.Add("../results/FakeData.root");
-    // NC_NPETresE.Add("../results/FakeData.root");
+    // muCC_NPETresE.Add("../results/result_NPETE*_100.root");
+    // eCC_NPETresE.Add("../results/result_NPETE*_100.root");
+    // NC_NPETresE.Add("../results/result_NPETE*_100.root");
+    muCC_NPETresE.Add("../results/FakeData.root");
+    eCC_NPETresE.Add("../results/FakeData.root");
+    NC_NPETresE.Add("../results/FakeData.root");
     //mu,e,NC
     float sigma_tres[3] = {0}, NPE_LPMT[3] = {0}, E_nu_true[3] = {0};
     muCC_NPETresE.SetBranchAddress("sigma_tres", &sigma_tres[0]);
@@ -567,14 +567,16 @@ void ShowNPE_nd_Cuts()
         h_muCC_NPE_Spec[0]->Draw("SAME E1");
         leg_sel[1]->DrawClone("SAME");
         // TFile *ff_FakeData = TFile::Open("../data/UnfoldData.root", "recreate");
-        // ff_FakeData->cd();
-        // for (int i = 0; i < 3; i++)
-        // {
-        //     h_muCC_NPE_Spec[i]->Write();
-        //     h_eCC_NPE_Spec[i]->Write();
-        //     h_eCC_Enu_Spec[i]->Write();
-        //     h_muCC_Enu_Spec[i]->Write();
-        // }
+        TFile *ff_FakeData = TFile::Open("../data/UnfoldData.root", "update");
+        ff_FakeData->cd();
+        for (int i = 0; i < 3; i++)
+        {
+            h_muCC_NPE_Spec[i]->Write(h_muCC_NPE_Spec[i]->GetName(), TObject::kOverwrite);
+            h_eCC_NPE_Spec[i]->Write(h_eCC_NPE_Spec[i]->GetName(), TObject::kOverwrite);
+            h_eCC_Enu_Spec[i]->Write(h_eCC_Enu_Spec[i]->GetName(), TObject::kOverwrite);
+            h_muCC_Enu_Spec[i]->Write(h_muCC_Enu_Spec[i]->GetName(), TObject::kOverwrite);
+        }
+        ff_FakeData->Close();
 
         // h_muCC_Etrue_NPE->Draw("colz");
         // h_eCC_Etrue_NPE->Draw("colz");
@@ -661,16 +663,15 @@ void ShowNPE_nd_Cuts()
                 h_muCC_Etrue_NPE->SetBinContent(i + 1, j + 1, A_ji_mucc[j][i]);
             }
             printf("epsilon_muCC:%f\n", epsilon_muCC[i]);
-
         }
         TCanvas *c_redu_Ml_muCC = new TCanvas("c_redu_Ml_muCC");
         c_redu_Ml_muCC->cd();
         h_muCC_Etrue_NPE->Draw("colz");
         gPad->SetLogz();
-        TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "update");
-        ff_unfold->cd();
-        h_muCC_Etrue_NPE->Write(h_muCC_Etrue_NPE->GetName(), TObject::kOverwrite);
-        h_eCC_Etrue_NPE->Write(h_eCC_Etrue_NPE->GetName(), TObject::kOverwrite);
+        // TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "update");
+        // ff_unfold->cd();
+        // h_muCC_Etrue_NPE->Write(h_muCC_Etrue_NPE->GetName(), TObject::kOverwrite);
+        // h_eCC_Etrue_NPE->Write(h_eCC_Etrue_NPE->GetName(), TObject::kOverwrite);
     }
 }
 

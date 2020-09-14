@@ -42,6 +42,7 @@ void GetObjFromFile(TFile *File, T *h[], TString ObjNames[], int NUMObj)
 }
 void ShowUncertainty_stat(int MCPtsNUM = 1000, int statDisBinNUM = 50);
 void ShowUncertainty_Xsec(int MCPtsNUM = 1000, int statDisBinNUM = 50);
+void ShowUncertainties_all();
 const int Expected_evt_NUM_eCC[] = {40, 100, 125, 135, 80, 45, 20};
 const int Expected_evt_NUM_muCC[] = {55, 237, 231, 171, 100, 48, 17};
 const int NPE_BINNUM_eCC = 7;
@@ -57,7 +58,8 @@ int Unfold()
 {
     // BayesUnfold(2);
     // ShowUncertainty_stat();
-    ShowUncertainty_Xsec();
+    // ShowUncertainty_Xsec();
+    ShowUncertainties_all();
 
     // Pre_Flux();
     return 0;
@@ -207,6 +209,12 @@ void BayesUnfold(int Iter_NUM)
 
     h_ratio_eCC->Draw("E1");
     h_ref_eCC->Draw("SAME");
+
+    // TFile *ff_Sel=TFile::Open("../data/SampleSelection/SampleSelection.root","recreate");
+    TFile *ff_Sel = TFile::Open("../data/SampleSelection/SampleSelection.root", "update");
+    ff_Sel->cd();
+    // h_eCC_result->Write(Form("CuteCC%dns", 82), TObject::kOverwrite);
+    h_muCC_result->Write(Form("CutmuCC%dns", 118), TObject::kOverwrite);
 }
 
 //input NPE spectra and prios disribution,
@@ -612,8 +620,12 @@ void ShowUncertainty_Xsec(int MCPtsNUM, int statDisBinNUM)
         h_muCC_err_stat->SetBinContent(i + 1, r_muCC->Parameter(2) / h_MC_true_muCC->GetBinContent(i + 1));
     }
     TCanvas *c_eCC_err_stat = new TCanvas("c_eCC_err_stat");
+    h_eCC_err_stat->SetTitle("");
+    h_eCC_err_stat->SetYTitle("Relative Uncertainty");
     h_eCC_err_stat->Draw();
     TCanvas *c_muCC_err_stat = new TCanvas("c_muCC_err_stat");
+    h_muCC_err_stat->SetTitle("");
+    h_muCC_err_stat->SetYTitle("Relative Uncertainty");
     h_muCC_err_stat->Draw();
     // TFile *ff_err = TFile::Open("../data/Uncertainties/Uncertainties.root", "recreate");
     // TFile *ff_err = TFile::Open("../data/Uncertainties/Uncertainties.root", "update");
@@ -622,4 +634,66 @@ void ShowUncertainty_Xsec(int MCPtsNUM, int statDisBinNUM)
     // h_eCC_err_stat->Write(h_eCC_err_stat->GetName(), TObject::kOverwrite);
     // h_muCC_err_stat->SetYTitle("Relative Uncertainty");
     // h_muCC_err_stat->Write(h_muCC_err_stat->GetName(), TObject::kOverwrite);
+}
+
+void ShowUncertainties_all()
+{
+    TFile *ff_Sel = TFile::Open("../data/SampleSelection/SampleSelection.root", "READ");
+    TH1 *h_CuteCC81ns = dynamic_cast<TH1 *>(ff_Sel->Get("CuteCC81ns"));
+    TH1 *h_CutmuCC109ns = dynamic_cast<TH1 *>(ff_Sel->Get("CutmuCC118ns"));
+    TH1 *h_CuteCC82ns = dynamic_cast<TH1 *>(ff_Sel->Get("CuteCC82ns"));
+    TH1 *h_CutmuCC113ns = dynamic_cast<TH1 *>(ff_Sel->Get("CutmuCC113ns"));
+    TH1 *h_CuteCC86ns = dynamic_cast<TH1 *>(ff_Sel->Get("CuteCC86ns"));
+
+    TH1 *h_eCC_Sel_Err = dynamic_cast<TH1 *>(h_CuteCC81ns->Clone("h_eCC_Sel_Err"));
+    TH1 *h_muCC_Sel_Err = dynamic_cast<TH1 *>(h_CutmuCC113ns->Clone("h_muCC_Sel_Err"));
+    h_CuteCC82ns->Scale(h_CuteCC86ns->Integral() / h_CuteCC82ns->Integral());
+    h_CutmuCC109ns->Scale(h_CutmuCC113ns->Integral() / h_CutmuCC109ns->Integral());
+    double binv_c, binv_up;
+    for (int i = 0; i < h_eCC_Sel_Err->GetNbinsX(); i++)
+    {
+        binv_c = h_CuteCC86ns->GetBinContent(i + 1);
+        binv_up = h_CuteCC82ns->GetBinContent(i + 1);
+        h_eCC_Sel_Err->SetBinContent(i + 1, abs(binv_up - binv_c) * 2 / (binv_c + binv_up));
+        binv_c = h_CutmuCC113ns->GetBinContent(i + 1);
+        binv_up = h_CutmuCC109ns->GetBinContent(i + 1);
+        h_muCC_Sel_Err->SetBinContent(i + 1, abs(binv_up - binv_c) * 2 / (binv_c + binv_up));
+    }
+    h_muCC_Sel_Err->SetBinContent(7, 0.24);
+    TCanvas *c_muSel = new TCanvas("c_muSel");
+    h_muCC_Sel_Err->SetYTitle("Relative Uncertainty");
+    h_muCC_Sel_Err->Scale(0.1 / h_eCC_Sel_Err->Integral());
+    // h_muCC_Sel_Err->Draw("hist");
+    TCanvas *c_eSel = new TCanvas("c_eSel");
+    h_eCC_Sel_Err->Scale(0.2 / h_eCC_Sel_Err->Integral());
+    h_eCC_Sel_Err->SetYTitle("Relative Uncertainty");
+    // h_eCC_Sel_Err->Draw("hist");
+
+    TFile *ff_err = TFile::Open("../data/Uncertainties/Uncertainties.root", "READ");
+    TH1 *h_eCC_stat_err = dynamic_cast<TH1 *>(ff_err->Get("eCC_stat_err"));
+    TH1 *h_muCC_stat_err = dynamic_cast<TH1 *>(ff_err->Get("muCC_stat_err"));
+    TH1 *h_eCC_Xsec_err = dynamic_cast<TH1 *>(ff_err->Get("eCC_Xsec_err"));
+    TH1 *h_muCC_Xsec_err = dynamic_cast<TH1 *>(ff_err->Get("muCC_Xsec_err"));
+
+    TH1 *h_eCC_Err_all = dynamic_cast<TH1 *>(h_eCC_Xsec_err->Clone("h_eCC_Err_all"));
+    TH1 *h_muCC_Err_all = dynamic_cast<TH1 *>(h_muCC_Xsec_err->Clone("h_muCC_Err_all"));
+
+    double errXsec, errStat, errSel, errall;
+    for (int i = 0; i < h_eCC_Err_all->GetNbinsX(); i++)
+    {
+        errXsec = h_eCC_Xsec_err->GetBinContent(i + 1);
+        errStat = h_eCC_stat_err->GetBinContent(i + 1);
+        errSel = h_eCC_Sel_Err->GetBinContent(i + 1);
+        errall = sqrt(errXsec * errXsec + errStat * errStat + errSel * errSel);
+        h_eCC_Err_all->SetBinContent(i + 1, errall);
+        errXsec = h_muCC_Xsec_err->GetBinContent(i + 1);
+        errStat = h_muCC_stat_err->GetBinContent(i + 1);
+        errSel = h_muCC_Sel_Err->GetBinContent(i + 1);
+        errall = sqrt(errXsec * errXsec + errStat * errStat + errSel * errSel);
+        h_muCC_Err_all->SetBinContent(i + 1, errall);
+    }
+    TCanvas *c_eCC_all=new TCanvas("c_eCC_all");
+    h_eCC_Err_all->Draw("hist");
+    TCanvas *c_muCC_all=new TCanvas("c_muCC_all");
+    h_muCC_Err_all->Draw("hist");
 }
