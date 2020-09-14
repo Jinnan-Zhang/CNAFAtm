@@ -523,30 +523,51 @@ void ShowUncertainty_Xsec(int MCPtsNUM, int statDisBinNUM)
     TH1 *h_err_muCC[Etrue_BINNUM_muCC];
     for (int i = 0; i < Etrue_BINNUM_eCC; i++)
     {
-        h_err_eCC[i] = new TH1D(Form("err%deCC", i), Form("Event Number Distribution of %d-th bin for eCC", i), statDisBinNUM, h_MC_true_eCC->GetBinContent(i + 1) - 3 * sqrt(h_MC_true_eCC->GetBinContent(i + 1)), h_MC_true_eCC->GetBinContent(i + 1) + 3 * sqrt(h_MC_true_eCC->GetBinContent(i + 1)));
-        h_err_muCC[i] = new TH1D(Form("err%dmuCC", i), Form("Event Number Distribution of %d-th bin for muCC", i), statDisBinNUM, h_MC_true_muCC->GetBinContent(i + 1) - 3 * sqrt(h_MC_true_muCC->GetBinContent(i + 1)), h_MC_true_muCC->GetBinContent(i + 1) + 3 * sqrt(h_MC_true_muCC->GetBinContent(i + 1)));
+        h_err_eCC[i] = new TH1D(Form("err%deCC", i), Form("Event Number Distribution of %d-th bin for eCC", i), statDisBinNUM, h_MC_true_eCC->GetBinContent(i + 1) - 7 * sqrt(h_MC_true_eCC->GetBinContent(i + 1)), h_MC_true_eCC->GetBinContent(i + 1) + 7 * sqrt(h_MC_true_eCC->GetBinContent(i + 1)));
+        h_err_muCC[i] = new TH1D(Form("err%dmuCC", i), Form("Event Number Distribution of %d-th bin for muCC", i), statDisBinNUM, h_MC_true_muCC->GetBinContent(i + 1) - 7 * sqrt(h_MC_true_muCC->GetBinContent(i + 1)), h_MC_true_muCC->GetBinContent(i + 1) + 7 * sqrt(h_MC_true_muCC->GetBinContent(i + 1)));
     }
-    std::vector<std::vector<double>> v_eCCXecErr;
-    std::vector<std::vector<double>> v_muCCXecErr;
-    LoadFile("../data/Xsec/eCCXsecErr.txt", v_eCCXecErr, 2, 1);
-    LoadFile("../data/Xsec/muCCXsecErr.txt", v_muCCXecErr, 2, 1);
-    // printf("EV:%f\tErr:%f\n",v_eCCXecErr[0][0],v_eCCXecErr[0][1]);
+    { // std::vector<std::vector<double>> v_eCCXecErr;
+        // std::vector<std::vector<double>> v_muCCXecErr;
+        // LoadFile("../data/Xsec/eCCXsecErr.txt", v_eCCXecErr, 2, 1);
+        // LoadFile("../data/Xsec/muCCXsecErr.txt", v_muCCXecErr, 2, 1);
+        // TH1 *h_eCC_Err_input = new TH1D("h_eCC_Err_input", "Input Xsec Err eCC", Etrue_BINNUM_eCC, logEtrue_range_eCC[0], logEtrue_range_eCC[1]);
+        // TH1 *h_muCC_Err_input = new TH1D("h_muCC_Err_input", "Input Xsec Err muCC", Etrue_BINNUM_muCC, logEtrue_range_muCC[0], logEtrue_range_muCC[1]);
+
+        // for (int i = 0; i < Etrue_BINNUM_eCC; i++)
+        // {
+        //     h_eCC_Err_input->SetBinContent(i + 1, v_eCCXecErr[i][1]);
+        //     h_muCC_Err_input->SetBinContent(i + 1, v_muCCXecErr[i][1]);
+        // }
+        // // h_eCC_Err_input->Draw();
+        // // h_muCC_Err_input->Draw();
+        // // printf("EV:%f\tErr:%f\n",v_eCCXecErr[0][0],v_eCCXecErr[0][1]);
+    }
+
+    TGraph *g_eCC_XsecErr_input = new TGraph("../data/Xsec/T2KeCCXsecErr.txt");
+    TGraph *g_muCC_XsecErr_input = new TGraph("../data/Xsec/T2KmuCCXsecErr.txt");
+    // g_eCC_XsecErr_input->Draw();
+
     TRandom3 r3;
     // TF1 *f_gaus=new TF1("f_gaus","0.39894228/[1]*exp(-0.5*((x-[0])/[1])**2) ",0,200);
     for (int nstat = 0; nstat < MCPtsNUM; nstat++)
     {
         TH1 *h_eCC_input = dynamic_cast<TH1 *>(h_sel_eCC->Clone("eCC_input"));
         TH1 *h_muCC_input = dynamic_cast<TH1 *>(h_sel_muCC->Clone("muCC_input"));
+        double bin_center;
         for (int i = 0; i < NPE_BINNUM_muCC; i++)
         {
             if (i < NPE_BINNUM_eCC)
             {
+                bin_center = h_sel_eCC->GetBinCenter(i + 1);
                 double Content_i_eCC = h_sel_eCC->GetBinContent(i + 1);
-                Content_i_eCC = r3.Poisson(Content_i_eCC);
+                // Content_i_eCC = r3.Gaus(Content_i_eCC, Content_i_eCC * h_eCC_Err_input->Interpolate(bin_center));
+                Content_i_eCC = r3.Gaus(Content_i_eCC, Content_i_eCC * g_eCC_XsecErr_input->Eval(bin_center));
                 h_eCC_input->SetBinContent(i + 1, Content_i_eCC);
             }
+            bin_center = h_sel_muCC->GetBinCenter(i + 1);
             double Content_i_muCC = h_sel_muCC->GetBinContent(i + 1);
-            Content_i_muCC = r3.Poisson(Content_i_muCC);
+            // Content_i_muCC = r3.Gaus(Content_i_muCC, Content_i_muCC * h_muCC_Err_input->Interpolate(bin_center));
+            Content_i_muCC = r3.Gaus(Content_i_muCC, Content_i_muCC * g_muCC_XsecErr_input->Eval(bin_center));
             h_muCC_input->SetBinContent(i + 1, Content_i_muCC);
         }
 

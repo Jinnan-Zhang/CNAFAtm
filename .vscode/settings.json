@@ -74,7 +74,10 @@
         "circular.C": "cpp",
         "ALL_systcut_Nue.C": "cpp",
         "makeErrHisto.C": "cpp",
-        "All_systxsec_Nue.C": "cpp"
+        "All_systxsec_Nue.C": "cpp",
+        "analyzestat_Nue.C": "cpp",
+        "All_systxsec_Numu.C": "cpp",
+        "ALL_systosc_Numu.C": "cpp"
     },
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
