@@ -21,7 +21,9 @@
 #include <TPad.h>
 #include <TObject.h>
 #include <TGraph.h>
+#include <TRandom3.h>
 #include <TLegend.h>
+#include <TFitResultPtr.h>
 #include <vector>
 #include <string>
 #include <fstream>
@@ -38,6 +40,8 @@ void GetObjFromFile(TFile *File, T *h[], TString ObjNames[], int NUMObj)
         h[i] = dynamic_cast<T *>(File->Get(ObjNames[i]));
     }
 }
+void ShowUncertainty_stat(int MCPtsNUM = 1000, int statDisBinNUM = 50);
+void ShowUncertainty_Xsec(int MCPtsNUM = 1000, int statDisBinNUM = 50);
 const int Expected_evt_NUM_eCC[] = {40, 100, 125, 135, 80, 45, 20};
 const int Expected_evt_NUM_muCC[] = {55, 237, 231, 171, 100, 48, 17};
 const int NPE_BINNUM_eCC = 7;
@@ -51,7 +55,9 @@ double logEtrue_range_muCC[2] = {-0.3, 1.05};
 
 int Unfold()
 {
-    BayesUnfold(1);
+    // BayesUnfold(2);
+    ShowUncertainty_stat();
+
     // Pre_Flux();
     return 0;
 }
@@ -63,16 +69,16 @@ void BayesUnfold(int Iter_NUM)
     TFile *ff_unfold_data = TFile::Open("../data/UnfoldData.root", "READ");
     TH2 *h_likeli_eCC = (TH2 *)ff_unfold_data->Get("eCC_Likely_hood");
     TH2 *h_likeli_muCC = (TH2 *)ff_unfold_data->Get("muCC_Likely_hood");
-    TH1 *h_sel_eCC = (TH1 *)ff_unfold_data->Get("NPEeCCSel");
-    TH1 *h_sel_muCC = (TH1 *)ff_unfold_data->Get("NPEmuCCSel");
-    TH1 *h_Prior_eCC = (TH1 *)ff_unfold_data->Get("Honda_flux_e");
-    TH1 *h_Prior_muCC = (TH1 *)ff_unfold_data->Get("Honda_flux_mu");
-    // TH1 *h_MC_true_eCC = (TH1 *)ff_unfold_data->Get("Enu_eCCTrue");
-    // TH1 *h_MC_true_muCC = (TH1 *)ff_unfold_data->Get("Enu_muCCTrue");
-    TH1 *h_MC_true_eCC = (TH1 *)ff_unfold_data->Get("Enu_eCCSel;1");
-    TH1 *h_MC_true_muCC = (TH1 *)ff_unfold_data->Get("Enu_muCCSel;1");
-    TH1 *h_eCC_result = (TH1 *)h_MC_true_eCC->Clone("eCC_result");
-    TH1 *h_muCC_result = (TH1 *)h_MC_true_muCC->Clone("muCC_result");
+    TH1 *h_sel_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("NPEeCCSel"));
+    TH1 *h_sel_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("NPEmuCCSel"));
+    TH1 *h_Prior_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Honda_flux_e"));
+    TH1 *h_Prior_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Honda_flux_mu"));
+    // TH1 *h_MC_true_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Enu_eCCTrue"));
+    // TH1 *h_MC_true_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Enu_muCCTrue"));
+    TH1 *h_MC_true_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Enu_eCCSel;1"));
+    TH1 *h_MC_true_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Enu_muCCSel;1"));
+    TH1 *h_eCC_result = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("eCC_result"));
+    TH1 *h_muCC_result = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("muCC_result"));
     const int Enu_BINNUM_eCC = h_Prior_eCC->GetNbinsX();
     const int Enu_BINNUM_muCC = h_Prior_muCC->GetNbinsX();
     double epsilon_i_eCC[Enu_BINNUM_eCC];
@@ -85,8 +91,8 @@ void BayesUnfold(int Iter_NUM)
     {
         epsilon_i_muCC[i] = 0;
     }
-    // h_Prior_eCC = (TH1 *)h_MC_true_eCC->Clone("eCC_Prior");
-    // h_Prior_muCC = (TH1 *)h_MC_true_muCC->Clone("muCC_Prior");
+    // h_Prior_eCC = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("eCC_Prior"));
+    // h_Prior_muCC = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("muCC_Prior"));
     // h_Prior_eCC->Scale(1 / h_Prior_eCC->Integral());
     // h_Prior_muCC->Scale(1 / h_Prior_muCC->Integral());
     Iter_Bayes_Once(h_sel_eCC, h_Prior_eCC, h_likeli_eCC, h_eCC_result, epsilon_i_eCC);
@@ -94,8 +100,8 @@ void BayesUnfold(int Iter_NUM)
     if (Iter_NUM > 1)
         for (int i = 1; i < Iter_NUM; i++)
         {
-            h_Prior_eCC = (TH1 *)h_eCC_result->Clone("eCC_Prior");
-            h_Prior_muCC = (TH1 *)h_muCC_result->Clone("muCC_Prior");
+            h_Prior_eCC = dynamic_cast<TH1 *>(h_eCC_result->Clone("eCC_Prior"));
+            h_Prior_muCC = dynamic_cast<TH1 *>(h_muCC_result->Clone("muCC_Prior"));
             h_Prior_eCC->Scale(1 / h_Prior_eCC->Integral());
             h_Prior_muCC->Scale(1 / h_Prior_muCC->Integral());
             Iter_Bayes_Once(h_sel_eCC, h_Prior_eCC, h_likeli_eCC, h_eCC_result, epsilon_i_eCC);
@@ -103,7 +109,7 @@ void BayesUnfold(int Iter_NUM)
         }
     gStyle->SetOptStat(0);
     gStyle->SetOptTitle(0);
-    TCanvas *c_CC_Spec = new TCanvas("muCC_Spec");
+    TCanvas *c_CC_Spec = new TCanvas("muCC_Spec", "", 800, 600);
     TPad *p1 = new TPad("p1", "p1", 0.01, 0.3, 0.95, 0.95, 0, 0, 0);
     p1->SetTopMargin(0);
     p1->SetBottomMargin(0);
@@ -133,8 +139,8 @@ void BayesUnfold(int Iter_NUM)
 
     // TCanvas *c_muCC = new TCanvas("muCC_");
     p2->cd();
-    TH1 *h_ref_muCC = (TH1 *)h_MC_true_muCC->Clone("refLine_muCC");
-    TH1 *h_ratio_muCC = (TH1 *)h_MC_true_muCC->Clone("Ratio_muCC");
+    TH1 *h_ref_muCC = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("refLine_muCC"));
+    TH1 *h_ratio_muCC = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("Ratio_muCC"));
     h_ref_muCC->Divide(h_MC_true_muCC);
     h_ratio_muCC->Divide(h_muCC_result, h_MC_true_muCC);
     h_ratio_muCC->SetLineColor(kRed);
@@ -151,7 +157,7 @@ void BayesUnfold(int Iter_NUM)
     h_ratio_muCC->Draw("E1");
     h_ref_muCC->Draw("SAME");
 
-    TCanvas *c_eCC_Spec = new TCanvas("eCC_Spec");
+    TCanvas *c_eCC_Spec = new TCanvas("eCC_Spec", "", 800, 600);
     TPad *p3 = new TPad("p3", "p3", 0.01, 0.3, 0.95, 0.95, 0, 0, 0);
     p3->SetTopMargin(0);
     p3->SetBottomMargin(0);
@@ -182,8 +188,8 @@ void BayesUnfold(int Iter_NUM)
 
     // TCanvas *c_eCC = new TCanvas("eCC_");
     p4->cd();
-    TH1 *h_ref_eCC = (TH1 *)h_MC_true_eCC->Clone("refLine_eCC");
-    TH1 *h_ratio_eCC = (TH1 *)h_MC_true_eCC->Clone("Ratio_eCC");
+    TH1 *h_ref_eCC = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("refLine_eCC"));
+    TH1 *h_ratio_eCC = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("Ratio_eCC"));
     h_ref_eCC->Divide(h_MC_true_eCC);
     h_ratio_eCC->Divide(h_eCC_result, h_MC_true_eCC);
     h_ratio_eCC->SetLineColor(kRed);
@@ -365,7 +371,228 @@ void Pre_Flux()
     h_Honda_flux_mu->Draw();
     TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "update");
     ff_unfold->cd();
-    h_Honda_flux_e->Write(h_Honda_flux_e->GetName(),TObject::kOverwrite);
-    h_Honda_flux_mu->Write(h_Honda_flux_mu->GetName(),TObject::kOverwrite);
+    h_Honda_flux_e->Write(h_Honda_flux_e->GetName(), TObject::kOverwrite);
+    h_Honda_flux_mu->Write(h_Honda_flux_mu->GetName(), TObject::kOverwrite);
+}
 
+//evaluate the uncertainties and show them
+void ShowUncertainty_stat(int MCPtsNUM, int statDisBinNUM)
+{
+    TFile *ff_unfold_data = TFile::Open("../data/UnfoldData.root", "READ");
+    TH2 *h_likeli_eCC = (TH2 *)ff_unfold_data->Get("eCC_Likely_hood");
+    TH2 *h_likeli_muCC = (TH2 *)ff_unfold_data->Get("muCC_Likely_hood");
+    TH1 *h_sel_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("NPEeCCSel"));
+    TH1 *h_sel_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("NPEmuCCSel"));
+    TH1 *h_Prior_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Honda_flux_e"));
+    TH1 *h_Prior_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Honda_flux_mu"));
+    // TH1 *h_MC_true_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Enu_eCCTrue"));
+    // TH1 *h_MC_true_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Enu_muCCTrue"));
+    TH1 *h_MC_true_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Enu_eCCSel;1"));
+    TH1 *h_MC_true_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Enu_muCCSel;1"));
+    TH1 *h_eCC_result = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("eCC_result"));
+    TH1 *h_muCC_result = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("muCC_result"));
+    const int Enu_BINNUM_eCC = h_Prior_eCC->GetNbinsX();
+    const int Enu_BINNUM_muCC = h_Prior_muCC->GetNbinsX();
+    double epsilon_i_eCC[Enu_BINNUM_eCC];
+    double epsilon_i_muCC[Enu_BINNUM_muCC];
+    for (int i = 0; i < Enu_BINNUM_eCC; i++)
+    {
+        epsilon_i_eCC[i] = 0;
+    }
+    for (int i = 0; i < Enu_BINNUM_muCC; i++)
+    {
+        epsilon_i_muCC[i] = 0;
+    }
+    // h_Prior_eCC = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("eCC_Prior"));
+    // h_Prior_muCC = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("muCC_Prior"));
+    // h_Prior_eCC->Scale(1 / h_Prior_eCC->Integral());
+    // h_Prior_muCC->Scale(1 / h_Prior_muCC->Integral());
+
+    TH1 *h_err_eCC[Etrue_BINNUM_eCC];
+    TH1 *h_err_muCC[Etrue_BINNUM_muCC];
+    for (int i = 0; i < Etrue_BINNUM_eCC; i++)
+    {
+        h_err_eCC[i] = new TH1D(Form("err%deCC", i), Form("Event Number Distribution of %d-th bin for eCC", i), statDisBinNUM, h_MC_true_eCC->GetBinContent(i + 1) - 3 * sqrt(h_MC_true_eCC->GetBinContent(i + 1)), h_MC_true_eCC->GetBinContent(i + 1) + 3 * sqrt(h_MC_true_eCC->GetBinContent(i + 1)));
+        h_err_muCC[i] = new TH1D(Form("err%dmuCC", i), Form("Event Number Distribution of %d-th bin for muCC", i), statDisBinNUM, h_MC_true_muCC->GetBinContent(i + 1) - 3 * sqrt(h_MC_true_muCC->GetBinContent(i + 1)), h_MC_true_muCC->GetBinContent(i + 1) + 3 * sqrt(h_MC_true_muCC->GetBinContent(i + 1)));
+    }
+    TRandom3 r3;
+    // TF1 *f_gaus=new TF1("f_gaus","0.39894228/[1]*exp(-0.5*((x-[0])/[1])**2) ",0,200);
+    for (int nstat = 0; nstat < MCPtsNUM; nstat++)
+    {
+        TH1 *h_eCC_input = dynamic_cast<TH1 *>(h_sel_eCC->Clone("eCC_input"));
+        TH1 *h_muCC_input = dynamic_cast<TH1 *>(h_sel_muCC->Clone("muCC_input"));
+        for (int i = 0; i < NPE_BINNUM_muCC; i++)
+        {
+            if (i < NPE_BINNUM_eCC)
+            {
+                double Content_i_eCC = h_sel_eCC->GetBinContent(i + 1);
+                Content_i_eCC = r3.Poisson(Content_i_eCC);
+                h_eCC_input->SetBinContent(i + 1, Content_i_eCC);
+            }
+            double Content_i_muCC = h_sel_muCC->GetBinContent(i + 1);
+            Content_i_muCC = r3.Poisson(Content_i_muCC);
+            h_muCC_input->SetBinContent(i + 1, Content_i_muCC);
+        }
+
+        //reset prior distribution
+        h_Prior_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Honda_flux_e"));
+        h_Prior_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Honda_flux_mu"));
+
+        int Iter_NUM = 2;
+        Iter_Bayes_Once(h_eCC_input, h_Prior_eCC, h_likeli_eCC, h_eCC_result, epsilon_i_eCC);
+        Iter_Bayes_Once(h_muCC_input, h_Prior_muCC, h_likeli_muCC, h_muCC_result, epsilon_i_muCC);
+        if (Iter_NUM > 1)
+            for (int i = 1; i < Iter_NUM; i++)
+            {
+                h_Prior_eCC = dynamic_cast<TH1 *>(h_eCC_result->Clone("eCC_Prior"));
+                h_Prior_muCC = dynamic_cast<TH1 *>(h_muCC_result->Clone("muCC_Prior"));
+                h_Prior_eCC->Scale(1 / h_Prior_eCC->Integral());
+                h_Prior_muCC->Scale(1 / h_Prior_muCC->Integral());
+                Iter_Bayes_Once(h_sel_eCC, h_Prior_eCC, h_likeli_eCC, h_eCC_result, epsilon_i_eCC);
+                Iter_Bayes_Once(h_sel_muCC, h_Prior_muCC, h_likeli_muCC, h_muCC_result, epsilon_i_muCC);
+            }
+        for (int i = 0; i < Etrue_BINNUM_eCC; i++)
+        {
+            h_err_eCC[i]->Fill(h_eCC_result->GetBinContent(i + 1));
+            h_err_muCC[i]->Fill(h_muCC_result->GetBinContent(i + 1));
+        }
+    }
+    TCanvas *c_err_eCC[Etrue_BINNUM_eCC];
+    TCanvas *c_err_muCC[Etrue_BINNUM_muCC];
+    TH1 *h_eCC_err_stat = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("eCC_stat_err"));
+    TH1 *h_muCC_err_stat = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("muCC_stat_err"));
+    for (int i = 0; i < Etrue_BINNUM_eCC; i++)
+    {
+        gStyle->SetOptFit(1111);
+
+        c_err_eCC[i] = new TCanvas(Form("c_err_eCC%d", i));
+        // h_err_eCC[i]->Draw();
+        TFitResultPtr r_eCC = h_err_eCC[i]->Fit("gaus", "S");
+        h_eCC_err_stat->SetBinContent(i + 1, r_eCC->Parameter(2) / h_MC_true_eCC->GetBinContent(i + 1));
+        c_err_muCC[i] = new TCanvas(Form("c_err_muCC%d", i));
+        // h_err_muCC[i]->Draw();
+        TFitResultPtr r_muCC = h_err_muCC[i]->Fit("gaus", "S");
+        h_muCC_err_stat->SetBinContent(i + 1, r_muCC->Parameter(2) / h_MC_true_muCC->GetBinContent(i + 1));
+    }
+    TCanvas *c_eCC_err_stat = new TCanvas("c_eCC_err_stat");
+    h_eCC_err_stat->Draw();
+    TCanvas *c_muCC_err_stat = new TCanvas("c_muCC_err_stat");
+    h_muCC_err_stat->Draw();
+    // TFile *ff_err = TFile::Open("../data/Uncertainties/Uncertainties.root", "recreate");
+    TFile *ff_err = TFile::Open("../data/Uncertainties/Uncertainties.root", "update");
+    ff_err->cd();
+    h_eCC_err_stat->SetYTitle("Relative Uncertainty");
+    h_eCC_err_stat->Write(h_eCC_err_stat->GetName(), TObject::kOverwrite);
+    h_muCC_err_stat->SetYTitle("Relative Uncertainty");
+    h_muCC_err_stat->Write(h_muCC_err_stat->GetName(), TObject::kOverwrite);
+}
+void ShowUncertainty_Xsec(int MCPtsNUM, int statDisBinNUM)
+{
+    TFile *ff_unfold_data = TFile::Open("../data/UnfoldData.root", "READ");
+    TH2 *h_likeli_eCC = (TH2 *)ff_unfold_data->Get("eCC_Likely_hood");
+    TH2 *h_likeli_muCC = (TH2 *)ff_unfold_data->Get("muCC_Likely_hood");
+    TH1 *h_sel_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("NPEeCCSel"));
+    TH1 *h_sel_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("NPEmuCCSel"));
+    TH1 *h_Prior_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Honda_flux_e"));
+    TH1 *h_Prior_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Honda_flux_mu"));
+    // TH1 *h_MC_true_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Enu_eCCTrue"));
+    // TH1 *h_MC_true_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Enu_muCCTrue"));
+    TH1 *h_MC_true_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Enu_eCCSel;1"));
+    TH1 *h_MC_true_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Enu_muCCSel;1"));
+    TH1 *h_eCC_result = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("eCC_result"));
+    TH1 *h_muCC_result = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("muCC_result"));
+    const int Enu_BINNUM_eCC = h_Prior_eCC->GetNbinsX();
+    const int Enu_BINNUM_muCC = h_Prior_muCC->GetNbinsX();
+    double epsilon_i_eCC[Enu_BINNUM_eCC];
+    double epsilon_i_muCC[Enu_BINNUM_muCC];
+    for (int i = 0; i < Enu_BINNUM_eCC; i++)
+    {
+        epsilon_i_eCC[i] = 0;
+    }
+    for (int i = 0; i < Enu_BINNUM_muCC; i++)
+    {
+        epsilon_i_muCC[i] = 0;
+    }
+    // h_Prior_eCC = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("eCC_Prior"));
+    // h_Prior_muCC = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("muCC_Prior"));
+    // h_Prior_eCC->Scale(1 / h_Prior_eCC->Integral());
+    // h_Prior_muCC->Scale(1 / h_Prior_muCC->Integral());
+
+    TH1 *h_err_eCC[Etrue_BINNUM_eCC];
+    TH1 *h_err_muCC[Etrue_BINNUM_muCC];
+    for (int i = 0; i < Etrue_BINNUM_eCC; i++)
+    {
+        h_err_eCC[i] = new TH1D(Form("err%deCC", i), Form("Event Number Distribution of %d-th bin for eCC", i), statDisBinNUM, h_MC_true_eCC->GetBinContent(i + 1) - 3 * sqrt(h_MC_true_eCC->GetBinContent(i + 1)), h_MC_true_eCC->GetBinContent(i + 1) + 3 * sqrt(h_MC_true_eCC->GetBinContent(i + 1)));
+        h_err_muCC[i] = new TH1D(Form("err%dmuCC", i), Form("Event Number Distribution of %d-th bin for muCC", i), statDisBinNUM, h_MC_true_muCC->GetBinContent(i + 1) - 3 * sqrt(h_MC_true_muCC->GetBinContent(i + 1)), h_MC_true_muCC->GetBinContent(i + 1) + 3 * sqrt(h_MC_true_muCC->GetBinContent(i + 1)));
+    }
+    TRandom3 r3;
+    // TF1 *f_gaus=new TF1("f_gaus","0.39894228/[1]*exp(-0.5*((x-[0])/[1])**2) ",0,200);
+    for (int nstat = 0; nstat < MCPtsNUM; nstat++)
+    {
+        TH1 *h_eCC_input = dynamic_cast<TH1 *>(h_sel_eCC->Clone("eCC_input"));
+        TH1 *h_muCC_input = dynamic_cast<TH1 *>(h_sel_muCC->Clone("muCC_input"));
+        for (int i = 0; i < NPE_BINNUM_muCC; i++)
+        {
+            if (i < NPE_BINNUM_eCC)
+            {
+                double Content_i_eCC = h_sel_eCC->GetBinContent(i + 1);
+                Content_i_eCC = r3.Poisson(Content_i_eCC);
+                h_eCC_input->SetBinContent(i + 1, Content_i_eCC);
+            }
+            double Content_i_muCC = h_sel_muCC->GetBinContent(i + 1);
+            Content_i_muCC = r3.Poisson(Content_i_muCC);
+            h_muCC_input->SetBinContent(i + 1, Content_i_muCC);
+        }
+
+        //reset prior distribution
+        h_Prior_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Honda_flux_e"));
+        h_Prior_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Honda_flux_mu"));
+
+        int Iter_NUM = 2;
+        Iter_Bayes_Once(h_eCC_input, h_Prior_eCC, h_likeli_eCC, h_eCC_result, epsilon_i_eCC);
+        Iter_Bayes_Once(h_muCC_input, h_Prior_muCC, h_likeli_muCC, h_muCC_result, epsilon_i_muCC);
+        if (Iter_NUM > 1)
+            for (int i = 1; i < Iter_NUM; i++)
+            {
+                h_Prior_eCC = dynamic_cast<TH1 *>(h_eCC_result->Clone("eCC_Prior"));
+                h_Prior_muCC = dynamic_cast<TH1 *>(h_muCC_result->Clone("muCC_Prior"));
+                h_Prior_eCC->Scale(1 / h_Prior_eCC->Integral());
+                h_Prior_muCC->Scale(1 / h_Prior_muCC->Integral());
+                Iter_Bayes_Once(h_sel_eCC, h_Prior_eCC, h_likeli_eCC, h_eCC_result, epsilon_i_eCC);
+                Iter_Bayes_Once(h_sel_muCC, h_Prior_muCC, h_likeli_muCC, h_muCC_result, epsilon_i_muCC);
+            }
+        for (int i = 0; i < Etrue_BINNUM_eCC; i++)
+        {
+            h_err_eCC[i]->Fill(h_eCC_result->GetBinContent(i + 1));
+            h_err_muCC[i]->Fill(h_muCC_result->GetBinContent(i + 1));
+        }
+    }
+    TCanvas *c_err_eCC[Etrue_BINNUM_eCC];
+    TCanvas *c_err_muCC[Etrue_BINNUM_muCC];
+    TH1 *h_eCC_err_stat = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("eCC_Xsec_err"));
+    TH1 *h_muCC_err_stat = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("muCC_Xsec_err"));
+    for (int i = 0; i < Etrue_BINNUM_eCC; i++)
+    {
+        gStyle->SetOptFit(1111);
+
+        c_err_eCC[i] = new TCanvas(Form("c_err_eCC%d", i));
+        // h_err_eCC[i]->Draw();
+        TFitResultPtr r_eCC = h_err_eCC[i]->Fit("gaus", "S");
+        h_eCC_err_stat->SetBinContent(i + 1, r_eCC->Parameter(2) / h_MC_true_eCC->GetBinContent(i + 1));
+        c_err_muCC[i] = new TCanvas(Form("c_err_muCC%d", i));
+        // h_err_muCC[i]->Draw();
+        TFitResultPtr r_muCC = h_err_muCC[i]->Fit("gaus", "S");
+        h_muCC_err_stat->SetBinContent(i + 1, r_muCC->Parameter(2) / h_MC_true_muCC->GetBinContent(i + 1));
+    }
+    TCanvas *c_eCC_err_stat = new TCanvas("c_eCC_err_stat");
+    h_eCC_err_stat->Draw();
+    TCanvas *c_muCC_err_stat = new TCanvas("c_muCC_err_stat");
+    h_muCC_err_stat->Draw();
+    // TFile *ff_err = TFile::Open("../data/Uncertainties/Uncertainties.root", "recreate");
+    // TFile *ff_err = TFile::Open("../data/Uncertainties/Uncertainties.root", "update");
+    // ff_err->cd();
+    // h_eCC_err_stat->SetYTitle("Relative Uncertainty");
+    // h_eCC_err_stat->Write(h_eCC_err_stat->GetName(), TObject::kOverwrite);
+    // h_muCC_err_stat->SetYTitle("Relative Uncertainty");
+    // h_muCC_err_stat->Write(h_muCC_err_stat->GetName(), TObject::kOverwrite);
 }

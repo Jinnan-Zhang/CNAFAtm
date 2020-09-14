@@ -71,7 +71,10 @@
         "ALL_systcut_Numu.C": "cpp",
         "Data.C": "cpp",
         "hstack.C": "cpp",
-        "circular.C": "cpp"
+        "circular.C": "cpp",
+        "ALL_systcut_Nue.C": "cpp",
+        "makeErrHisto.C": "cpp",
+        "All_systxsec_Nue.C": "cpp"
     },
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
