@@ -56,7 +56,8 @@ double logEtrue_range_muCC[2] = {-0.3, 1.05};
 int Unfold()
 {
     // BayesUnfold(2);
-    ShowUncertainty_stat();
+    // ShowUncertainty_stat();
+    ShowUncertainty_Xsec();
 
     // Pre_Flux();
     return 0;
@@ -525,6 +526,11 @@ void ShowUncertainty_Xsec(int MCPtsNUM, int statDisBinNUM)
         h_err_eCC[i] = new TH1D(Form("err%deCC", i), Form("Event Number Distribution of %d-th bin for eCC", i), statDisBinNUM, h_MC_true_eCC->GetBinContent(i + 1) - 3 * sqrt(h_MC_true_eCC->GetBinContent(i + 1)), h_MC_true_eCC->GetBinContent(i + 1) + 3 * sqrt(h_MC_true_eCC->GetBinContent(i + 1)));
         h_err_muCC[i] = new TH1D(Form("err%dmuCC", i), Form("Event Number Distribution of %d-th bin for muCC", i), statDisBinNUM, h_MC_true_muCC->GetBinContent(i + 1) - 3 * sqrt(h_MC_true_muCC->GetBinContent(i + 1)), h_MC_true_muCC->GetBinContent(i + 1) + 3 * sqrt(h_MC_true_muCC->GetBinContent(i + 1)));
     }
+    std::vector<std::vector<double>> v_eCCXecErr;
+    std::vector<std::vector<double>> v_muCCXecErr;
+    LoadFile("../data/Xsec/eCCXsecErr.txt", v_eCCXecErr, 2, 1);
+    LoadFile("../data/Xsec/muCCXsecErr.txt", v_muCCXecErr, 2, 1);
+    // printf("EV:%f\tErr:%f\n",v_eCCXecErr[0][0],v_eCCXecErr[0][1]);
     TRandom3 r3;
     // TF1 *f_gaus=new TF1("f_gaus","0.39894228/[1]*exp(-0.5*((x-[0])/[1])**2) ",0,200);
     for (int nstat = 0; nstat < MCPtsNUM; nstat++)
