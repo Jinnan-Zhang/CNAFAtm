@@ -213,8 +213,8 @@ void BayesUnfold(int Iter_NUM)
     // TFile *ff_Sel=TFile::Open("../data/SampleSelection/SampleSelection.root","recreate");
     TFile *ff_Sel = TFile::Open("../data/SampleSelection/SampleSelection.root", "update");
     ff_Sel->cd();
-    // h_eCC_result->Write(Form("CuteCC%dns", 82), TObject::kOverwrite);
-    h_muCC_result->Write(Form("CutmuCC%dns", 118), TObject::kOverwrite);
+    // h_eCC_result->Write(Form("CuteCC%dns", 88), TObject::kOverwrite);
+    h_muCC_result->Write(Form("CutmuCC%dns", 112), TObject::kOverwrite);
 }
 
 //input NPE spectra and prios disribution,
@@ -638,17 +638,17 @@ void ShowUncertainty_Xsec(int MCPtsNUM, int statDisBinNUM)
 
 void ShowUncertainties_all()
 {
+    gStyle->SetOptStat(0);
     TFile *ff_Sel = TFile::Open("../data/SampleSelection/SampleSelection.root", "READ");
-    TH1 *h_CuteCC81ns = dynamic_cast<TH1 *>(ff_Sel->Get("CuteCC81ns"));
-    TH1 *h_CutmuCC109ns = dynamic_cast<TH1 *>(ff_Sel->Get("CutmuCC118ns"));
-    TH1 *h_CuteCC82ns = dynamic_cast<TH1 *>(ff_Sel->Get("CuteCC82ns"));
+    TH1 *h_CutmuCC109ns = dynamic_cast<TH1 *>(ff_Sel->Get("CutmuCC109ns"));
+    TH1 *h_CuteCC82ns = dynamic_cast<TH1 *>(ff_Sel->Get("CuteCC88ns"));
     TH1 *h_CutmuCC113ns = dynamic_cast<TH1 *>(ff_Sel->Get("CutmuCC113ns"));
-    TH1 *h_CuteCC86ns = dynamic_cast<TH1 *>(ff_Sel->Get("CuteCC86ns"));
+    TH1 *h_CuteCC86ns = dynamic_cast<TH1 *>(ff_Sel->Get("CuteCC87ns"));
 
-    TH1 *h_eCC_Sel_Err = dynamic_cast<TH1 *>(h_CuteCC81ns->Clone("h_eCC_Sel_Err"));
+    TH1 *h_eCC_Sel_Err = dynamic_cast<TH1 *>(h_CuteCC82ns->Clone("h_eCC_Sel_Err"));
     TH1 *h_muCC_Sel_Err = dynamic_cast<TH1 *>(h_CutmuCC113ns->Clone("h_muCC_Sel_Err"));
-    h_CuteCC82ns->Scale(h_CuteCC86ns->Integral() / h_CuteCC82ns->Integral());
-    h_CutmuCC109ns->Scale(h_CutmuCC113ns->Integral() / h_CutmuCC109ns->Integral());
+    // h_CuteCC82ns->Scale(h_CuteCC86ns->Integral() / h_CuteCC82ns->Integral());
+    // h_CutmuCC109ns->Scale(h_CutmuCC113ns->Integral() / h_CutmuCC109ns->Integral());
     double binv_c, binv_up;
     for (int i = 0; i < h_eCC_Sel_Err->GetNbinsX(); i++)
     {
@@ -662,18 +662,19 @@ void ShowUncertainties_all()
     h_muCC_Sel_Err->SetBinContent(7, 0.24);
     TCanvas *c_muSel = new TCanvas("c_muSel");
     h_muCC_Sel_Err->SetYTitle("Relative Uncertainty");
-    h_muCC_Sel_Err->Scale(0.1 / h_eCC_Sel_Err->Integral());
-    // h_muCC_Sel_Err->Draw("hist");
+    // h_muCC_Sel_Err->Scale(0.1 / h_eCC_Sel_Err->Integral());
+    h_muCC_Sel_Err->Draw("hist");
     TCanvas *c_eSel = new TCanvas("c_eSel");
-    h_eCC_Sel_Err->Scale(0.2 / h_eCC_Sel_Err->Integral());
+    // h_eCC_Sel_Err->Scale(0.2 / h_eCC_Sel_Err->Integral());
     h_eCC_Sel_Err->SetYTitle("Relative Uncertainty");
-    // h_eCC_Sel_Err->Draw("hist");
+    h_eCC_Sel_Err->Draw("hist");
 
     TFile *ff_err = TFile::Open("../data/Uncertainties/Uncertainties.root", "READ");
     TH1 *h_eCC_stat_err = dynamic_cast<TH1 *>(ff_err->Get("eCC_stat_err"));
     TH1 *h_muCC_stat_err = dynamic_cast<TH1 *>(ff_err->Get("muCC_stat_err"));
     TH1 *h_eCC_Xsec_err = dynamic_cast<TH1 *>(ff_err->Get("eCC_Xsec_err"));
     TH1 *h_muCC_Xsec_err = dynamic_cast<TH1 *>(ff_err->Get("muCC_Xsec_err"));
+    // h_muCC_stat_err->Draw("hist");
 
     TH1 *h_eCC_Err_all = dynamic_cast<TH1 *>(h_eCC_Xsec_err->Clone("h_eCC_Err_all"));
     TH1 *h_muCC_Err_all = dynamic_cast<TH1 *>(h_muCC_Xsec_err->Clone("h_muCC_Err_all"));
@@ -692,8 +693,41 @@ void ShowUncertainties_all()
         errall = sqrt(errXsec * errXsec + errStat * errStat + errSel * errSel);
         h_muCC_Err_all->SetBinContent(i + 1, errall);
     }
-    TCanvas *c_eCC_all=new TCanvas("c_eCC_all");
+    h_eCC_stat_err->SetLineColor(kRed);
+    h_eCC_Xsec_err->SetLineColor(kBlue);
+    h_eCC_Sel_Err->SetLineColor(kGreen+3);
+    h_eCC_stat_err->SetLineStyle(9);
+    h_eCC_Xsec_err->SetLineStyle(10);
+    h_eCC_Sel_Err->SetLineStyle(2);
+    h_muCC_stat_err->SetLineColor(kRed);
+    h_muCC_Xsec_err->SetLineColor(kBlue);
+    h_muCC_Sel_Err->SetLineColor(kGreen+3);
+    h_muCC_stat_err->SetLineStyle(9);
+    h_muCC_Xsec_err->SetLineStyle(10);
+    h_muCC_Sel_Err->SetLineStyle(2);
+    TLegend *leg_eCC_err = new TLegend();
+    TLegend *leg_muCC_err = new TLegend();
+    leg_eCC_err->AddEntry(h_eCC_stat_err, "statistical");
+    leg_eCC_err->AddEntry(h_eCC_Xsec_err, "cross section");
+    leg_eCC_err->AddEntry(h_eCC_Sel_Err, "sample selection");
+    leg_eCC_err->AddEntry(h_eCC_Err_all, "total");
+    leg_muCC_err->AddEntry(h_muCC_stat_err, "statistical");
+    leg_muCC_err->AddEntry(h_muCC_Xsec_err, "cross section");
+    leg_muCC_err->AddEntry(h_muCC_Sel_Err, "sample selection");
+    leg_muCC_err->AddEntry(h_muCC_Err_all, "total");
+
+    TCanvas *c_eCC_all = new TCanvas("c_eCC_all");
+    h_eCC_Err_all->SetAxisRange(0,0.3,"Y");
     h_eCC_Err_all->Draw("hist");
-    TCanvas *c_muCC_all=new TCanvas("c_muCC_all");
+    h_eCC_stat_err->Draw("SAME hist");
+    h_eCC_Xsec_err->Draw("SAME hist");
+    h_eCC_Sel_Err->Draw("SAME hist");
+    leg_eCC_err->DrawClone("SAME");
+    TCanvas *c_muCC_all = new TCanvas("c_muCC_all");
+    h_muCC_Err_all->SetAxisRange(0,0.4,"Y");
     h_muCC_Err_all->Draw("hist");
+    h_muCC_stat_err->Draw("SAME hist");
+    h_muCC_Xsec_err->Draw("SAME hist");
+    h_muCC_Sel_Err->Draw("SAME hist");
+    leg_muCC_err->DrawClone("SAME");
 }
