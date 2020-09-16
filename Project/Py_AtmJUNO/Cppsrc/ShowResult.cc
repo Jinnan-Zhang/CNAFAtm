@@ -23,7 +23,7 @@ author: Jinnan Zhang:Jinnan.Zhang@ihep.ac.cn
 using namespace std;
 
 //in ns, muCC eCC
-const double Cut_sigma_tres_Sg_muCC = 112;
+const double Cut_sigma_tres_Sg_muCC = 113;
 const double Cut_sigma_tres_Sg_eCC = 86;
 // muCC then eCC
 const double Cut_NPE_low_Sg[2] = {5e5, 1e5};

@@ -42,6 +42,7 @@ void GetObjFromFile(TFile *File, T *h[], TString ObjNames[], int NUMObj)
 }
 void ShowUncertainty_stat(int MCPtsNUM = 1000, int statDisBinNUM = 50);
 void ShowUncertainty_Xsec(int MCPtsNUM = 1000, int statDisBinNUM = 50);
+void ShowUncertainty_SamSel(const int SampelNUM = 11);
 void ShowUncertainties_all();
 const int Expected_evt_NUM_eCC[] = {40, 100, 125, 135, 80, 45, 20};
 const int Expected_evt_NUM_muCC[] = {55, 237, 231, 171, 100, 48, 17};
@@ -53,13 +54,17 @@ double logNPE_range_eCC[2] = {5, 7.2};
 double logNPE_range_muCC[2] = {5.7, 7.2};
 double logEtrue_range_eCC[2] = {-1, 1.05};
 double logEtrue_range_muCC[2] = {-0.3, 1.05};
+//in ns, muCC eCC
+const double Cut_sigma_tres_Sg_muCC = 113;
+const double Cut_sigma_tres_Sg_eCC = 86;
 
 int Unfold()
 {
     // BayesUnfold(2);
     // ShowUncertainty_stat();
     // ShowUncertainty_Xsec();
-    ShowUncertainties_all();
+    ShowUncertainty_SamSel();
+    // ShowUncertainties_all();
 
     // Pre_Flux();
     return 0;
@@ -213,8 +218,8 @@ void BayesUnfold(int Iter_NUM)
     // TFile *ff_Sel=TFile::Open("../data/SampleSelection/SampleSelection.root","recreate");
     TFile *ff_Sel = TFile::Open("../data/SampleSelection/SampleSelection.root", "update");
     ff_Sel->cd();
-    // h_eCC_result->Write(Form("CuteCC%dns", 88), TObject::kOverwrite);
-    h_muCC_result->Write(Form("CutmuCC%dns", 112), TObject::kOverwrite);
+    h_eCC_result->Write(Form("CuteCC%dns", 91), TObject::kOverwrite);
+    h_muCC_result->Write(Form("CutmuCC%dns", 117), TObject::kOverwrite);
 }
 
 //input NPE spectra and prios disribution,
@@ -636,6 +641,32 @@ void ShowUncertainty_Xsec(int MCPtsNUM, int statDisBinNUM)
     // h_muCC_err_stat->Write(h_muCC_err_stat->GetName(), TObject::kOverwrite);
 }
 
+void ShowUncertainty_SamSel(const int SampelNUM)
+{
+    TFile *ff_Sel = TFile::Open("../data/SampleSelection/SampleSelection.root", "READ");
+    TH1 *h_eCCSel[SampelNUM];
+    TH1 *h_muCCSel[SampelNUM];
+    for (int i = 0; i < SampelNUM; i++)
+    {
+        h_eCCSel[i] = dynamic_cast<TH1 *>(ff_Sel->Get(Form("CuteCC%dns", i + 81)));
+        h_muCCSel[i] = dynamic_cast<TH1 *>(ff_Sel->Get(Form("CutmuCC%dns", i + 108)));
+    }
+    for (int k_bin = 0; k_bin < h_eCCSel[0]->GetNbinsX(); k_bin++)
+    {
+        double Avg_eCC = 0, Avg_muCC = 0;
+        double v_ith_eCC[SampelNUM];
+        double v_ith_muCC[SampelNUM];
+        for (int i = 0; i < SampelNUM; i++)
+        {
+            v_ith_eCC[i] = h_eCCSel[i]->GetBinContent(k_bin + 1);
+            v_ith_muCC[i] = h_muCCSel[i]->GetBinContent(k_bin + 1);
+            Avg_eCC += v_ith_eCC[i] / SampelNUM;
+            Avg_muCC += v_ith_muCC[i] / SampelNUM;
+        }
+        
+    }
+}
+
 void ShowUncertainties_all()
 {
     gStyle->SetOptStat(0);
@@ -695,13 +726,13 @@ void ShowUncertainties_all()
     }
     h_eCC_stat_err->SetLineColor(kRed);
     h_eCC_Xsec_err->SetLineColor(kBlue);
-    h_eCC_Sel_Err->SetLineColor(kGreen+3);
+    h_eCC_Sel_Err->SetLineColor(kGreen + 3);
     h_eCC_stat_err->SetLineStyle(9);
     h_eCC_Xsec_err->SetLineStyle(10);
     h_eCC_Sel_Err->SetLineStyle(2);
     h_muCC_stat_err->SetLineColor(kRed);
     h_muCC_Xsec_err->SetLineColor(kBlue);
-    h_muCC_Sel_Err->SetLineColor(kGreen+3);
+    h_muCC_Sel_Err->SetLineColor(kGreen + 3);
     h_muCC_stat_err->SetLineStyle(9);
     h_muCC_Xsec_err->SetLineStyle(10);
     h_muCC_Sel_Err->SetLineStyle(2);
@@ -717,14 +748,14 @@ void ShowUncertainties_all()
     leg_muCC_err->AddEntry(h_muCC_Err_all, "total");
 
     TCanvas *c_eCC_all = new TCanvas("c_eCC_all");
-    h_eCC_Err_all->SetAxisRange(0,0.3,"Y");
+    h_eCC_Err_all->SetAxisRange(0, 0.3, "Y");
     h_eCC_Err_all->Draw("hist");
     h_eCC_stat_err->Draw("SAME hist");
     h_eCC_Xsec_err->Draw("SAME hist");
     h_eCC_Sel_Err->Draw("SAME hist");
     leg_eCC_err->DrawClone("SAME");
     TCanvas *c_muCC_all = new TCanvas("c_muCC_all");
-    h_muCC_Err_all->SetAxisRange(0,0.4,"Y");
+    h_muCC_Err_all->SetAxisRange(0, 0.4, "Y");
     h_muCC_Err_all->Draw("hist");
     h_muCC_stat_err->Draw("SAME hist");
     h_muCC_Xsec_err->Draw("SAME hist");
