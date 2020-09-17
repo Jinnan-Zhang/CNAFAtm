@@ -63,7 +63,7 @@ int Unfold()
     // BayesUnfold(2);
     // ShowUncertainty_stat();
     // ShowUncertainty_Xsec();
-    ShowUncertainty_SamSel();
+    ShowUncertainty_SamSel(2);
     // ShowUncertainties_all();
 
     // Pre_Flux();
@@ -219,7 +219,7 @@ void BayesUnfold(int Iter_NUM)
     TFile *ff_Sel = TFile::Open("../data/SampleSelection/SampleSelection.root", "update");
     ff_Sel->cd();
     h_eCC_result->Write(Form("CuteCC%dns", 91), TObject::kOverwrite);
-    h_muCC_result->Write(Form("CutmuCC%dns", 117), TObject::kOverwrite);
+    h_muCC_result->Write(Form("CutmuCC%dns", 118), TObject::kOverwrite);
 }
 
 //input NPE spectra and prios disribution,
@@ -651,6 +651,8 @@ void ShowUncertainty_SamSel(const int SampelNUM)
         h_eCCSel[i] = dynamic_cast<TH1 *>(ff_Sel->Get(Form("CuteCC%dns", i + 81)));
         h_muCCSel[i] = dynamic_cast<TH1 *>(ff_Sel->Get(Form("CutmuCC%dns", i + 108)));
     }
+    TH1 *h_eCC_Sel_Err = dynamic_cast<TH1 *>(h_eCCSel[0]->Clone("h_eCC_Sel_Err"));
+    TH1 *h_muCC_Sel_Err = dynamic_cast<TH1 *>(h_muCCSel[0]->Clone("h_muCC_Sel_Err"));
     for (int k_bin = 0; k_bin < h_eCCSel[0]->GetNbinsX(); k_bin++)
     {
         double Avg_eCC = 0, Avg_muCC = 0;
@@ -663,8 +665,23 @@ void ShowUncertainty_SamSel(const int SampelNUM)
             Avg_eCC += v_ith_eCC[i] / SampelNUM;
             Avg_muCC += v_ith_muCC[i] / SampelNUM;
         }
-        
+        double Variance_eCC = 0;
+        double Variance_muCC = 0;
+        for (int i = 0; i < SampelNUM; i++)
+        {
+            Variance_eCC += pow(v_ith_eCC[i] - Avg_eCC, 2) / (SampelNUM );
+            Variance_muCC += pow(v_ith_muCC[i] - Avg_muCC, 2) / (SampelNUM );
+        }
+        h_eCC_Sel_Err->SetBinContent(k_bin + 1, sqrt(Variance_eCC) / Avg_eCC);
+        h_muCC_Sel_Err->SetBinContent(k_bin + 1, sqrt(Variance_muCC) / Avg_muCC);
     }
+    h_eCC_Sel_Err->SetYTitle("Relative Uncertainty");
+    h_muCC_Sel_Err->SetYTitle("Relative Uncertainty");
+
+    TCanvas *c_eCC_sel=new TCanvas("c_eCC_sel");
+    h_eCC_Sel_Err->Draw("hist");
+    TCanvas *c_muCC_sel=new TCanvas("c_muCC_sel");
+    h_muCC_Sel_Err->Draw("hist");
 }
 
 void ShowUncertainties_all()
