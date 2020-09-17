@@ -7,7 +7,8 @@
                 "/cvmfs/juno.ihep.ac.cn/sl6_amd64_gcc830/Pre-Release/J20v1r1-Pre0/ExternalLibs/ROOT/6.20.02/include/**",
                 "/cvmfs/juno.ihep.ac.cn/sl6_amd64_gcc830/Pre-Release/J20v1r1-Pre0/sniper/**",
                 "/cvmfs/juno.ihep.ac.cn/sl6_amd64_gcc830/Pre-Release/J20v1r1-Pre0/offline/**",
-                "${ROOTSYS}/include/**"
+                "${ROOTSYS}/include/**",
+                "/home/jinnan/SoftWare/srcs/RooUnfold/src/"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

@@ -653,35 +653,35 @@ void ShowNPE_nd_Cuts()
             epsilon_muCC[i] = h_muCC2D->GetBinContent(i + 1, 0) / h_muCC2D->Integral(i + 1, i + 1, 0, NPE_BINNUM_muCC + 1);
 
         double Response_SUM[Etrue_BINNUM_eCC];
-        for (int i = 0; i < Etrue_BINNUM_eCC; i++)
-        {
-            Response_SUM[i] = h_eCC_Etrue_NPE->Integral(i + 1, i + 1, 1, NPE_BINNUM_eCC);
-            for (int j = 0; j < NPE_BINNUM_eCC; j++)
-            {
-                //normalize the the likelihood sum of a row to 1-epsilon
-                A_ji_ecc[j][i] = h_eCC_Etrue_NPE->GetBinContent(i + 1, j + 1) *
-                                 (1 - epsilon_eCC[i]) / Response_SUM[i];
-                h_eCC_Etrue_NPE->SetBinContent(i + 1, j + 1, A_ji_ecc[j][i]);
-            }
-            printf("epsilon_eCC:%f\n", epsilon_eCC[i]);
-        }
+        // for (int i = 0; i < Etrue_BINNUM_eCC; i++)
+        // {
+        //     Response_SUM[i] = h_eCC_Etrue_NPE->Integral(i + 1, i + 1, 1, NPE_BINNUM_eCC);
+        //     for (int j = 0; j < NPE_BINNUM_eCC; j++)
+        //     {
+        //         //normalize the the likelihood sum of a row to 1-epsilon
+        //         A_ji_ecc[j][i] = h_eCC_Etrue_NPE->GetBinContent(i + 1, j + 1) *
+        //                          (1 - epsilon_eCC[i]) / Response_SUM[i];
+        //         h_eCC_Etrue_NPE->SetBinContent(i + 1, j + 1, A_ji_ecc[j][i]);
+        //     }
+        //     printf("epsilon_eCC:%f\n", epsilon_eCC[i]);
+        // }
         TCanvas *c_redu_Ml_eCC = new TCanvas("c_redu_Ml_eCC");
         h_eCC_Etrue_NPE->Draw("colz");
         gPad->SetLogz();
         double A_ji_mucc[NPE_BINNUM_muCC][Etrue_BINNUM_muCC];
         // double Response_SUM[Etrue_BINNUM_muCC];
-        for (int i = 0; i < Etrue_BINNUM_muCC; i++)
-        {
-            Response_SUM[i] = h_muCC_Etrue_NPE->Integral(i + 1, i + 1, 1, NPE_BINNUM_muCC);
-            for (int j = 0; j < NPE_BINNUM_muCC; j++)
-            {
-                //normalize the the likelihood sum of a row to 1-epsilon
-                A_ji_mucc[j][i] = h_muCC_Etrue_NPE->GetBinContent(i + 1, j + 1) *
-                                  (1 - epsilon_muCC[i]) / Response_SUM[i];
-                h_muCC_Etrue_NPE->SetBinContent(i + 1, j + 1, A_ji_mucc[j][i]);
-            }
-            printf("epsilon_muCC:%f\n", epsilon_muCC[i]);
-        }
+        // for (int i = 0; i < Etrue_BINNUM_muCC; i++)
+        // {
+        //     Response_SUM[i] = h_muCC_Etrue_NPE->Integral(i + 1, i + 1, 1, NPE_BINNUM_muCC);
+        //     for (int j = 0; j < NPE_BINNUM_muCC; j++)
+        //     {
+        //         //normalize the the likelihood sum of a row to 1-epsilon
+        //         A_ji_mucc[j][i] = h_muCC_Etrue_NPE->GetBinContent(i + 1, j + 1) *
+        //                           (1 - epsilon_muCC[i]) / Response_SUM[i];
+        //         h_muCC_Etrue_NPE->SetBinContent(i + 1, j + 1, A_ji_mucc[j][i]);
+        //     }
+        //     printf("epsilon_muCC:%f\n", epsilon_muCC[i]);
+        // }
         TCanvas *c_redu_Ml_muCC = new TCanvas("c_redu_Ml_muCC");
         c_redu_Ml_muCC->cd();
         h_muCC_Etrue_NPE->Draw("colz");

@@ -6,6 +6,7 @@
 
 #include <TChain.h>
 #include <TROOT.h>
+#include <TSystem.h>
 #include <TTree.h>
 #include <TFile.h>
 #include <TSelector.h>
@@ -27,9 +28,12 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include "RooUnfoldBayes.h"
+#include "RooUnfoldResponse.h"
 
 void LoadFile(std::string filename, std::vector<std::vector<double>> &v, int Length = 2, int SkipLines = 0);
-void BayesUnfold(int Iter_NUM = 1);
+void BayesUnfold(int Iter_NUM = 2);
+void TryRooUnfold(int Iter_NUM = 2);
 void Iter_Bayes_Once(TH1 *h_input, TH1 *h_prior, TH2 *h_Likelihd_M, TH1 *h_output, double *epsilon_i);
 void Pre_Flux();
 template <typename T>
@@ -60,10 +64,12 @@ const double Cut_sigma_tres_Sg_eCC = 86;
 
 int Unfold()
 {
+    // gSystem->Load("/home/jinnan/SoftWare/srcs/RooUnfold/libRooUnfold");
     // BayesUnfold(2);
+    TryRooUnfold(4);
     // ShowUncertainty_stat();
     // ShowUncertainty_Xsec();
-    ShowUncertainty_SamSel(2);
+    // ShowUncertainty_SamSel(2);
     // ShowUncertainties_all();
 
     // Pre_Flux();
@@ -93,11 +99,11 @@ void BayesUnfold(int Iter_NUM)
     double epsilon_i_muCC[Enu_BINNUM_muCC];
     for (int i = 0; i < Enu_BINNUM_eCC; i++)
     {
-        epsilon_i_eCC[i] = 0;
+        epsilon_i_eCC[i] = h_likeli_eCC->Integral(i + 1, i + 1, 1, NPE_BINNUM_eCC);
     }
     for (int i = 0; i < Enu_BINNUM_muCC; i++)
     {
-        epsilon_i_muCC[i] = 0;
+        epsilon_i_muCC[i] = h_likeli_muCC->Integral(i + 1, i + 1, 1, NPE_BINNUM_muCC);
     }
     // h_Prior_eCC = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("eCC_Prior"));
     // h_Prior_muCC = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("muCC_Prior"));
@@ -134,16 +140,19 @@ void BayesUnfold(int Iter_NUM)
     p2->Draw();
 
     p1->cd();
-    TLegend leg_[2];
+    TLegend *leg_[2];
+    leg_[0]=new TLegend();
+    leg_[1]=new TLegend();
     h_muCC_result->SetLineColor(kRed);
     h_muCC_result->SetMarkerColor(kRed);
     h_muCC_result->SetMarkerSize(2);
-
+    
+    h_muCC_result->SetAxisRange(0, h_muCC_result->GetMaximum() + 50, "Y");
     h_muCC_result->Draw();
     h_MC_true_muCC->Draw("SAME");
-    leg_[0].AddEntry(h_MC_true_muCC, "#nu_{#mu} MC Truth");
-    leg_[0].AddEntry(h_muCC_result, "#nu_{#mu} Unfolded");
-    leg_[0].DrawClone("SAME");
+    leg_[0]->AddEntry(h_MC_true_muCC, "#nu_{#mu} MC Truth");
+    leg_[0]->AddEntry(h_muCC_result, "#nu_{#mu} Unfolded");
+    leg_[0]->DrawClone("SAME");
 
     // TCanvas *c_muCC = new TCanvas("muCC_");
     p2->cd();
@@ -188,10 +197,11 @@ void BayesUnfold(int Iter_NUM)
     h_eCC_result->SetMarkerColor(kRed);
     h_eCC_result->SetMarkerSize(2);
     h_eCC_result->Draw();
+    h_eCC_result->SetAxisRange(0, h_eCC_result->GetMaximum() + 20, "Y");
     h_MC_true_eCC->Draw("SAME");
-    leg_[1].AddEntry(h_MC_true_eCC, "#nu_{e} MC Truth");
-    leg_[1].AddEntry(h_eCC_result, "#nu_{e}  Unfolded");
-    leg_[1].DrawClone("SAME");
+    leg_[1]->AddEntry(h_MC_true_eCC, "#nu_{e} MC Truth");
+    leg_[1]->AddEntry(h_eCC_result, "#nu_{e}  Unfolded");
+    leg_[1]->DrawClone("SAME");
     // h_MC_true_eCC->Draw();
 
     // TCanvas *c_eCC = new TCanvas("eCC_");
@@ -216,10 +226,10 @@ void BayesUnfold(int Iter_NUM)
     h_ref_eCC->Draw("SAME");
 
     // TFile *ff_Sel=TFile::Open("../data/SampleSelection/SampleSelection.root","recreate");
-    TFile *ff_Sel = TFile::Open("../data/SampleSelection/SampleSelection.root", "update");
-    ff_Sel->cd();
-    h_eCC_result->Write(Form("CuteCC%dns", 91), TObject::kOverwrite);
-    h_muCC_result->Write(Form("CutmuCC%dns", 118), TObject::kOverwrite);
+    // TFile *ff_Sel = TFile::Open("../data/SampleSelection/SampleSelection.root", "update");
+    // ff_Sel->cd();
+    // h_eCC_result->Write(Form("CuteCC%dns", 91), TObject::kOverwrite);
+    // h_muCC_result->Write(Form("CutmuCC%dns", 118), TObject::kOverwrite);
 }
 
 //input NPE spectra and prios disribution,
@@ -287,17 +297,171 @@ void Iter_Bayes_Once(TH1 *h_input,
                       h_input->GetBinContent(j + 1));
         }
         // printf("E_hat: %f\n", E_hat);
+        // if (epsilon_i[i] != 0)
+        E_hat /= epsilon_i[i];
         BinCenter = h_output->GetBinCenter(i + 1);
         h_output->SetBinContent(i + 1, E_hat);
         h_output->SetBinError(i + 1, sqrt(E_hat));
-        // const int stat_NUM = 100;
-        // if (NPE_BINNUM == 7)
-        //     for (int k = 0; k < Expected_evt_NUM_eCC[i]; k++)
-        //         h_output->Fill(BinCenter, E_hat / Expected_evt_NUM_eCC[i]);
-        // else
-        //     for (int k = 0; k < Expected_evt_NUM_muCC[i]; k++)
-        //         h_output->Fill(BinCenter, E_hat / Expected_evt_NUM_muCC[i]);
     }
+}
+
+TH2 *SwapX2Y(TH2 *h_innital)
+{
+    int nbinx = h_innital->GetNbinsX();
+    int nbiny = h_innital->GetNbinsY();
+    double x1 = h_innital->GetXaxis()->GetBinLowEdge(1);
+    double x2 = h_innital->GetXaxis()->GetBinLowEdge(nbinx) + h_innital->GetXaxis()->GetBinWidth(nbinx);
+    double y1 = h_innital->GetYaxis()->GetBinLowEdge(1);
+    double y2 = h_innital->GetYaxis()->GetBinLowEdge(nbiny) + h_innital->GetYaxis()->GetBinWidth(nbiny);
+    TH2D *h_after = new TH2D(Form("%sSwap", h_innital->GetName()), h_innital->GetTitle(), nbiny, y1, y2, nbinx, x1, x2);
+    double c;
+    for (int i = 1; i <= nbinx; i++)
+    {
+        for (int j = 1; j <= nbiny; j++)
+        {
+            c = h_innital->GetBinContent(i, j);
+            h_after->SetBinContent(j, i, c);
+        }
+    }
+    return h_after;
+}
+//apply rooUnfold
+void TryRooUnfold(int Iter_NUM)
+{
+    // gSystem->Load("/home/jinnan/SoftWare/srcs/RooUnfold/libRooUnfold");
+    TFile *ff_unfold_data = TFile::Open("../data/UnfoldData.root", "READ");
+    TH2 *h_likeli_eCC = SwapX2Y(dynamic_cast<TH2 *>(ff_unfold_data->Get("eCC_Likely_hood")));
+    TH2 *h_likeli_muCC = SwapX2Y(dynamic_cast<TH2 *>(ff_unfold_data->Get("muCC_Likely_hood")));
+    TH1 *h_sel_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("NPEeCCSel"));
+    TH1 *h_sel_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("NPEmuCCSel"));
+    TH1 *h_Prior_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Honda_flux_e"));
+    TH1 *h_Prior_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Honda_flux_mu"));
+    // TH1 *h_MC_true_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Enu_eCCTrue"));
+    // TH1 *h_MC_true_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Enu_muCCTrue"));
+    TH1 *h_MC_true_eCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Enu_eCCSel;1"));
+    TH1 *h_MC_true_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Enu_muCCSel;1"));
+    TH1 *h_eCC_result = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("eCC_result"));
+    TH1 *h_muCC_result = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("muCC_result"));
+    // RooUnfoldResponse *R_atm_eCC = new RooUnfoldResponse(h_sel_eCC, h_MC_true_eCC, h_likeli_eCC);
+    // RooUnfoldResponse *R_atm_muCC = new RooUnfoldResponse(h_sel_muCC, h_MC_true_muCC, h_likeli_muCC);
+    RooUnfoldResponse *R_atm_eCC = new RooUnfoldResponse(0, 0, h_likeli_eCC);
+    RooUnfoldResponse *R_atm_muCC = new RooUnfoldResponse(0, 0, h_likeli_muCC);
+    RooUnfoldBayes *unfold_eCC = new RooUnfoldBayes(R_atm_eCC, h_sel_eCC, Iter_NUM);
+    RooUnfoldBayes *unfold_muCC = new RooUnfoldBayes(R_atm_muCC, h_sel_muCC, Iter_NUM);
+    unfold_eCC->PrintTable(cout, h_MC_true_eCC);
+    h_eCC_result = dynamic_cast<TH1 *>(unfold_eCC->Hreco());
+    unfold_muCC->PrintTable(cout, h_MC_true_muCC);
+    h_muCC_result = dynamic_cast<TH1 *>(unfold_muCC->Hreco());
+
+    gStyle->SetOptStat(0);
+    gStyle->SetOptTitle(0);
+    TCanvas *c_CC_Spec = new TCanvas("muCC_Spec", "", 800, 600);
+    TPad *p1 = new TPad("p1", "p1", 0.01, 0.3, 0.95, 0.95, 0, 0, 0);
+    p1->SetTopMargin(0);
+    p1->SetBottomMargin(0);
+    p1->SetRightMargin(0.02);
+    p1->Draw();
+
+    TPad *p2 = new TPad("p2", "p2", 0.01, 0.0, 0.95, 0.3, 0, 0, 0);
+    p2->SetTopMargin(0);
+    //p2->SetLeftMargin(0);
+    p2->SetRightMargin(0.02);
+    p2->SetBottomMargin(0.25);
+    //gPad->SetTickx(2);
+    //gPad->SetTicky(2);
+    p2->Draw();
+
+    p1->cd();
+    TLegend *leg_[2];
+    leg_[0]=new TLegend();
+    leg_[1]=new TLegend();
+    h_muCC_result->SetLineColor(kRed);
+    h_muCC_result->SetMarkerColor(kRed);
+    h_muCC_result->SetMarkerSize(2);
+    
+    h_muCC_result->SetAxisRange(0, h_muCC_result->GetMaximum() + 50, "Y");
+    h_muCC_result->Draw();
+    h_MC_true_muCC->Draw("SAME");
+    leg_[0]->AddEntry(h_MC_true_muCC, "#nu_{#mu} MC Truth");
+    leg_[0]->AddEntry(h_muCC_result, "#nu_{#mu} Unfolded");
+    leg_[0]->DrawClone("SAME");
+
+    // TCanvas *c_muCC = new TCanvas("muCC_");
+    p2->cd();
+    TH1 *h_ref_muCC = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("refLine_muCC"));
+    TH1 *h_ratio_muCC = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("Ratio_muCC"));
+    h_ref_muCC->Divide(h_MC_true_muCC);
+    h_ratio_muCC->Divide(h_muCC_result, h_MC_true_muCC);
+    h_ratio_muCC->SetLineColor(kRed);
+    h_ratio_muCC->SetMarkerColor(kRed);
+    h_ratio_muCC->SetMarkerSize(2);
+    h_ratio_muCC->SetMarkerStyle(kFullCircle);
+    h_ratio_muCC->SetYTitle("Reco/MC");
+    h_ratio_muCC->GetYaxis()->SetTitleSize(0.15);
+    h_ratio_muCC->GetYaxis()->SetTitleOffset(0.3);
+    h_ratio_muCC->GetYaxis()->SetLabelSize(0.1);
+    h_ratio_muCC->GetXaxis()->SetTitleSize(0.11);
+    h_ratio_muCC->GetXaxis()->SetTitleOffset(0.9);
+    h_ratio_muCC->GetXaxis()->SetLabelSize(0.1);
+    h_ratio_muCC->Draw("E1");
+    h_ref_muCC->Draw("SAME");
+
+    TCanvas *c_eCC_Spec = new TCanvas("eCC_Spec", "", 800, 600);
+    TPad *p3 = new TPad("p3", "p3", 0.01, 0.3, 0.95, 0.95, 0, 0, 0);
+    p3->SetTopMargin(0);
+    p3->SetBottomMargin(0);
+    //p3->SetLeftMargin(0);
+    p3->SetRightMargin(0.02);
+    //gPad->SetTickx(2);
+    //gPad->SetTicky(2);
+    p3->Draw();
+
+    TPad *p4 = new TPad("p4", "p4", 0.01, 0.0, 0.95, 0.3, 0, 0, 0);
+    p4->SetTopMargin(0);
+    //p4->SetLeftMargin(0);
+    p4->SetRightMargin(0.02);
+    p4->SetBottomMargin(0.25);
+    //gPad->SetTickx(2);
+    //gPad->SetTicky(2);
+    p4->Draw();
+    p3->cd();
+    h_eCC_result->SetLineColor(kRed);
+    h_eCC_result->SetMarkerColor(kRed);
+    h_eCC_result->SetMarkerSize(2);
+    h_eCC_result->Draw();
+    h_eCC_result->SetAxisRange(0, h_eCC_result->GetMaximum() + 20, "Y");
+    h_MC_true_eCC->Draw("SAME");
+    leg_[1]->AddEntry(h_MC_true_eCC, "#nu_{e} MC Truth");
+    leg_[1]->AddEntry(h_eCC_result, "#nu_{e}  Unfolded");
+    leg_[1]->DrawClone("SAME");
+    // h_MC_true_eCC->Draw();
+
+    // TCanvas *c_eCC = new TCanvas("eCC_");
+    p4->cd();
+    TH1 *h_ref_eCC = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("refLine_eCC"));
+    TH1 *h_ratio_eCC = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("Ratio_eCC"));
+    h_ref_eCC->Divide(h_MC_true_eCC);
+    h_ratio_eCC->Divide(h_eCC_result, h_MC_true_eCC);
+    h_ratio_eCC->SetLineColor(kRed);
+    h_ratio_eCC->SetMarkerColor(kRed);
+    h_ratio_eCC->SetMarkerSize(2);
+    h_ratio_eCC->SetMarkerStyle(kFullCircle);
+    h_ratio_eCC->SetYTitle("Reco/MC");
+    h_ratio_eCC->GetYaxis()->SetTitleSize(0.15);
+    h_ratio_eCC->GetYaxis()->SetTitleOffset(0.3);
+    h_ratio_eCC->GetYaxis()->SetLabelSize(0.1);
+    h_ratio_eCC->GetXaxis()->SetTitleSize(0.11);
+    h_ratio_eCC->GetXaxis()->SetTitleOffset(0.9);
+    h_ratio_eCC->GetXaxis()->SetLabelSize(0.1);
+
+    h_ratio_eCC->Draw("E1");
+    h_ref_eCC->Draw("SAME");
+
+    // TFile *ff_Sel=TFile::Open("../data/SampleSelection/SampleSelection.root","recreate");
+    // TFile *ff_Sel = TFile::Open("../data/SampleSelection/SampleSelection.root", "update");
+    // ff_Sel->cd();
+    // h_eCC_result->Write(Form("CuteCC%dns", 91), TObject::kOverwrite);
+    // h_muCC_result->Write(Form("CutmuCC%dns", 118), TObject::kOverwrite);
 }
 
 //may load data inte vector from txt file
@@ -669,8 +833,8 @@ void ShowUncertainty_SamSel(const int SampelNUM)
         double Variance_muCC = 0;
         for (int i = 0; i < SampelNUM; i++)
         {
-            Variance_eCC += pow(v_ith_eCC[i] - Avg_eCC, 2) / (SampelNUM );
-            Variance_muCC += pow(v_ith_muCC[i] - Avg_muCC, 2) / (SampelNUM );
+            Variance_eCC += pow(v_ith_eCC[i] - Avg_eCC, 2) / (SampelNUM);
+            Variance_muCC += pow(v_ith_muCC[i] - Avg_muCC, 2) / (SampelNUM);
         }
         h_eCC_Sel_Err->SetBinContent(k_bin + 1, sqrt(Variance_eCC) / Avg_eCC);
         h_muCC_Sel_Err->SetBinContent(k_bin + 1, sqrt(Variance_muCC) / Avg_muCC);
@@ -678,9 +842,9 @@ void ShowUncertainty_SamSel(const int SampelNUM)
     h_eCC_Sel_Err->SetYTitle("Relative Uncertainty");
     h_muCC_Sel_Err->SetYTitle("Relative Uncertainty");
 
-    TCanvas *c_eCC_sel=new TCanvas("c_eCC_sel");
+    TCanvas *c_eCC_sel = new TCanvas("c_eCC_sel");
     h_eCC_Sel_Err->Draw("hist");
-    TCanvas *c_muCC_sel=new TCanvas("c_muCC_sel");
+    TCanvas *c_muCC_sel = new TCanvas("c_muCC_sel");
     h_muCC_Sel_Err->Draw("hist");
 }
 
