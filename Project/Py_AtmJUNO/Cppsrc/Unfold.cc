@@ -61,12 +61,14 @@ double logEtrue_range_muCC[2] = {-0.3, 1.05};
 //in ns, muCC eCC
 const double Cut_sigma_tres_Sg_muCC = 113;
 const double Cut_sigma_tres_Sg_eCC = 86;
+const double Cut_NPE_low_Sg[2] = {5e5, 1e5};
+const double Cut_NPE_up_Sg[2] = {1.585e7, 1.585e7};
 
 int Unfold()
 {
     // gSystem->Load("/home/jinnan/SoftWare/srcs/RooUnfold/libRooUnfold");
     // BayesUnfold(2);
-    TryRooUnfold(4);
+    TryRooUnfold(2);
     // ShowUncertainty_stat();
     // ShowUncertainty_Xsec();
     // ShowUncertainty_SamSel(2);
@@ -141,12 +143,12 @@ void BayesUnfold(int Iter_NUM)
 
     p1->cd();
     TLegend *leg_[2];
-    leg_[0]=new TLegend();
-    leg_[1]=new TLegend();
+    leg_[0] = new TLegend();
+    leg_[1] = new TLegend();
     h_muCC_result->SetLineColor(kRed);
     h_muCC_result->SetMarkerColor(kRed);
     h_muCC_result->SetMarkerSize(2);
-    
+
     h_muCC_result->SetAxisRange(0, h_muCC_result->GetMaximum() + 50, "Y");
     h_muCC_result->Draw();
     h_MC_true_muCC->Draw("SAME");
@@ -342,10 +344,98 @@ void TryRooUnfold(int Iter_NUM)
     TH1 *h_MC_true_muCC = dynamic_cast<TH1 *>(ff_unfold_data->Get("Enu_muCCSel;1"));
     TH1 *h_eCC_result = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("eCC_result"));
     TH1 *h_muCC_result = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("muCC_result"));
+
+    
     // RooUnfoldResponse *R_atm_eCC = new RooUnfoldResponse(h_sel_eCC, h_MC_true_eCC, h_likeli_eCC);
     // RooUnfoldResponse *R_atm_muCC = new RooUnfoldResponse(h_sel_muCC, h_MC_true_muCC, h_likeli_muCC);
     RooUnfoldResponse *R_atm_eCC = new RooUnfoldResponse(0, 0, h_likeli_eCC);
     RooUnfoldResponse *R_atm_muCC = new RooUnfoldResponse(0, 0, h_likeli_muCC);
+
+    // RooUnfoldResponse *R_atm_eCC = new RooUnfoldResponse(NPE_BINNUM_eCC, logNPE_range_eCC[0], logNPE_range_eCC[1], Etrue_BINNUM_eCC, logEtrue_range_eCC[0], logEtrue_range_eCC[1]);
+    // RooUnfoldResponse *R_atm_muCC = new RooUnfoldResponse(NPE_BINNUM_muCC, logNPE_range_muCC[0], logNPE_range_muCC[1], Etrue_BINNUM_muCC, logEtrue_range_muCC[0], logEtrue_range_muCC[1]);
+    // double Sigma_cut_muCC = Cut_sigma_tres_Sg_muCC; //ns
+    // double Sigma_cut_eCC = Cut_sigma_tres_Sg_eCC;   //ns
+    // double NPE_cut_muCC[2] = {Cut_NPE_low_Sg[0], Cut_NPE_up_Sg[0]};
+    // double NPE_cut_eCC[2] = {Cut_NPE_low_Sg[1], Cut_NPE_up_Sg[1]};
+    // TChain muCC_NPETresE("muCC_NPETresE");
+    // TChain eCC_NPETresE("eCC_NPETresE");
+    // TChain NC_NPETresE("NC_NPETresE");
+    // muCC_NPETresE.Add("../results/result_NPETE*_100.root");
+    // eCC_NPETresE.Add("../results/result_NPETE*_100.root");
+    // NC_NPETresE.Add("../results/result_NPETE*_100.root");
+    // float sigma_tres[3] = {0}, NPE_LPMT[3] = {0}, E_nu_true[3] = {0};
+    // {
+    //     muCC_NPETresE.SetBranchAddress("sigma_tres", &sigma_tres[0]);
+    //     muCC_NPETresE.SetBranchAddress("NPE_LPMT", &NPE_LPMT[0]);
+    //     muCC_NPETresE.SetBranchAddress("E_nu_true", &E_nu_true[0]);
+    //     eCC_NPETresE.SetBranchAddress("sigma_tres", &sigma_tres[1]);
+    //     eCC_NPETresE.SetBranchAddress("NPE_LPMT", &NPE_LPMT[1]);
+    //     eCC_NPETresE.SetBranchAddress("E_nu_true", &E_nu_true[1]);
+    //     NC_NPETresE.SetBranchAddress("sigma_tres", &sigma_tres[2]);
+    //     NC_NPETresE.SetBranchAddress("NPE_LPMT", &NPE_LPMT[2]);
+    //     NC_NPETresE.SetBranchAddress("E_nu_true", &E_nu_true[2]);
+    // }
+    // for (int i = 0; i < muCC_NPETresE.GetEntries(); i++)
+    // {
+    //     muCC_NPETresE.GetEntry(i);
+    //     if (sigma_tres[0] >= Sigma_cut_muCC)
+    //     {
+    //         if (NPE_LPMT[0] >= NPE_cut_muCC[0] &&
+    //             NPE_LPMT[0] <= NPE_cut_muCC[1])
+    //             R_atm_muCC->Fill(log10(NPE_LPMT[0]), log10(E_nu_true[0])); //all
+    //         else
+    //             R_atm_muCC->Miss(log10(E_nu_true[0]));
+    //     }
+    //     if (sigma_tres[0] <= Sigma_cut_eCC)
+    //     {
+    //         if (NPE_LPMT[0] >= NPE_cut_eCC[0] &&
+    //             NPE_LPMT[0] <= NPE_cut_eCC[1])
+    //             R_atm_eCC->Fill(log10(NPE_LPMT[0]), log10(E_nu_true[0])); //all
+    //         else
+    //             R_atm_eCC->Miss(log10(E_nu_true[0]));
+    //     }
+    //     if (i < eCC_NPETresE.GetEntries())
+    //     {
+    //         eCC_NPETresE.GetEntry(i);
+    //         if (sigma_tres[1] >= Sigma_cut_muCC)
+    //         {
+    //             if (NPE_LPMT[1] >= NPE_cut_muCC[0] &&
+    //                 NPE_LPMT[1] <= NPE_cut_muCC[1])
+    //                 R_atm_muCC->Fill(log10(NPE_LPMT[0]), log10(E_nu_true[0])); //all
+    //             else
+    //                 R_atm_muCC->Miss(log10(E_nu_true[0]));
+    //         }
+    //         if (sigma_tres[0] <= Sigma_cut_eCC)
+    //         {
+    //             if (NPE_LPMT[0] >= NPE_cut_eCC[0] &&
+    //                 NPE_LPMT[0] <= NPE_cut_eCC[1])
+    //                 R_atm_eCC->Fill(log10(NPE_LPMT[0]), log10(E_nu_true[0])); //all
+    //             else
+    //                 R_atm_eCC->Miss(log10(E_nu_true[0]));
+    //         }
+    //     }
+    //     if (i < NC_NPETresE.GetEntries())
+    //     {
+    //         NC_NPETresE.GetEntry(i);
+    //         if (sigma_tres[0] >= Sigma_cut_muCC)
+    //         {
+    //             if (NPE_LPMT[0] >= NPE_cut_muCC[0] &&
+    //                 NPE_LPMT[0] <= NPE_cut_muCC[1])
+    //                 R_atm_muCC->Fill(log10(NPE_LPMT[0]), log10(E_nu_true[0])); //all
+    //             else
+    //                 R_atm_muCC->Miss(log10(E_nu_true[0]));
+    //         }
+    //         if (sigma_tres[0] <= Sigma_cut_eCC)
+    //         {
+    //             if (NPE_LPMT[0] >= NPE_cut_eCC[0] &&
+    //                 NPE_LPMT[0] <= NPE_cut_eCC[1])
+    //                 R_atm_eCC->Fill(log10(NPE_LPMT[0]), log10(E_nu_true[0])); //all
+    //             else
+    //                 R_atm_eCC->Miss(log10(E_nu_true[0]));
+    //         }
+    //     }
+    // }
+
     RooUnfoldBayes *unfold_eCC = new RooUnfoldBayes(R_atm_eCC, h_sel_eCC, Iter_NUM);
     RooUnfoldBayes *unfold_muCC = new RooUnfoldBayes(R_atm_muCC, h_sel_muCC, Iter_NUM);
     unfold_eCC->PrintTable(cout, h_MC_true_eCC);
@@ -373,12 +463,12 @@ void TryRooUnfold(int Iter_NUM)
 
     p1->cd();
     TLegend *leg_[2];
-    leg_[0]=new TLegend();
-    leg_[1]=new TLegend();
+    leg_[0] = new TLegend();
+    leg_[1] = new TLegend();
     h_muCC_result->SetLineColor(kRed);
     h_muCC_result->SetMarkerColor(kRed);
     h_muCC_result->SetMarkerSize(2);
-    
+
     h_muCC_result->SetAxisRange(0, h_muCC_result->GetMaximum() + 50, "Y");
     h_muCC_result->Draw();
     h_MC_true_muCC->Draw("SAME");
