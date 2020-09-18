@@ -472,7 +472,7 @@ void ShowNPE_nd_Cuts()
             h_eCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[0]));                    //wrong for eCC
             h_eCC_Enu_Spec[0]->Fill(log10(E_nu_true[0]));                   //all for eCC
             h_eCC_Enu_Spec[2]->Fill(log10(E_nu_true[0]));                   //wrong for eCC
-            h_eCC_Etrue_NPE->Fill(log10(E_nu_true[0]), log10(NPE_LPMT[0])); //all
+            // h_eCC_Etrue_NPE->Fill(log10(E_nu_true[0]), log10(NPE_LPMT[0])); //all
         }
         if (i < eCC_NPETresE.GetEntries())
         {
@@ -485,7 +485,7 @@ void ShowNPE_nd_Cuts()
                 h_muCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[1]));                    //wrong for eCC
                 h_muCC_Enu_Spec[0]->Fill(log10(E_nu_true[1]));                   //all for muCC
                 h_muCC_Enu_Spec[2]->Fill(log10(E_nu_true[1]));                   //wrong for eCC
-                h_muCC_Etrue_NPE->Fill(log10(E_nu_true[1]), log10(NPE_LPMT[1])); //all
+                // h_muCC_Etrue_NPE->Fill(log10(E_nu_true[1]), log10(NPE_LPMT[1])); //all
             }
             if (NPE_LPMT[1] >= NPE_cut_eCC[0] &&
                 NPE_LPMT[1] <= NPE_cut_eCC[1] &&
@@ -687,10 +687,10 @@ void ShowNPE_nd_Cuts()
         c_redu_Ml_muCC->cd();
         h_muCC_Etrue_NPE->Draw("colz");
         gPad->SetLogz();
-        // TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "update");
-        // ff_unfold->cd();
-        // h_muCC_Etrue_NPE->Write(h_muCC_Etrue_NPE->GetName(), TObject::kOverwrite);
-        // h_eCC_Etrue_NPE->Write(h_eCC_Etrue_NPE->GetName(), TObject::kOverwrite);
+        TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "update");
+        ff_unfold->cd();
+        h_muCC_Etrue_NPE->Write(h_muCC_Etrue_NPE->GetName(), TObject::kOverwrite);
+        h_eCC_Etrue_NPE->Write(h_eCC_Etrue_NPE->GetName(), TObject::kOverwrite);
     }
 }
 

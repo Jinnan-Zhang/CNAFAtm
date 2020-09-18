@@ -47,6 +47,7 @@ void GetObjFromFile(TFile *File, T *h[], TString ObjNames[], int NUMObj)
 void ShowUncertainty_stat(int MCPtsNUM = 1000, int statDisBinNUM = 50);
 void ShowUncertainty_Xsec(int MCPtsNUM = 1000, int statDisBinNUM = 50);
 void ShowUncertainty_SamSel(const int SampelNUM = 11);
+void ShowUncertainty_Osci();
 void ShowUncertainties_all();
 const int Expected_evt_NUM_eCC[] = {40, 100, 125, 135, 80, 45, 20};
 const int Expected_evt_NUM_muCC[] = {55, 237, 231, 171, 100, 48, 17};
@@ -69,10 +70,12 @@ int Unfold()
     // gSystem->Load("/home/jinnan/SoftWare/srcs/RooUnfold/libRooUnfold");
     // gSystem->Load("/home/jinnan/SoftWare/src/RooUnfold/libRooUnfold");
     // BayesUnfold(2);
-    TryRooUnfold(4);
+    // TryRooUnfold(2);
+
     // ShowUncertainty_stat();
     // ShowUncertainty_Xsec();
-    // ShowUncertainty_SamSel(2);
+    // ShowUncertainty_SamSel(4);
+    ShowUncertainty_Osci();
     // ShowUncertainties_all();
 
     // Pre_Flux();
@@ -118,18 +121,18 @@ void BayesUnfold(int Iter_NUM)
     };
     // for (int i = 0; i < Enu_BINNUM_eCC; i++)
     // {
-        // epsilon_i_eCC[i] = h_likeli_eCC->Integral(i + 1, i + 1, 1, NPE_BINNUM_eCC);
+    // epsilon_i_eCC[i] = h_likeli_eCC->Integral(i + 1, i + 1, 1, NPE_BINNUM_eCC);
     //     epsilon_i_eCC[i] = 0;
     // }
     // for (int i = 0; i < Enu_BINNUM_muCC; i++)
     // {
-        // epsilon_i_muCC[i] = h_likeli_muCC->Integral(i + 1, i + 1, 1, NPE_BINNUM_muCC);
+    // epsilon_i_muCC[i] = h_likeli_muCC->Integral(i + 1, i + 1, 1, NPE_BINNUM_muCC);
     //     epsilon_i_muCC[i] = 0;
     // }
-    // h_Prior_eCC = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("eCC_Prior"));
-    // h_Prior_muCC = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("muCC_Prior"));
-    // h_Prior_eCC->Scale(1 / h_Prior_eCC->Integral());
-    // h_Prior_muCC->Scale(1 / h_Prior_muCC->Integral());
+    h_Prior_eCC = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("eCC_Prior"));
+    h_Prior_muCC = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("muCC_Prior"));
+    h_Prior_eCC->Scale(1 / h_Prior_eCC->Integral());
+    h_Prior_muCC->Scale(1 / h_Prior_muCC->Integral());
     Iter_Bayes_Once(h_sel_eCC, h_Prior_eCC, h_likeli_eCC, h_eCC_result, epsilon_i_eCC);
     Iter_Bayes_Once(h_sel_muCC, h_Prior_muCC, h_likeli_muCC, h_muCC_result, epsilon_i_muCC);
     if (Iter_NUM > 1)
@@ -250,12 +253,12 @@ void BayesUnfold(int Iter_NUM)
     h_ref_eCC->Draw("SAME");
 
     // TFile *ff_Sel=TFile::Open("../data/SampleSelection/SampleSelection.root","recreate");
-    TFile *ff_Sel = TFile::Open("../data/SampleSelection/SampleSelection.root", "update");
-    ff_Sel->cd();
-    // h_eCC_result->Write(Form("CuteCC%dns", 91), TObject::kOverwrite);
-    // h_muCC_result->Write(Form("CutmuCC%dns", 118), TObject::kOverwrite);
-    h_eCC_result->Write(Form("My_CuteCC%dns", 86), TObject::kOverwrite);
-    h_muCC_result->Write(Form("My_CutmuCC%dns", 113), TObject::kOverwrite);
+    // TFile *ff_Sel = TFile::Open("../data/SampleSelection/SampleSelection.root", "update");
+    // ff_Sel->cd();
+    // // h_eCC_result->Write(Form("CuteCC%dns", 91), TObject::kOverwrite);
+    // // h_muCC_result->Write(Form("CutmuCC%dns", 118), TObject::kOverwrite);
+    // h_eCC_result->Write(Form("My_CuteCC%dns", 86), TObject::kOverwrite);
+    // h_muCC_result->Write(Form("My_CutmuCC%dns", 113), TObject::kOverwrite);
 }
 
 //input NPE spectra and prios disribution,
@@ -324,7 +327,7 @@ void Iter_Bayes_Once(TH1 *h_input,
         }
         // printf("E_hat: %f\n", E_hat);
         // if (epsilon_i[i] != 0)
-        E_hat /= (1-epsilon_i[i]);
+        E_hat /= (1 - epsilon_i[i]);
         BinCenter = h_output->GetBinCenter(i + 1);
         h_output->SetBinContent(i + 1, E_hat);
         h_output->SetBinError(i + 1, sqrt(E_hat));
@@ -404,19 +407,19 @@ void TryRooUnfold(int Iter_NUM)
     //     muCC_NPETresE.GetEntry(i);
     //     if (sigma_tres[0] >= Sigma_cut_muCC)
     //     {
-    //         // if (NPE_LPMT[0] >= NPE_cut_muCC[0] &&
-    //             // NPE_LPMT[0] <= NPE_cut_muCC[1])
+    //         if (NPE_LPMT[0] >= NPE_cut_muCC[0] &&
+    //             NPE_LPMT[0] <= NPE_cut_muCC[1])
     //             R_atm_muCC->Fill(log10(NPE_LPMT[0]), log10(E_nu_true[0])); //all
-    //         // else
-    //         //     R_atm_muCC->Miss(log10(E_nu_true[0]));
+    //         else
+    //             R_atm_muCC->Miss(log10(E_nu_true[0]));
     //     }
     //     if (sigma_tres[0] <= Sigma_cut_eCC)
     //     {
-    //         // if (NPE_LPMT[0] >= NPE_cut_eCC[0] &&
-    //         //     NPE_LPMT[0] <= NPE_cut_eCC[1])
+    //         if (NPE_LPMT[0] >= NPE_cut_eCC[0] &&
+    //             NPE_LPMT[0] <= NPE_cut_eCC[1])
     //             R_atm_eCC->Fill(log10(NPE_LPMT[0]), log10(E_nu_true[0])); //all
-    //         // else
-    //         //     R_atm_eCC->Miss(log10(E_nu_true[0]));
+    //         else
+    //             R_atm_eCC->Miss(log10(E_nu_true[0]));
     //     }
     //     if (i < eCC_NPETresE.GetEntries())
     //     {
@@ -576,12 +579,12 @@ void TryRooUnfold(int Iter_NUM)
     h_ref_eCC->Draw("SAME");
 
     // TFile *ff_Sel=TFile::Open("../data/SampleSelection/SampleSelection.root","recreate");
-    // TFile *ff_Sel = TFile::Open("../data/SampleSelection/SampleSelection.root", "update");
-    // ff_Sel->cd();
+    TFile *ff_Sel = TFile::Open("../data/SampleSelection/SampleSelection.root", "update");
+    ff_Sel->cd();
     // h_eCC_result->Write(Form("CuteCC%dns", 91), TObject::kOverwrite);
     // h_muCC_result->Write(Form("CutmuCC%dns", 118), TObject::kOverwrite);
-    // h_eCC_result->Write(Form("RooUnf_CuteCC%dns", 86), TObject::kOverwrite);
-    // h_muCC_result->Write(Form("RooUnf_CutmuCC%dns", 113), TObject::kOverwrite);
+    h_eCC_result->Write(Form("Pure_CuteCC%dns", 86), TObject::kOverwrite);
+    h_muCC_result->Write(Form("Pure_CutmuCC%dns", 113), TObject::kOverwrite);
 }
 
 //may load data inte vector from txt file
@@ -932,8 +935,8 @@ void ShowUncertainty_SamSel(const int SampelNUM)
     TH1 *h_muCCSel[SampelNUM];
     for (int i = 0; i < SampelNUM; i++)
     {
-        h_eCCSel[i] = dynamic_cast<TH1 *>(ff_Sel->Get(Form("CuteCC%dns", i + 81)));
-        h_muCCSel[i] = dynamic_cast<TH1 *>(ff_Sel->Get(Form("CutmuCC%dns", i + 108)));
+        h_eCCSel[i] = dynamic_cast<TH1 *>(ff_Sel->Get(Form("CuteCC%dns", i + 85)));
+        h_muCCSel[i] = dynamic_cast<TH1 *>(ff_Sel->Get(Form("CutmuCC%dns", i + 112)));
     }
     TH1 *h_eCC_Sel_Err = dynamic_cast<TH1 *>(h_eCCSel[0]->Clone("h_eCC_Sel_Err"));
     TH1 *h_muCC_Sel_Err = dynamic_cast<TH1 *>(h_muCCSel[0]->Clone("h_muCC_Sel_Err"));
@@ -968,11 +971,57 @@ void ShowUncertainty_SamSel(const int SampelNUM)
     h_muCC_Sel_Err->Draw("hist");
 }
 
+void ShowUncertainty_Osci()
+{
+    TFile *ff_sam = TFile::Open("../data/SampleSelection/SampleSelection.root", "READ");
+    TString ObjName[] = {
+        "RooUnf_CuteCC86ns",
+        "RooUnf_CutmuCC113ns",
+        "Pure_CuteCC86ns",
+        "Pure_CutmuCC113ns",
+    };
+    TH1 *h_sams[4];
+    GetObjFromFile(ff_sam,h_sams,ObjName,4);
+    h_sams[2]->SetLineColor(kRed);
+    h_sams[3]->SetLineColor(kRed);
+    TH1 *h_eCC_Osc_Err = dynamic_cast<TH1 *>(h_sams[0]->Clone("h_eCC_Osc_Err"));
+    TH1 *h_muCC_Osc_Err = dynamic_cast<TH1 *>(h_sams[1]->Clone("h_muCC_Osc_Err"));
+    h_eCC_Osc_Err->SetYTitle("Relative Difference [%]");
+    h_muCC_Osc_Err->SetYTitle("Relative Difference [%]");
+    h_eCC_Osc_Err->SetXTitle("log_{10}(E_{#nu}/GeV)");
+    h_muCC_Osc_Err->SetXTitle("log_{10}(E_{#nu}/GeV)");
+
+    h_eCC_Osc_Err->SetAxisRange(0.,1,"Y");
+    h_muCC_Osc_Err->SetAxisRange(0.,5,"Y");
+    for (int i = 0; i < 7; i++)
+    {
+        double All,Pure;
+        All=h_sams[0]->GetBinContent(i+1);
+        Pure=h_sams[2]->GetBinContent(i+1);
+        h_eCC_Osc_Err->SetBinContent(i+1,(All-Pure)*2/(All+Pure)*100);
+        All=h_sams[1]->GetBinContent(i+1);
+        Pure=h_sams[3]->GetBinContent(i+1);
+        h_muCC_Osc_Err->SetBinContent(i+1,(All-Pure)*2/(All+Pure)*100);
+    }
+    
+
+    TCanvas *c_e=new TCanvas("ce_sam");
+    h_eCC_Osc_Err->Draw("hist");
+    // h_sams[0]->Divide(h_sams[2]);
+    // h_sams[0]->Draw("hist");
+    // h_sams[2]->Draw("SAME");
+    TCanvas *c_mu=new TCanvas("cmu_sam");
+    h_muCC_Osc_Err->Draw("hist");
+    // h_sams[1]->Divide(h_sams[3]);
+    // h_sams[1]->Draw("hist");
+    // h_sams[3]->Draw("SAME");
+}
+
 void ShowUncertainties_all()
 {
     gStyle->SetOptStat(0);
     TFile *ff_Sel = TFile::Open("../data/SampleSelection/SampleSelection.root", "READ");
-    TH1 *h_CutmuCC109ns = dynamic_cast<TH1 *>(ff_Sel->Get("CutmuCC109ns"));
+    TH1 *h_CutmuCC109ns = dynamic_cast<TH1 *>(ff_Sel->Get("CutmuCC114ns"));
     TH1 *h_CuteCC82ns = dynamic_cast<TH1 *>(ff_Sel->Get("CuteCC88ns"));
     TH1 *h_CutmuCC113ns = dynamic_cast<TH1 *>(ff_Sel->Get("CutmuCC113ns"));
     TH1 *h_CuteCC86ns = dynamic_cast<TH1 *>(ff_Sel->Get("CuteCC87ns"));
@@ -986,10 +1035,10 @@ void ShowUncertainties_all()
     {
         binv_c = h_CuteCC86ns->GetBinContent(i + 1);
         binv_up = h_CuteCC82ns->GetBinContent(i + 1);
-        h_eCC_Sel_Err->SetBinContent(i + 1, abs(binv_up - binv_c) * 2 / (binv_c + binv_up));
+        h_eCC_Sel_Err->SetBinContent(i + 1, sqrt(abs(binv_up - binv_c) * 2) / (binv_c + binv_up));
         binv_c = h_CutmuCC113ns->GetBinContent(i + 1);
         binv_up = h_CutmuCC109ns->GetBinContent(i + 1);
-        h_muCC_Sel_Err->SetBinContent(i + 1, abs(binv_up - binv_c) * 2 / (binv_c + binv_up));
+        h_muCC_Sel_Err->SetBinContent(i + 1, sqrt(abs(binv_up - binv_c) * 2) / (binv_c + binv_up));
     }
     h_muCC_Sel_Err->SetBinContent(7, 0.24);
     TCanvas *c_muSel = new TCanvas("c_muSel");
