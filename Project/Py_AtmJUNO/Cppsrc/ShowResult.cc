@@ -251,7 +251,7 @@ void ShowNPE_nd_Cuts()
         TH1 *h_Eff_muCC = dynamic_cast<TH1 *>(h_tres_initial[0]->Clone("Eff_muCC"));
         TH1 *h_CONT_muCC = dynamic_cast<TH1 *>(h_tres_initial[0]->Clone("Cont_muCC"));
 
-        const int nBinsS2B=70;
+        const int nBinsS2B = 70;
         TH2D *h_S2B_eCC = new TH2D("S2B_eCC", "", nBinsS2B, 0, 1, nBinsS2B, 0, 1);
         TH2D *h_S2B_muCC = new TH2D("S2B_muCC", "", nBinsS2B, 0, 1, nBinsS2B, 0, 1);
         h_S2B_eCC->SetXTitle("#frac{S}{S+B}");
@@ -297,8 +297,8 @@ void ShowNPE_nd_Cuts()
             h_CONT_eCC->SetBinContent(i + 1, CONT_e);
             h_Eff_muCC->SetBinContent(i + 1, Eff_mu);
             h_CONT_muCC->SetBinContent(i + 1, CONT_mu);
-            h_S2B_eCC->Fill(Eff_e,1- CONT_e);
-            h_S2B_muCC->Fill(Eff_mu,1- CONT_mu);
+            h_S2B_eCC->Fill(Eff_e, 1 - CONT_e);
+            h_S2B_muCC->Fill(Eff_mu, 1 - CONT_mu);
         }
         TCanvas *c_S2B_eCC = new TCanvas("c_S2B_eCC");
         h_S2B_eCC->SetTitle("#nu_{e} CC");
@@ -554,7 +554,8 @@ void ShowNPE_nd_Cuts()
             if (i > 0)
                 h_eCC_NPE_Spec[i]->SetFillColor(NPE_Spec_Color[i]);
             leg_sel[0]->AddEntry(h_eCC_NPE_Spec[i], "#nu_{e}: " + NPE_Spec_Name[i] + " part");
-            h_eCC_NPE_Spec[i]->Draw("SAME");
+            if (i > 0)
+                h_eCC_NPE_Spec[i]->Draw("SAME");
         }
         h_eCC_NPE_Spec[0]->Draw("SAME E1");
         leg_sel[0]->DrawClone("SAME");
@@ -652,7 +653,7 @@ void ShowNPE_nd_Cuts()
         for (int i = 0; i < Etrue_BINNUM_muCC; i++)
             epsilon_muCC[i] = h_muCC2D->GetBinContent(i + 1, 0) / h_muCC2D->Integral(i + 1, i + 1, 0, NPE_BINNUM_muCC + 1);
 
-        double Response_SUM[Etrue_BINNUM_eCC];
+        // double Response_SUM[Etrue_BINNUM_eCC];
         // for (int i = 0; i < Etrue_BINNUM_eCC; i++)
         // {
         //     Response_SUM[i] = h_eCC_Etrue_NPE->Integral(i + 1, i + 1, 1, NPE_BINNUM_eCC);
@@ -663,7 +664,7 @@ void ShowNPE_nd_Cuts()
         //                          (1 - epsilon_eCC[i]) / Response_SUM[i];
         //         h_eCC_Etrue_NPE->SetBinContent(i + 1, j + 1, A_ji_ecc[j][i]);
         //     }
-        //     printf("epsilon_eCC:%f\n", epsilon_eCC[i]);
+        //     printf("epsilon_eCC:%.10f\n", epsilon_eCC[i]);
         // }
         TCanvas *c_redu_Ml_eCC = new TCanvas("c_redu_Ml_eCC");
         h_eCC_Etrue_NPE->Draw("colz");
@@ -680,16 +681,16 @@ void ShowNPE_nd_Cuts()
         //                           (1 - epsilon_muCC[i]) / Response_SUM[i];
         //         h_muCC_Etrue_NPE->SetBinContent(i + 1, j + 1, A_ji_mucc[j][i]);
         //     }
-        //     printf("epsilon_muCC:%f\n", epsilon_muCC[i]);
+        //     printf("epsilon_muCC:%.10f\n", epsilon_muCC[i]);
         // }
         TCanvas *c_redu_Ml_muCC = new TCanvas("c_redu_Ml_muCC");
         c_redu_Ml_muCC->cd();
         h_muCC_Etrue_NPE->Draw("colz");
         gPad->SetLogz();
-        TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "update");
-        ff_unfold->cd();
-        h_muCC_Etrue_NPE->Write(h_muCC_Etrue_NPE->GetName(), TObject::kOverwrite);
-        h_eCC_Etrue_NPE->Write(h_eCC_Etrue_NPE->GetName(), TObject::kOverwrite);
+        // TFile *ff_unfold = TFile::Open("../data/UnfoldData.root", "update");
+        // ff_unfold->cd();
+        // h_muCC_Etrue_NPE->Write(h_muCC_Etrue_NPE->GetName(), TObject::kOverwrite);
+        // h_eCC_Etrue_NPE->Write(h_eCC_Etrue_NPE->GetName(), TObject::kOverwrite);
     }
 }
 

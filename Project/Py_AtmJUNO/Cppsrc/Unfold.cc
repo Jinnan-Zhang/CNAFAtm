@@ -28,8 +28,8 @@
 #include <vector>
 #include <string>
 #include <fstream>
-#include "RooUnfoldBayes.h"
-#include "RooUnfoldResponse.h"
+// #include "RooUnfoldBayes.h"
+// #include "RooUnfoldResponse.h"
 
 void LoadFile(std::string filename, std::vector<std::vector<double>> &v, int Length = 2, int SkipLines = 0);
 void BayesUnfold(int Iter_NUM = 2);
@@ -67,8 +67,9 @@ const double Cut_NPE_up_Sg[2] = {1.585e7, 1.585e7};
 int Unfold()
 {
     // gSystem->Load("/home/jinnan/SoftWare/srcs/RooUnfold/libRooUnfold");
+    // gSystem->Load("/home/jinnan/SoftWare/src/RooUnfold/libRooUnfold");
     // BayesUnfold(2);
-    TryRooUnfold(2);
+    TryRooUnfold(4);
     // ShowUncertainty_stat();
     // ShowUncertainty_Xsec();
     // ShowUncertainty_SamSel(2);
@@ -97,16 +98,34 @@ void BayesUnfold(int Iter_NUM)
     TH1 *h_muCC_result = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("muCC_result"));
     const int Enu_BINNUM_eCC = h_Prior_eCC->GetNbinsX();
     const int Enu_BINNUM_muCC = h_Prior_muCC->GetNbinsX();
-    double epsilon_i_eCC[Enu_BINNUM_eCC];
-    double epsilon_i_muCC[Enu_BINNUM_muCC];
-    for (int i = 0; i < Enu_BINNUM_eCC; i++)
-    {
-        epsilon_i_eCC[i] = h_likeli_eCC->Integral(i + 1, i + 1, 1, NPE_BINNUM_eCC);
-    }
-    for (int i = 0; i < Enu_BINNUM_muCC; i++)
-    {
-        epsilon_i_muCC[i] = h_likeli_muCC->Integral(i + 1, i + 1, 1, NPE_BINNUM_muCC);
-    }
+    double epsilon_i_eCC[] = {
+        0.1104294479,
+        0.0014534884,
+        0.0002564892,
+        0.0001964926,
+        0.0000699447,
+        0.0000000000,
+        0.0000000000,
+    };
+    double epsilon_i_muCC[] = {
+        0.0000391742,
+        0.0000373650,
+        0.0000413018,
+        0.0000000000,
+        0.0001890181,
+        0.0000000000,
+        0.0000000000,
+    };
+    // for (int i = 0; i < Enu_BINNUM_eCC; i++)
+    // {
+        // epsilon_i_eCC[i] = h_likeli_eCC->Integral(i + 1, i + 1, 1, NPE_BINNUM_eCC);
+    //     epsilon_i_eCC[i] = 0;
+    // }
+    // for (int i = 0; i < Enu_BINNUM_muCC; i++)
+    // {
+        // epsilon_i_muCC[i] = h_likeli_muCC->Integral(i + 1, i + 1, 1, NPE_BINNUM_muCC);
+    //     epsilon_i_muCC[i] = 0;
+    // }
     // h_Prior_eCC = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("eCC_Prior"));
     // h_Prior_muCC = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("muCC_Prior"));
     // h_Prior_eCC->Scale(1 / h_Prior_eCC->Integral());
@@ -123,6 +142,7 @@ void BayesUnfold(int Iter_NUM)
             Iter_Bayes_Once(h_sel_eCC, h_Prior_eCC, h_likeli_eCC, h_eCC_result, epsilon_i_eCC);
             Iter_Bayes_Once(h_sel_muCC, h_Prior_muCC, h_likeli_muCC, h_muCC_result, epsilon_i_muCC);
         }
+    // h_likeli_muCC->Draw("colz");
     gStyle->SetOptStat(0);
     gStyle->SetOptTitle(0);
     TCanvas *c_CC_Spec = new TCanvas("muCC_Spec", "", 800, 600);
@@ -173,6 +193,7 @@ void BayesUnfold(int Iter_NUM)
     h_ratio_muCC->GetXaxis()->SetTitleSize(0.11);
     h_ratio_muCC->GetXaxis()->SetTitleOffset(0.9);
     h_ratio_muCC->GetXaxis()->SetLabelSize(0.1);
+    h_ratio_muCC->SetAxisRange(0, 2, "Y");
     h_ratio_muCC->Draw("E1");
     h_ref_muCC->Draw("SAME");
 
@@ -224,14 +245,17 @@ void BayesUnfold(int Iter_NUM)
     h_ratio_eCC->GetXaxis()->SetTitleOffset(0.9);
     h_ratio_eCC->GetXaxis()->SetLabelSize(0.1);
 
+    h_ratio_eCC->SetAxisRange(0, 2, "Y");
     h_ratio_eCC->Draw("E1");
     h_ref_eCC->Draw("SAME");
 
     // TFile *ff_Sel=TFile::Open("../data/SampleSelection/SampleSelection.root","recreate");
-    // TFile *ff_Sel = TFile::Open("../data/SampleSelection/SampleSelection.root", "update");
-    // ff_Sel->cd();
+    TFile *ff_Sel = TFile::Open("../data/SampleSelection/SampleSelection.root", "update");
+    ff_Sel->cd();
     // h_eCC_result->Write(Form("CuteCC%dns", 91), TObject::kOverwrite);
     // h_muCC_result->Write(Form("CutmuCC%dns", 118), TObject::kOverwrite);
+    h_eCC_result->Write(Form("My_CuteCC%dns", 86), TObject::kOverwrite);
+    h_muCC_result->Write(Form("My_CutmuCC%dns", 113), TObject::kOverwrite);
 }
 
 //input NPE spectra and prios disribution,
@@ -248,23 +272,23 @@ void Iter_Bayes_Once(TH1 *h_input,
     double Response_SUM[Enu_BINNUM];
     for (int i = 0; i < Enu_BINNUM; i++)
     {
-        // Response_SUM[i] = h_Likelihd_M->Integral(i + 1, i + 1, 1, NPE_BINNUM);
+        Response_SUM[i] = h_Likelihd_M->Integral(i + 1, i + 1, 1, NPE_BINNUM);
         for (int j = 0; j < NPE_BINNUM; j++)
         {
             //normalize the the likelihood sum of a row to 1-epsilon
-            // A_ji[j][i] = h_Likelihd_M->GetBinContent(i + 1, j + 1) *
-            //              (1 - epsilon_i[i]) / Response_SUM[i];
-            A_ji[j][i] = h_Likelihd_M->GetBinContent(i + 1, j + 1);
+            A_ji[j][i] = h_Likelihd_M->GetBinContent(i + 1, j + 1) *
+                         (1 - epsilon_i[i]) / Response_SUM[i];
+            // A_ji[j][i] = h_Likelihd_M->GetBinContent(i + 1, j + 1);
         }
     }
     {
-        // for (int i = 0; i < Enu_BINNUM; i++)
-        // {
-        //     for (int j = 0; j < NPE_BINNUM; j++)
-        //     {
-        //         printf("A_%d%d: %f\n", j+1, i+1, A_ji[j][i]);
-        //     }
-        // }
+        for (int i = 0; i < Enu_BINNUM; i++)
+        {
+            for (int j = 0; j < NPE_BINNUM; j++)
+            {
+                printf("A_%d%d: %f\n", j + 1, i + 1, A_ji[j][i]);
+            }
+        }
     }
 
     double U_ij[Enu_BINNUM][NPE_BINNUM];
@@ -300,7 +324,7 @@ void Iter_Bayes_Once(TH1 *h_input,
         }
         // printf("E_hat: %f\n", E_hat);
         // if (epsilon_i[i] != 0)
-        E_hat /= epsilon_i[i];
+        E_hat /= (1-epsilon_i[i]);
         BinCenter = h_output->GetBinCenter(i + 1);
         h_output->SetBinContent(i + 1, E_hat);
         h_output->SetBinError(i + 1, sqrt(E_hat));
@@ -331,6 +355,7 @@ TH2 *SwapX2Y(TH2 *h_innital)
 void TryRooUnfold(int Iter_NUM)
 {
     // gSystem->Load("/home/jinnan/SoftWare/srcs/RooUnfold/libRooUnfold");
+    // gSystem->Load("/home/jinnan/SoftWare/src/RooUnfold/libRooUnfold");
     TFile *ff_unfold_data = TFile::Open("../data/UnfoldData.root", "READ");
     TH2 *h_likeli_eCC = SwapX2Y(dynamic_cast<TH2 *>(ff_unfold_data->Get("eCC_Likely_hood")));
     TH2 *h_likeli_muCC = SwapX2Y(dynamic_cast<TH2 *>(ff_unfold_data->Get("muCC_Likely_hood")));
@@ -345,7 +370,6 @@ void TryRooUnfold(int Iter_NUM)
     TH1 *h_eCC_result = dynamic_cast<TH1 *>(h_MC_true_eCC->Clone("eCC_result"));
     TH1 *h_muCC_result = dynamic_cast<TH1 *>(h_MC_true_muCC->Clone("muCC_result"));
 
-    
     // RooUnfoldResponse *R_atm_eCC = new RooUnfoldResponse(h_sel_eCC, h_MC_true_eCC, h_likeli_eCC);
     // RooUnfoldResponse *R_atm_muCC = new RooUnfoldResponse(h_sel_muCC, h_MC_true_muCC, h_likeli_muCC);
     RooUnfoldResponse *R_atm_eCC = new RooUnfoldResponse(0, 0, h_likeli_eCC);
@@ -380,19 +404,19 @@ void TryRooUnfold(int Iter_NUM)
     //     muCC_NPETresE.GetEntry(i);
     //     if (sigma_tres[0] >= Sigma_cut_muCC)
     //     {
-    //         if (NPE_LPMT[0] >= NPE_cut_muCC[0] &&
-    //             NPE_LPMT[0] <= NPE_cut_muCC[1])
+    //         // if (NPE_LPMT[0] >= NPE_cut_muCC[0] &&
+    //             // NPE_LPMT[0] <= NPE_cut_muCC[1])
     //             R_atm_muCC->Fill(log10(NPE_LPMT[0]), log10(E_nu_true[0])); //all
-    //         else
-    //             R_atm_muCC->Miss(log10(E_nu_true[0]));
+    //         // else
+    //         //     R_atm_muCC->Miss(log10(E_nu_true[0]));
     //     }
     //     if (sigma_tres[0] <= Sigma_cut_eCC)
     //     {
-    //         if (NPE_LPMT[0] >= NPE_cut_eCC[0] &&
-    //             NPE_LPMT[0] <= NPE_cut_eCC[1])
+    //         // if (NPE_LPMT[0] >= NPE_cut_eCC[0] &&
+    //         //     NPE_LPMT[0] <= NPE_cut_eCC[1])
     //             R_atm_eCC->Fill(log10(NPE_LPMT[0]), log10(E_nu_true[0])); //all
-    //         else
-    //             R_atm_eCC->Miss(log10(E_nu_true[0]));
+    //         // else
+    //         //     R_atm_eCC->Miss(log10(E_nu_true[0]));
     //     }
     //     if (i < eCC_NPETresE.GetEntries())
     //     {
@@ -401,40 +425,42 @@ void TryRooUnfold(int Iter_NUM)
     //         {
     //             if (NPE_LPMT[1] >= NPE_cut_muCC[0] &&
     //                 NPE_LPMT[1] <= NPE_cut_muCC[1])
-    //                 R_atm_muCC->Fill(log10(NPE_LPMT[0]), log10(E_nu_true[0])); //all
+    //                 R_atm_muCC->Fill(log10(NPE_LPMT[1]), log10(E_nu_true[1])); //all
     //             else
-    //                 R_atm_muCC->Miss(log10(E_nu_true[0]));
+    //                 R_atm_muCC->Miss(log10(E_nu_true[1]));
     //         }
-    //         if (sigma_tres[0] <= Sigma_cut_eCC)
+    //         if (sigma_tres[1] <= Sigma_cut_eCC)
     //         {
-    //             if (NPE_LPMT[0] >= NPE_cut_eCC[0] &&
-    //                 NPE_LPMT[0] <= NPE_cut_eCC[1])
-    //                 R_atm_eCC->Fill(log10(NPE_LPMT[0]), log10(E_nu_true[0])); //all
+    //             if (NPE_LPMT[1] >= NPE_cut_eCC[0] &&
+    //                 NPE_LPMT[1] <= NPE_cut_eCC[1])
+    //                 R_atm_eCC->Fill(log10(NPE_LPMT[1]), log10(E_nu_true[1])); //all
     //             else
-    //                 R_atm_eCC->Miss(log10(E_nu_true[0]));
+    //                 R_atm_eCC->Miss(log10(E_nu_true[1]));
     //         }
     //     }
     //     if (i < NC_NPETresE.GetEntries())
     //     {
     //         NC_NPETresE.GetEntry(i);
-    //         if (sigma_tres[0] >= Sigma_cut_muCC)
+    //         if (sigma_tres[2] >= Sigma_cut_muCC)
     //         {
-    //             if (NPE_LPMT[0] >= NPE_cut_muCC[0] &&
-    //                 NPE_LPMT[0] <= NPE_cut_muCC[1])
-    //                 R_atm_muCC->Fill(log10(NPE_LPMT[0]), log10(E_nu_true[0])); //all
+    //             if (NPE_LPMT[2] >= NPE_cut_muCC[0] &&
+    //                 NPE_LPMT[2] <= NPE_cut_muCC[1])
+    //                 R_atm_muCC->Fill(log10(NPE_LPMT[2]), log10(E_nu_true[2])); //all
     //             else
-    //                 R_atm_muCC->Miss(log10(E_nu_true[0]));
+    //                 R_atm_muCC->Miss(log10(E_nu_true[2]));
     //         }
-    //         if (sigma_tres[0] <= Sigma_cut_eCC)
+    //         if (sigma_tres[2] <= Sigma_cut_eCC)
     //         {
-    //             if (NPE_LPMT[0] >= NPE_cut_eCC[0] &&
-    //                 NPE_LPMT[0] <= NPE_cut_eCC[1])
-    //                 R_atm_eCC->Fill(log10(NPE_LPMT[0]), log10(E_nu_true[0])); //all
+    //             if (NPE_LPMT[2] >= NPE_cut_eCC[0] &&
+    //                 NPE_LPMT[2] <= NPE_cut_eCC[1])
+    //                 R_atm_eCC->Fill(log10(NPE_LPMT[2]), log10(E_nu_true[2])); //all
     //             else
-    //                 R_atm_eCC->Miss(log10(E_nu_true[0]));
+    //                 R_atm_eCC->Miss(log10(E_nu_true[2]));
     //         }
     //     }
     // }
+    // TH2 *h_eCC=R_atm_eCC->Hresponse();
+    // h_eCC->Draw("colz");
 
     RooUnfoldBayes *unfold_eCC = new RooUnfoldBayes(R_atm_eCC, h_sel_eCC, Iter_NUM);
     RooUnfoldBayes *unfold_muCC = new RooUnfoldBayes(R_atm_muCC, h_sel_muCC, Iter_NUM);
@@ -493,6 +519,7 @@ void TryRooUnfold(int Iter_NUM)
     h_ratio_muCC->GetXaxis()->SetTitleSize(0.11);
     h_ratio_muCC->GetXaxis()->SetTitleOffset(0.9);
     h_ratio_muCC->GetXaxis()->SetLabelSize(0.1);
+    h_ratio_muCC->SetAxisRange(0, 2, "Y");
     h_ratio_muCC->Draw("E1");
     h_ref_muCC->Draw("SAME");
 
@@ -544,6 +571,7 @@ void TryRooUnfold(int Iter_NUM)
     h_ratio_eCC->GetXaxis()->SetTitleOffset(0.9);
     h_ratio_eCC->GetXaxis()->SetLabelSize(0.1);
 
+    h_ratio_eCC->SetAxisRange(0, 2, "Y");
     h_ratio_eCC->Draw("E1");
     h_ref_eCC->Draw("SAME");
 
@@ -552,6 +580,8 @@ void TryRooUnfold(int Iter_NUM)
     // ff_Sel->cd();
     // h_eCC_result->Write(Form("CuteCC%dns", 91), TObject::kOverwrite);
     // h_muCC_result->Write(Form("CutmuCC%dns", 118), TObject::kOverwrite);
+    // h_eCC_result->Write(Form("RooUnf_CuteCC%dns", 86), TObject::kOverwrite);
+    // h_muCC_result->Write(Form("RooUnf_CutmuCC%dns", 113), TObject::kOverwrite);
 }
 
 //may load data inte vector from txt file

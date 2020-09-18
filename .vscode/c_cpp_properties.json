@@ -8,7 +8,8 @@
                 "/cvmfs/juno.ihep.ac.cn/sl6_amd64_gcc830/Pre-Release/J20v1r1-Pre0/sniper/**",
                 "/cvmfs/juno.ihep.ac.cn/sl6_amd64_gcc830/Pre-Release/J20v1r1-Pre0/offline/**",
                 "${ROOTSYS}/include/**",
-                "/home/jinnan/SoftWare/srcs/RooUnfold/src/"
+                "/home/jinnan/SoftWare/srcs/RooUnfold/src/",
+                "/home/jinnan/SoftWare/src/RooUnfold/src/"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
