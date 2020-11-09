@@ -38,6 +38,7 @@ double logEtrue_range_eCC[2] = {-1, 1.05};
 double logEtrue_range_muCC[2] = {-0.3, 1.05};
 
 void ViewFlavor();
+void ViewNPE_tres();
 void ViewEffandCONT();
 void ForAllPEs();
 void GetObjFromFile(TFile *File, TH1 *h[], TString ObjNames[], int NUMObj);
@@ -54,8 +55,10 @@ int ShowResult()
 {
     // ViewFlavor();
     // ViewEffandCONT();
+    ViewNPE_tres();
+
     // ForAllPEs();
-    ShowNPE_nd_Cuts();
+    // ShowNPE_nd_Cuts();
     // ShowNPE_Sg_Cuts();
     return 0;
 }
@@ -468,10 +471,10 @@ void ShowNPE_nd_Cuts()
             NPE_LPMT[0] <= NPE_cut_eCC[1] &&
             sigma_tres[0] <= Sigma_cut_eCC)
         {
-            h_eCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[0]));                    //all for eCC
-            h_eCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[0]));                    //wrong for eCC
-            h_eCC_Enu_Spec[0]->Fill(log10(E_nu_true[0]));                   //all for eCC
-            h_eCC_Enu_Spec[2]->Fill(log10(E_nu_true[0]));                   //wrong for eCC
+            h_eCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[0]));  //all for eCC
+            h_eCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[0]));  //wrong for eCC
+            h_eCC_Enu_Spec[0]->Fill(log10(E_nu_true[0])); //all for eCC
+            h_eCC_Enu_Spec[2]->Fill(log10(E_nu_true[0])); //wrong for eCC
             // h_eCC_Etrue_NPE->Fill(log10(E_nu_true[0]), log10(NPE_LPMT[0])); //all
         }
         if (i < eCC_NPETresE.GetEntries())
@@ -481,10 +484,10 @@ void ShowNPE_nd_Cuts()
                 NPE_LPMT[1] <= NPE_cut_muCC[1] &&
                 sigma_tres[1] >= Sigma_cut_muCC)
             {
-                h_muCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[1]));                    //all for muCC
-                h_muCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[1]));                    //wrong for eCC
-                h_muCC_Enu_Spec[0]->Fill(log10(E_nu_true[1]));                   //all for muCC
-                h_muCC_Enu_Spec[2]->Fill(log10(E_nu_true[1]));                   //wrong for eCC
+                h_muCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[1]));  //all for muCC
+                h_muCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[1]));  //wrong for eCC
+                h_muCC_Enu_Spec[0]->Fill(log10(E_nu_true[1])); //all for muCC
+                h_muCC_Enu_Spec[2]->Fill(log10(E_nu_true[1])); //wrong for eCC
                 // h_muCC_Etrue_NPE->Fill(log10(E_nu_true[1]), log10(NPE_LPMT[1])); //all
             }
             if (NPE_LPMT[1] >= NPE_cut_eCC[0] &&
@@ -1000,6 +1003,64 @@ void ViewFlavor()
         leg[i].DrawClone("SAME");
     }
 }
+
+//show the figure one in the techNote
+void ViewNPE_tres()
+{
+    TChain muCC_NPETresE("muCC_NPETresE");
+    TChain eCC_NPETresE("eCC_NPETresE");
+    TChain NC_NPETresE("NC_NPETresE");
+    muCC_NPETresE.Add("../results/result_NPETE*_100.root");
+    eCC_NPETresE.Add("../results/result_NPETE*_100.root");
+    NC_NPETresE.Add("../results/result_NPETE*_100.root");
+    TH1 *h_muCC[4], *h_eCC[4], *h_NC[4];
+    Color_t mueN[] = {
+        kBlue,
+        kRed,
+        kGreen,
+    };
+    double NPE_cuts[4][2] = {
+        {1e5, 4.73e5},
+        {4.73e5, 1.01e6},
+        {1.01e6, 2.32e6},
+        {2.32e6, 1.58e7},
+    };
+    TString CutConditions[] = {
+        "10^{5}<NPE_{LPMT}<4.73#times10^{5}",
+        "4.73#times10^{5}<NPE_{LPMT}<1.01#times10^{6}",
+        "1.01#times10^{6}<NPE_{LPMT}<2.32#times10^{6}",
+        "NPE_{LPMT}>2.32#times10^{6}"};
+    TCanvas *cs[5];
+    TLegend leg[5];
+    for (int i = 0; i < 4; i++)
+    {
+        cs[i] = new TCanvas(CutConditions[i]);
+        cs[i]->cd();
+        muCC_NPETresE.Draw(Form("sigma_tres>>muCC%d(160,40,200)", i), Form("NPE_LPMT>=%f&&NPE_LPMT<=%f", NPE_cuts[i][0], NPE_cuts[i][1]), "");
+        eCC_NPETresE.Draw(Form("sigma_tres>>eCC%d(160,40,200)", i), Form("NPE_LPMT>=%f&&NPE_LPMT<=%f", NPE_cuts[i][0], NPE_cuts[i][1]), "SAME");
+        NC_NPETresE.Draw(Form("sigma_tres>>NC%d(160,40,200)", i), Form("NPE_LPMT>=%f&&NPE_LPMT<=%f", NPE_cuts[i][0], NPE_cuts[i][1]), "SAME");
+        
+        h_muCC[i] = dynamic_cast<TH1 *>(gDirectory->Get(Form("muCC%d", i)));
+        h_eCC[i] = dynamic_cast<TH1 *>(gDirectory->Get(Form("eCC%d", i)));
+        h_NC[i] = dynamic_cast<TH1 *>(gDirectory->Get(Form("NC%d", i)));
+        h_muCC[i]->SetTitle(CutConditions[i]);
+        h_muCC[i]->SetXTitle("#sigma(t_{res}) [ns]");
+        h_muCC[i]->SetYTitle("entries");
+        h_muCC[i]->SetLineColor(mueN[0]);
+        h_eCC[i]->SetXTitle("#sigma(t_{res}) [ns]");
+        h_eCC[i]->SetYTitle("entries");
+        h_eCC[i]->SetLineColor(mueN[1]);
+        h_NC[i]->SetXTitle("#sigma(t_{res}) [ns]");
+        h_NC[i]->SetYTitle("entries");
+        h_NC[i]->SetLineColor(mueN[2]);
+        leg[i].AddEntry(h_muCC[i], "#nu_{#mu} CC");
+        leg[i].AddEntry(h_eCC[i], "#nu_{e} CC");
+        leg[i].AddEntry(h_NC[i], "NC");
+        leg[i].DrawClone("SAME");
+    }
+    h_muCC[0]->SetAxisRange(0,2500,"Y");
+}
+
 void GetObjFromFile(TFile *File, TH1 *h[], TString ObjNames[], int NUMObj)
 {
     for (int i = 0; i < NUMObj; i++)
