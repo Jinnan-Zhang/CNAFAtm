@@ -104,11 +104,13 @@ def ShowSimpletres(WhichEntry=0):
             hit_pr_idx = np.where(Smear_t < HitTimeCut_up)[0]
             t_res_i = Smear_t - (R_Vi * LS_RI_idx / LightSpeed_c)
             t_res_i = t_res_i[hit_pr_idx]
-            # print(t_res_i[0:100:])
             # t_res_i = t_res_i[t_res_i < HitTimeCut_up]
             sigma_tres = np.sqrt(np.mean(t_res_i**2))
             print(sigma_tres)
+            print("pdg id:", (np.asarray(geninfo.InitPDGID)))
 
             import matplotlib.pyplot as plt
+            fig, ax = plt.subplots()
             plt.hist(t_res_i, 100)
+            ax.set_yscale("log")
             plt.show()
