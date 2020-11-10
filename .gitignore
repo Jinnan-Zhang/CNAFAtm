@@ -38,3 +38,4 @@ src_sgiulio/matrix/**/output*
 !src_sgiulio/bayes/5YRS/output_Numu_osc/*.root
 !Project/Py_AtmJUNO/data/*.root
 !Project/Py_AtmJUNO/data/*/*.root
+*genie3.0.2*

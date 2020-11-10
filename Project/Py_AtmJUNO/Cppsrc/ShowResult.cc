@@ -1031,18 +1031,19 @@ void ViewNPE_tres()
         "1.01#times10^{6}<NPE_{LPMT}<2.32#times10^{6}",
         "NPE_{LPMT}>2.32#times10^{6}"};
     TCanvas *cs[5];
-    TLegend leg[5];
+    TLegend *leg[5];
     for (int i = 0; i < 4; i++)
     {
-        cs[i] = new TCanvas(CutConditions[i]);
+        cs[i] = new TCanvas(CutConditions[i], "", 900, 600);
         cs[i]->cd();
         muCC_NPETresE.Draw(Form("sigma_tres>>muCC%d(160,40,200)", i), Form("NPE_LPMT>=%f&&NPE_LPMT<=%f", NPE_cuts[i][0], NPE_cuts[i][1]), "");
         eCC_NPETresE.Draw(Form("sigma_tres>>eCC%d(160,40,200)", i), Form("NPE_LPMT>=%f&&NPE_LPMT<=%f", NPE_cuts[i][0], NPE_cuts[i][1]), "SAME");
         NC_NPETresE.Draw(Form("sigma_tres>>NC%d(160,40,200)", i), Form("NPE_LPMT>=%f&&NPE_LPMT<=%f", NPE_cuts[i][0], NPE_cuts[i][1]), "SAME");
-        
+
         h_muCC[i] = dynamic_cast<TH1 *>(gDirectory->Get(Form("muCC%d", i)));
         h_eCC[i] = dynamic_cast<TH1 *>(gDirectory->Get(Form("eCC%d", i)));
         h_NC[i] = dynamic_cast<TH1 *>(gDirectory->Get(Form("NC%d", i)));
+        h_muCC[0]->SetAxisRange(0, 2500, "Y");
         h_muCC[i]->SetTitle(CutConditions[i]);
         h_muCC[i]->SetXTitle("#sigma(t_{res}) [ns]");
         h_muCC[i]->SetYTitle("entries");
@@ -1053,12 +1054,13 @@ void ViewNPE_tres()
         h_NC[i]->SetXTitle("#sigma(t_{res}) [ns]");
         h_NC[i]->SetYTitle("entries");
         h_NC[i]->SetLineColor(mueN[2]);
-        leg[i].AddEntry(h_muCC[i], "#nu_{#mu} CC");
-        leg[i].AddEntry(h_eCC[i], "#nu_{e} CC");
-        leg[i].AddEntry(h_NC[i], "NC");
-        leg[i].DrawClone("SAME");
+        leg[i]=new TLegend(0.55,0.6,0.8,0.9);
+        leg[i]->AddEntry(h_muCC[i], "#nu_{#mu} CC");
+        leg[i]->AddEntry(h_eCC[i], "#nu_{e} CC");
+        leg[i]->AddEntry(h_NC[i], "NC");
+        leg[i]->Draw();
+        cs[i]->SaveAs(Form("./pics/NPE_LPMT_in%.2e_%.2e.png", NPE_cuts[i][0], NPE_cuts[i][1]));
     }
-    h_muCC[0]->SetAxisRange(0,2500,"Y");
 }
 
 void GetObjFromFile(TFile *File, TH1 *h[], TString ObjNames[], int NUMObj)

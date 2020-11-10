@@ -36,3 +36,5 @@ if __name__ == "__main__":
         ViewNPE_LPMT(int(sys.argv[2]))
     elif (sys.argv[1] == "WPEFF"):
         GetFiducialCutEff()
+    elif (sys.argv[1] == "SimTres"):
+        ShowSimpletres(int(sys.argv[2]))
