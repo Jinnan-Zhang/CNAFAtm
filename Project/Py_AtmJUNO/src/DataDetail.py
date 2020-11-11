@@ -45,6 +45,7 @@ def GetFiducialCutEff(NFile=1, StartFile=1):
 
     # AddUserFile2TChain(evt, NFiles=NFile)
     AddUserFile2TChain(geninfo, NFiles=NFile)
+    # geninfo.Add("/mnt/f/user-detsim-2185.root")
 
     # evt.SetBranchStatus("*", 0)
     geninfo.SetBranchStatus("*", 0)
