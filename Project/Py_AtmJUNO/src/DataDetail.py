@@ -55,8 +55,8 @@ def GetFiducialCutEff(NFile=1, StartFile=1):
     NC_total = 0
     for entry in geninfo:
         # evt.GetEntry(entry)
-        geninfo.GetEntry(entry)
-        InitPDGID = np.asarray(geninfo.InitPDGID)[0]
+        # geninfo.GetEntry(entry)
+        InitPDGID = np.asarray(entry.InitPDGID)[0]
         if (InitPDGID == 11) | (InitPDGID == -11):  #e CC
             eCC_total += 1
         elif (InitPDGID == 13) | (InitPDGID == -13):
