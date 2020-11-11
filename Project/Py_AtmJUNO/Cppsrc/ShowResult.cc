@@ -55,10 +55,10 @@ int ShowResult()
 {
     // ViewFlavor();
     // ViewEffandCONT();
-    ViewNPE_tres();
+    // ViewNPE_tres();
 
     // ForAllPEs();
-    // ShowNPE_nd_Cuts();
+    ShowNPE_nd_Cuts();
     // ShowNPE_Sg_Cuts();
     return 0;
 }

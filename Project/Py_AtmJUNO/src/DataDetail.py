@@ -37,33 +37,35 @@ def ViewFakeData():
 
 
 # get the efficiency of fiducial cut: WP and r<16m effciency of FC and PC events
-def GetFiducialCutEff():
-    evt = ROOT.TChain("evt")
-    prmtrkdep = ROOT.TChain("prmtrkdep")
+def GetFiducialCutEff(NFile=1, StartFile=1):
+    ROOT.ROOT.EnableImplicitMT()
+    # evt = ROOT.TChain("evt")
+    # prmtrkdep = ROOT.TChain("prmtrkdep")
     geninfo = ROOT.TChain("geninfo")
 
-    evt.Add(
-        "/junofs/users/zhangjn/CNAF_Atm/Project/Py_AtmJUNO/user-detsim-2185.root"
-    )
-    prmtrkdep.Add(
-        "/junofs/users/zhangjn/CNAF_Atm/Project/Py_AtmJUNO/user-detsim-2185.root"
-    )
-    geninfo.Add(
-        "/junofs/users/zhangjn/CNAF_Atm/Project/Py_AtmJUNO/user-detsim-2185.root"
-    )
-    total_selected = 0
-    FC_selected = 0
-    PC_selected = 0
-    for entry in evt:
-        evt.GetEntry(entry)
-        pmtID = np.asarray(evt.pmtID)
-        nPE = np.asarray(evt.nPE)
-        WPPMTs = np.where((pmtID >= WPPMTID_low) & (pmtID <= WPPMTID_up))[0]
-        NPE_WPPMTs = np.sum(nPE[WPPMTs])
+    # AddUserFile2TChain(evt, NFiles=NFile)
+    AddUserFile2TChain(geninfo, NFiles=NFile)
 
+    # evt.SetBranchStatus("*", 0)
+    geninfo.SetBranchStatus("*", 0)
+    geninfo.SetBranchStatus("InitPDGID", 1)
+
+    muCC_total = 0
+    eCC_total = 0
+    NC_total = 0
+    for entry in geninfo:
+        # evt.GetEntry(entry)
         geninfo.GetEntry(entry)
-        InitX, InitY, InitZ = np.asarray(geninfo.InitX)[0] / 1e3, np.asarray(
-            geninfo.InitY)[0] / 1e3, np.asarray(geninfo.InitZ)[0] / 1e3
+        InitPDGID = np.asarray(geninfo.InitPDGID)[0]
+        if (InitPDGID == 11) | (InitPDGID == -11):  #e CC
+            eCC_total += 1
+        elif (InitPDGID == 13) | (InitPDGID == -13):
+            muCC_total += 1
+        else:
+            NC_total += 1
+    print("muCC: ", muCC_total)
+    print("eCC: ", eCC_total)
+    print("NC: ", NC_total)
 
 
 # show simple time residual profile
@@ -103,8 +105,8 @@ def ShowSimpletres(WhichEntry=0):
             Smear_t = np.random.normal(hitTime, sigma_hitTime)
             hit_pr_idx = np.where(Smear_t < HitTimeCut_up)[0]
             t_res_i = Smear_t - (R_Vi * LS_RI_idx / LightSpeed_c)
-            t_res_i = t_res_i[hit_pr_idx]
-            # t_res_i = t_res_i[t_res_i < HitTimeCut_up]
+            # t_res_i = t_res_i[hit_pr_idx]
+            t_res_i = t_res_i[t_res_i < HitTimeCut_up]
             sigma_tres = np.sqrt(np.mean(t_res_i**2))
             print(sigma_tres)
             print("pdg id:", (np.asarray(geninfo.InitPDGID)))
@@ -112,5 +114,5 @@ def ShowSimpletres(WhichEntry=0):
             import matplotlib.pyplot as plt
             fig, ax = plt.subplots()
             plt.hist(t_res_i, 100)
-            ax.set_yscale("log")
+            # ax.set_yscale("log")
             plt.show()
