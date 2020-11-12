@@ -49,6 +49,7 @@ void ShowNPE_Sg_Cuts(bool WithCut = true);
 void GetFakeData(TString FileName = "../results/FakeData.root");
 const int Expected_evt_NUM_eCC[] = {40, 100, 125, 135, 80, 45, 20};
 const int Expected_evt_NUM_muCC[] = {165, 170, 155, 145, 100, 60, 35, 20};
+void GetEFF_CONT(double t_muCC = 113, double t_eCC = 86);
 
 using namespace std;
 int ShowResult()
@@ -57,8 +58,10 @@ int ShowResult()
     // ViewEffandCONT();
     // ViewNPE_tres();
 
+    GetEFF_CONT(113, 79);
+
     // ForAllPEs();
-    ShowNPE_nd_Cuts();
+    // ShowNPE_nd_Cuts();
     // ShowNPE_Sg_Cuts();
     return 0;
 }
@@ -1054,7 +1057,7 @@ void ViewNPE_tres()
         h_NC[i]->SetXTitle("#sigma(t_{res}) [ns]");
         h_NC[i]->SetYTitle("entries");
         h_NC[i]->SetLineColor(mueN[2]);
-        leg[i]=new TLegend(0.55,0.6,0.8,0.9);
+        leg[i] = new TLegend(0.55, 0.6, 0.8, 0.9);
         leg[i]->AddEntry(h_muCC[i], "#nu_{#mu} CC");
         leg[i]->AddEntry(h_eCC[i], "#nu_{e} CC");
         leg[i]->AddEntry(h_NC[i], "NC");
@@ -1335,4 +1338,34 @@ void GetFakeData(TString FileName = "../results/FakeData.root")
     // h_muCC_NPE_Spec[0]->Draw("E");
     // h_muCC_Etrue_NPE->Draw("colz");
     // h_eCC_Etrue_NPE->Draw("colz");
+}
+
+void GetEFF_CONT(double t_muCC = 113, double t_eCC = 86)
+{
+    TChain muCC_NPETresE("muCC_NPETresE");
+    TChain eCC_NPETresE("eCC_NPETresE");
+    TChain NC_NPETresE("NC_NPETresE");
+    muCC_NPETresE.Add("../results/result_NPETE*_100.root");
+    eCC_NPETresE.Add("../results/result_NPETE*_100.root");
+    NC_NPETresE.Add("../results/result_NPETE*_100.root");
+    const double muCC_total = 226197;
+    const double eCC_total = 115393;
+    const double NC_total = 158410;
+    //10^5.7= 501187.23
+    //10^7.2= 15848932.
+    double muCC_muCC = muCC_NPETresE.GetEntries(Form("NPE_LPMT>=501187.2&&sigma_tres>=%f&&NPE_LPMT<=15848931.9", t_muCC));
+    double muCC_eCC = eCC_NPETresE.GetEntries(Form("NPE_LPMT>=501187.2&&sigma_tres>=%f&&NPE_LPMT<=15848931.9", t_muCC));
+    double muCC_NC = NC_NPETresE.GetEntries(Form("NPE_LPMT>=501187.2&&sigma_tres>=%f&&NPE_LPMT<=15848931.9", t_muCC));
+
+    double eCC_muCC = muCC_NPETresE.GetEntries(Form("NPE_LPMT>=1e5&&sigma_tres<=%f&&NPE_LPMT<=15848931.9", t_eCC));
+    double eCC_eCC = eCC_NPETresE.GetEntries(Form("NPE_LPMT>=1e5&&sigma_tres<=%f&&NPE_LPMT<=15848931.9", t_eCC));
+    double eCC_NC = NC_NPETresE.GetEntries(Form("NPE_LPMT>=1e5&&sigma_tres<=%f&&NPE_LPMT<=15848931.9", t_eCC));
+
+    double muCC_EFF = muCC_muCC / muCC_total;
+    double muCC_CONT = (muCC_eCC + muCC_NC) / (muCC_muCC + muCC_eCC + muCC_NC);
+    double eCC_EFF = eCC_eCC / eCC_total;
+    double eCC_CONT = (eCC_muCC + eCC_NC) / (eCC_muCC + eCC_eCC + eCC_NC);
+
+    printf("%.1f ns muCC: EFF: %f\tCONT: %f\n", t_muCC, muCC_EFF, muCC_CONT);
+    printf("%.1f ns eCC: EFF: %f\tCONT: %f\n", t_eCC, eCC_EFF, eCC_CONT);
 }
