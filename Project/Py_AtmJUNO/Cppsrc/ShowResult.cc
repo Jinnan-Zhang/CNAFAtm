@@ -58,7 +58,7 @@ int ShowResult()
     // ViewEffandCONT();
     // ViewNPE_tres();
 
-    GetEFF_CONT(113, 79);
+    GetEFF_CONT(113, 86);
 
     // ForAllPEs();
     // ShowNPE_nd_Cuts();

@@ -39,13 +39,14 @@ def ViewFakeData():
 # get the efficiency of fiducial cut: WP and r<16m effciency of FC and PC events
 def GetFiducialCutEff(NFile=1, StartFile=1):
     ROOT.ROOT.EnableImplicitMT()
-    # evt = ROOT.TChain("evt")
-    # prmtrkdep = ROOT.TChain("prmtrkdep")
-    geninfo = ROOT.TChain("geninfo")
+    evt = ROOT.TChain("evt")
+    prmtrkdep = ROOT.TChain("prmtrkdep")
+    # geninfo = ROOT.TChain("geninfo")
 
     # AddUserFile2TChain(evt, NFiles=NFile)
-    AddUserFile2TChain(geninfo, NFiles=NFile)
-    # geninfo.Add("/mnt/f/user-detsim-2185.root")
+    # AddUserFile2TChain(geninfo, NFiles=NFile)
+    evt.Add("/mnt/f/user-detsim-2185.root")
+    geninfo.Add("/mnt/f/user-detsim-2185.root")
 
     # evt.SetBranchStatus("*", 0)
     geninfo.SetBranchStatus("*", 0)
