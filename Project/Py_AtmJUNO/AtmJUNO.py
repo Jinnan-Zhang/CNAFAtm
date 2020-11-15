@@ -35,6 +35,6 @@ if __name__ == "__main__":
     elif (sys.argv[1] == "NPE"):
         ViewNPE_LPMT(int(sys.argv[2]))
     elif (sys.argv[1] == "FVCut"):
-        GetFiducialCutEff(int(sys.argv[2]))
+        GetFiducialCutEff(int(sys.argv[2]),int(sys.argv[3]))
     elif (sys.argv[1] == "SimTres"):
         ShowSimpletres(int(sys.argv[2]))
