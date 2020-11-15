@@ -70,12 +70,12 @@ int Unfold()
     // gSystem->Load("/home/jinnan/SoftWare/srcs/RooUnfold/libRooUnfold");
     // gSystem->Load("/home/jinnan/SoftWare/src/RooUnfold/libRooUnfold");
     // BayesUnfold(2);
-    // TryRooUnfold(2);
+    TryRooUnfold(2);
 
     // ShowUncertainty_stat();
     // ShowUncertainty_Xsec();
     // ShowUncertainty_SamSel(4);
-    ShowUncertainty_Osci();
+    // ShowUncertainty_Osci();
     // ShowUncertainties_all();
 
     // Pre_Flux();
@@ -357,7 +357,7 @@ TH2 *SwapX2Y(TH2 *h_innital)
 //apply rooUnfold
 void TryRooUnfold(int Iter_NUM)
 {
-    // gSystem->Load("/home/jinnan/SoftWare/srcs/RooUnfold/libRooUnfold");
+    gSystem->Load("/home/jinnan/SoftWare/srcs/RooUnfold/libRooUnfold");
     // gSystem->Load("/home/jinnan/SoftWare/src/RooUnfold/libRooUnfold");
     TFile *ff_unfold_data = TFile::Open("../data/UnfoldData.root", "READ");
     TH2 *h_likeli_eCC = SwapX2Y(dynamic_cast<TH2 *>(ff_unfold_data->Get("eCC_Likely_hood")));

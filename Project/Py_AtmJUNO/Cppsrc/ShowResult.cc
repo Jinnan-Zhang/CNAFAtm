@@ -58,10 +58,10 @@ int ShowResult()
     // ViewEffandCONT();
     // ViewNPE_tres();
 
-    GetEFF_CONT(113, 86);
+    // GetEFF_CONT(113, 86);
 
     // ForAllPEs();
-    // ShowNPE_nd_Cuts();
+    ShowNPE_nd_Cuts();
     // ShowNPE_Sg_Cuts();
     return 0;
 }
@@ -659,36 +659,36 @@ void ShowNPE_nd_Cuts()
         for (int i = 0; i < Etrue_BINNUM_muCC; i++)
             epsilon_muCC[i] = h_muCC2D->GetBinContent(i + 1, 0) / h_muCC2D->Integral(i + 1, i + 1, 0, NPE_BINNUM_muCC + 1);
 
-        // double Response_SUM[Etrue_BINNUM_eCC];
-        // for (int i = 0; i < Etrue_BINNUM_eCC; i++)
-        // {
-        //     Response_SUM[i] = h_eCC_Etrue_NPE->Integral(i + 1, i + 1, 1, NPE_BINNUM_eCC);
-        //     for (int j = 0; j < NPE_BINNUM_eCC; j++)
-        //     {
-        //         //normalize the the likelihood sum of a row to 1-epsilon
-        //         A_ji_ecc[j][i] = h_eCC_Etrue_NPE->GetBinContent(i + 1, j + 1) *
-        //                          (1 - epsilon_eCC[i]) / Response_SUM[i];
-        //         h_eCC_Etrue_NPE->SetBinContent(i + 1, j + 1, A_ji_ecc[j][i]);
-        //     }
-        //     printf("epsilon_eCC:%.10f\n", epsilon_eCC[i]);
-        // }
+        double Response_SUM[Etrue_BINNUM_eCC];
+        for (int i = 0; i < Etrue_BINNUM_eCC; i++)
+        {
+            Response_SUM[i] = h_eCC_Etrue_NPE->Integral(i + 1, i + 1, 1, NPE_BINNUM_eCC);
+            for (int j = 0; j < NPE_BINNUM_eCC; j++)
+            {
+                //normalize the the likelihood sum of a row to 1-epsilon
+                A_ji_ecc[j][i] = h_eCC_Etrue_NPE->GetBinContent(i + 1, j + 1) *
+                                 (1 - epsilon_eCC[i]) / Response_SUM[i];
+                h_eCC_Etrue_NPE->SetBinContent(i + 1, j + 1, A_ji_ecc[j][i]);
+            }
+            printf("epsilon_eCC:%.10f\n", epsilon_eCC[i]);
+        }
         TCanvas *c_redu_Ml_eCC = new TCanvas("c_redu_Ml_eCC");
         h_eCC_Etrue_NPE->Draw("colz");
         gPad->SetLogz();
         double A_ji_mucc[NPE_BINNUM_muCC][Etrue_BINNUM_muCC];
         // double Response_SUM[Etrue_BINNUM_muCC];
-        // for (int i = 0; i < Etrue_BINNUM_muCC; i++)
-        // {
-        //     Response_SUM[i] = h_muCC_Etrue_NPE->Integral(i + 1, i + 1, 1, NPE_BINNUM_muCC);
-        //     for (int j = 0; j < NPE_BINNUM_muCC; j++)
-        //     {
-        //         //normalize the the likelihood sum of a row to 1-epsilon
-        //         A_ji_mucc[j][i] = h_muCC_Etrue_NPE->GetBinContent(i + 1, j + 1) *
-        //                           (1 - epsilon_muCC[i]) / Response_SUM[i];
-        //         h_muCC_Etrue_NPE->SetBinContent(i + 1, j + 1, A_ji_mucc[j][i]);
-        //     }
-        //     printf("epsilon_muCC:%.10f\n", epsilon_muCC[i]);
-        // }
+        for (int i = 0; i < Etrue_BINNUM_muCC; i++)
+        {
+            Response_SUM[i] = h_muCC_Etrue_NPE->Integral(i + 1, i + 1, 1, NPE_BINNUM_muCC);
+            for (int j = 0; j < NPE_BINNUM_muCC; j++)
+            {
+                //normalize the the likelihood sum of a row to 1-epsilon
+                A_ji_mucc[j][i] = h_muCC_Etrue_NPE->GetBinContent(i + 1, j + 1) *
+                                  (1 - epsilon_muCC[i]) / Response_SUM[i];
+                h_muCC_Etrue_NPE->SetBinContent(i + 1, j + 1, A_ji_mucc[j][i]);
+            }
+            printf("epsilon_muCC:%.10f\n", epsilon_muCC[i]);
+        }
         TCanvas *c_redu_Ml_muCC = new TCanvas("c_redu_Ml_muCC");
         c_redu_Ml_muCC->cd();
         h_muCC_Etrue_NPE->Draw("colz");
@@ -1345,12 +1345,19 @@ void GetEFF_CONT(double t_muCC = 113, double t_eCC = 86)
     TChain muCC_NPETresE("muCC_NPETresE");
     TChain eCC_NPETresE("eCC_NPETresE");
     TChain NC_NPETresE("NC_NPETresE");
-    muCC_NPETresE.Add("../results/result_NPETE*_100.root");
-    eCC_NPETresE.Add("../results/result_NPETE*_100.root");
-    NC_NPETresE.Add("../results/result_NPETE*_100.root");
-    const double muCC_total = 226197;
-    const double eCC_total = 115393;
-    const double NC_total = 158410;
+    // muCC_NPETresE.Add("../results/result_NPETE*_100.root");
+    // eCC_NPETresE.Add("../results/result_NPETE*_100.root");
+    // NC_NPETresE.Add("../results/result_NPETE*_100.root");
+    muCC_NPETresE.Add("../results/FakeData.root");
+    eCC_NPETresE.Add("../results/FakeData.root");
+    NC_NPETresE.Add("../results/FakeData.root");
+    // const double muCC_total = 226197;
+    // const double eCC_total = 115393;
+    // const double NC_total = 158410;
+    const double muCC_total = muCC_NPETresE.GetEntries();
+    const double eCC_total = eCC_NPETresE.GetEntries();
+    const double NC_total = NC_NPETresE.GetEntries();
+
     //10^5.7= 501187.23
     //10^7.2= 15848932.
     double muCC_muCC = muCC_NPETresE.GetEntries(Form("NPE_LPMT>=501187.2&&sigma_tres>=%f&&NPE_LPMT<=15848931.9", t_muCC));
@@ -1366,6 +1373,6 @@ void GetEFF_CONT(double t_muCC = 113, double t_eCC = 86)
     double eCC_EFF = eCC_eCC / eCC_total;
     double eCC_CONT = (eCC_muCC + eCC_NC) / (eCC_muCC + eCC_eCC + eCC_NC);
 
-    printf("%.1f ns muCC: EFF: %f\tCONT: %f\n", t_muCC, muCC_EFF, muCC_CONT);
-    printf("%.1f ns eCC: EFF: %f\tCONT: %f\n", t_eCC, eCC_EFF, eCC_CONT);
+    printf("Before: %.1f\tAfter: %.1f\t%.1f ns muCC: EFF: %f\tCONT: %f\n",muCC_total,muCC_muCC, t_muCC, muCC_EFF, muCC_CONT);
+    printf("Before: %.1f\tAfter: %.1f\t%.1f ns eCC: EFF: %f\tCONT: %f\n",eCC_total,eCC_eCC, t_eCC, eCC_EFF, eCC_CONT);
 }
