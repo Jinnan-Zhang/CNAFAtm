@@ -474,11 +474,11 @@ void ShowNPE_nd_Cuts()
             NPE_LPMT[0] <= NPE_cut_eCC[1] &&
             sigma_tres[0] <= Sigma_cut_eCC)
         {
-            h_eCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[0]));  //all for eCC
-            h_eCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[0]));  //wrong for eCC
-            h_eCC_Enu_Spec[0]->Fill(log10(E_nu_true[0])); //all for eCC
-            h_eCC_Enu_Spec[2]->Fill(log10(E_nu_true[0])); //wrong for eCC
-            // h_eCC_Etrue_NPE->Fill(log10(E_nu_true[0]), log10(NPE_LPMT[0])); //all
+            h_eCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[0]));                    //all for eCC
+            h_eCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[0]));                    //wrong for eCC
+            h_eCC_Enu_Spec[0]->Fill(log10(E_nu_true[0]));                   //all for eCC
+            h_eCC_Enu_Spec[2]->Fill(log10(E_nu_true[0]));                   //wrong for eCC
+            h_eCC_Etrue_NPE->Fill(log10(E_nu_true[0]), log10(NPE_LPMT[0])); //all
         }
         if (i < eCC_NPETresE.GetEntries())
         {
@@ -487,11 +487,11 @@ void ShowNPE_nd_Cuts()
                 NPE_LPMT[1] <= NPE_cut_muCC[1] &&
                 sigma_tres[1] >= Sigma_cut_muCC)
             {
-                h_muCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[1]));  //all for muCC
-                h_muCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[1]));  //wrong for eCC
-                h_muCC_Enu_Spec[0]->Fill(log10(E_nu_true[1])); //all for muCC
-                h_muCC_Enu_Spec[2]->Fill(log10(E_nu_true[1])); //wrong for eCC
-                // h_muCC_Etrue_NPE->Fill(log10(E_nu_true[1]), log10(NPE_LPMT[1])); //all
+                h_muCC_NPE_Spec[0]->Fill(log10(NPE_LPMT[1]));                    //all for muCC
+                h_muCC_NPE_Spec[2]->Fill(log10(NPE_LPMT[1]));                    //wrong for eCC
+                h_muCC_Enu_Spec[0]->Fill(log10(E_nu_true[1]));                   //all for muCC
+                h_muCC_Enu_Spec[2]->Fill(log10(E_nu_true[1]));                   //wrong for eCC
+                h_muCC_Etrue_NPE->Fill(log10(E_nu_true[1]), log10(NPE_LPMT[1])); //all
             }
             if (NPE_LPMT[1] >= NPE_cut_eCC[0] &&
                 NPE_LPMT[1] <= NPE_cut_eCC[1] &&
@@ -654,10 +654,11 @@ void ShowNPE_nd_Cuts()
         double epsilon_muCC[Etrue_BINNUM_eCC];
         TH2 *h_eCC2D = dynamic_cast<TH2 *>(gDirectory->Get("h_eCC2D"));
         TH2 *h_muCC2D = dynamic_cast<TH2 *>(gDirectory->Get("h_muCC2D"));
+        //under and overflow entries
         for (int i = 0; i < Etrue_BINNUM_eCC; i++)
-            epsilon_eCC[i] = h_eCC2D->GetBinContent(i + 1, 0) / h_eCC2D->Integral(i + 1, i + 1, 0, NPE_BINNUM_eCC + 1);
+            epsilon_eCC[i] = (h_eCC2D->GetBinContent(i + 1, 0) + h_eCC2D->GetBinContent(i + 1, NPE_BINNUM_eCC + 1)) / h_eCC2D->Integral(i + 1, i + 1, 0, NPE_BINNUM_eCC + 1);
         for (int i = 0; i < Etrue_BINNUM_muCC; i++)
-            epsilon_muCC[i] = h_muCC2D->GetBinContent(i + 1, 0) / h_muCC2D->Integral(i + 1, i + 1, 0, NPE_BINNUM_muCC + 1);
+            epsilon_muCC[i] = (h_muCC2D->GetBinContent(i + 1, 0) + h_muCC2D->GetBinContent(i + 1, NPE_BINNUM_muCC + 1)) / h_muCC2D->Integral(i + 1, i + 1, 0, NPE_BINNUM_muCC + 1);
 
         double Response_SUM[Etrue_BINNUM_eCC];
         for (int i = 0; i < Etrue_BINNUM_eCC; i++)
@@ -1373,6 +1374,6 @@ void GetEFF_CONT(double t_muCC = 113, double t_eCC = 86)
     double eCC_EFF = eCC_eCC / eCC_total;
     double eCC_CONT = (eCC_muCC + eCC_NC) / (eCC_muCC + eCC_eCC + eCC_NC);
 
-    printf("Before: %.1f\tAfter: %.1f\t%.1f ns muCC: EFF: %f\tCONT: %f\n",muCC_total,muCC_muCC, t_muCC, muCC_EFF, muCC_CONT);
-    printf("Before: %.1f\tAfter: %.1f\t%.1f ns eCC: EFF: %f\tCONT: %f\n",eCC_total,eCC_eCC, t_eCC, eCC_EFF, eCC_CONT);
+    printf("Before: %.1f\tAfter: %.1f\t%.1f ns muCC: EFF: %f\tCONT: %f\n", muCC_total, muCC_muCC, t_muCC, muCC_EFF, muCC_CONT);
+    printf("Before: %.1f\tAfter: %.1f\t%.1f ns eCC: EFF: %f\tCONT: %f\n", eCC_total, eCC_eCC, t_eCC, eCC_EFF, eCC_CONT);
 }
